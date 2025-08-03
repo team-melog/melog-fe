@@ -1,0 +1,21 @@
+{
+  "name": "melog-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "lint": "turbo lint",
+    "type-check": "turbo type-check",
+    "clean": "turbo clean",
+    "test": "turbo test"
+  },
+  "devDependencies": {
+    "turbo": "^2.2.5"
+  },
+  "packageManager": "npm@10.9.0"
+}

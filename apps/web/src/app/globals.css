@@ -1,0 +1,121 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/* @import "tailwindcss"; */
+
+/* CSS Reset for Mobile-First Web App */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: #f9fafb;
+  color: #111827;
+  overflow-x: hidden;
+}
+
+/* 모바일 터치 최적화 */
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  outline: none;
+  border: none;
+  background: transparent;
+}
+
+/* 터치 디바이스 최적화 */
+button {
+  cursor: pointer;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* iOS Safari 스크롤 최적화 */
+* {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* 링크 기본 스타일 제거 */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* 이미지 반응형 기본 설정 */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* 목록 스타일 제거 */
+ul,
+ol {
+  list-style: none;
+}
+
+/* 테이블 기본 스타일 */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* 폼 요소 일관성 */
+input,
+textarea {
+  width: 100%;
+}
+
+/* 스크롤바 숨기기 (웹킷 기반) */
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* Firefox 스크롤바 숨기기 */
+* {
+  scrollbar-width: none;
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}

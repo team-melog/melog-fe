@@ -1,0 +1,1 @@
+export { default as EmotionSelector } from './EmotionSelector'
