@@ -24,7 +24,7 @@ export default function Layout({
             theme === "dark" ? "dark bg-gray-900" : "bg-white"
           } ${className}`}
         >
-          <main className={`px-4 py-6 w-full ${showTabBar ? "pb-20" : ""}`}>
+          <main className={`px-4 w-full ${showTabBar ? "pb-20" : ""}`}>
             {children}
           </main>
         </div>

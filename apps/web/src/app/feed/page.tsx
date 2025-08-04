@@ -1,31 +1,154 @@
-'use client'
+"use client";
 
-import { Layout } from '@melog/ui'
+import { Layout, Button } from "@melog/ui";
+import { useAppStore, useEmotionStore, EMOTIONS } from "@melog/shared";
+import { useRouter } from "next/navigation";
 
 export default function FeedPage() {
-  return (
-    <Layout>
-      <div className="space-y-6">
-        <header className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">
-            📊 감정 피드
-          </h1>
-          <p className="text-sm text-gray-600">
-            모든 사용자들의 감정 기록을 확인해보세요
-          </p>
-        </header>
+  const router = useRouter();
+  const { user } = useAppStore();
+  const { entries } = useEmotionStore();
 
-        <main className="space-y-4">
-          <div className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
-            <h2 className="text-lg font-semibold mb-3 text-gray-800">전체 피드</h2>
-            <div className="text-center py-8">
-              <div className="text-4xl mb-2">🚧</div>
-              <p className="text-sm text-gray-500">피드 기능을 준비 중입니다</p>
-              <p className="text-xs text-gray-400 mt-1">곧 만나보실 수 있어요!</p>
+  // 실제 데이터 사용
+  const hasData = entries.length > 0;
+
+  const handleEmotionRecord = () => {
+    router.push("/emotion/select");
+  };
+
+  const handleCardClick = (entryId: string) => {
+    router.push(`/feed/${entryId}`);
+  };
+
+  // 실제 감정 데이터를 카드 형태로 변환
+  const emotionCards = entries.map((entry) => {
+    const date = new Date(entry.timestamp);
+    const formattedDate = new Intl.DateTimeFormat("ko-KR", {
+      month: "2-digit",
+      day: "2-digit",
+    }).format(date);
+
+    const emotionConfig = EMOTIONS[entry.emotion];
+
+    return {
+      id: entry.id,
+      date: formattedDate,
+      emotion: emotionConfig?.name || entry.emotion,
+      color: emotionConfig?.color || "#gray-300",
+      hasVoice: !!entry.voiceNote,
+    };
+  });
+
+  return (
+    <Layout showTabBar={true}>
+      <div className="min-h-screen bg-white flex flex-col">
+        {/* Header */}
+        <div className="px-4 py-6">
+          {/* Profile Section */}
+          <div className="flex items-center mb-6">
+            <div className="w-16 h-16 bg-gray-300 rounded-full mr-4"></div>
+            <div>
+              <h1 className="text-xl font-semibold text-black">
+                {user?.name || "닉네임명"}
+              </h1>
             </div>
           </div>
-        </main>
+
+          {/* Summary Stats */}
+          <div className="bg-gray-300 rounded-xl p-4 mb-6">
+            <div className="flex justify-between items-center">
+              <div className="text-center">
+                <p className="text-sm text-black">감정 기록</p>
+                <p className="text-sm font-semibold text-black">
+                  {hasData ? entries.length : 12}
+                </p>
+              </div>
+              <div className="w-px h-4 bg-black"></div>
+              <div className="text-center">
+                <p className="text-sm text-black">대표 감정</p>
+                {hasData ? (
+                  <div className="flex items-center justify-center mt-1">
+                    <div className="w-4 h-4 bg-gray-300 rounded-full mr-2"></div>
+                    <span className="text-xs text-black">매우 기쁨</span>
+                  </div>
+                ) : (
+                  <p className="text-sm text-black">-</p>
+                )}
+              </div>
+              <div className="w-px h-4 bg-black"></div>
+              <div className="text-center">
+                <p className="text-sm text-black">음성 녹음</p>
+                <p className="text-sm font-semibold text-black">
+                  {hasData ? entries.filter((e) => e.voiceNote).length : 8}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 px-4">
+          {!hasData ? (
+            /* No Data State */
+            <div className="flex flex-col items-center justify-center py-12">
+              <div className="w-px h-8 bg-black mb-8"></div>
+              <p className="text-sm text-black mb-8">
+                아직 기록된 감정이 없어요
+              </p>
+              <Button
+                onClick={handleEmotionRecord}
+                className="bg-gray-400 hover:bg-gray-500 text-black font-semibold py-3 px-8 rounded-lg transition-colors text-xl"
+              >
+                감정 기록하기
+              </Button>
+            </div>
+          ) : (
+            /* Has Data State */
+            <div className="space-y-4">
+              {/* Emotion Cards Grid */}
+              <div className="grid grid-cols-3 gap-1">
+                {emotionCards.map((card) => (
+                  <button
+                    key={card.id}
+                    onClick={() => handleCardClick(card.id)}
+                    className="aspect-square bg-gray-300 border border-white relative group hover:bg-gray-400 transition-colors"
+                  >
+                    {/* Voice Indicator */}
+                    {card.hasVoice && (
+                      <div className="absolute top-2 right-2 w-6 h-6 bg-gray-400 rounded-full flex items-center justify-center">
+                        <span className="text-xs">🎤</span>
+                      </div>
+                    )}
+
+                    {/* Emotion Color Overlay */}
+                    <div
+                      className="absolute inset-0 opacity-20"
+                      style={{ backgroundColor: card.color }}
+                    />
+
+                    {/* Date */}
+                    <div className="absolute bottom-2 left-2 right-2">
+                      <p className="text-xs text-black font-medium truncate">
+                        {card.date}
+                      </p>
+                    </div>
+                  </button>
+                ))}
+
+                {/* Add New Button */}
+                <button
+                  onClick={handleEmotionRecord}
+                  className="aspect-square bg-gray-300 border border-white flex items-center justify-center hover:bg-gray-400 transition-colors"
+                >
+                  <div className="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center">
+                    <span className="text-lg">+</span>
+                  </div>
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </Layout>
-  )
+  );
 }

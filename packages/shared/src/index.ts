@@ -1,11 +1,14 @@
 // Store exports
-export * from './store'
+export * from "./store";
 
-// Entity exports  
-export * from './entities'
+// Entity exports
+export * from "./entities";
 
 // Hooks exports
-export * from './hooks/useAudioRecorder'
+export * from "./hooks/useAudioRecorder";
 
 // Services exports
-export * from './services/sttService'
+export * from "./services/sttService";
+
+// Constants exports
+export * from "./constants/emotion";

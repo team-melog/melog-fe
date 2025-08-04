@@ -1,9 +1,13 @@
 {
-  "/_not-found/page": "app/_not-found/page.js",
-  "/feed/page": "app/feed/page.js",
-  "/favicon.ico/route": "app/favicon.ico/route.js",
-  "/emotion/page": "app/emotion/page.js",
-  "/page": "app/page.js",
+  "/emotion/record/page": "app/emotion/record/page.js",
+  "/emotion/input/page": "app/emotion/input/page.js",
   "/calendar/page": "app/calendar/page.js",
-  "/profile/page": "app/profile/page.js"
+  "/emotion/select/page": "app/emotion/select/page.js",
+  "/emotion/page": "app/emotion/page.js",
+  "/feed/page": "app/feed/page.js",
+  "/profile/page": "app/profile/page.js",
+  "/page": "app/page.js",
+  "/onboarding/page": "app/onboarding/page.js",
+  "/emotion/analysis/page": "app/emotion/analysis/page.js",
+  "/emotion/result/page": "app/emotion/result/page.js"
 }
