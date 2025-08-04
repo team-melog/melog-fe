@@ -2,10 +2,10 @@
 
 import { Layout } from "@melog/ui";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { intensityLabels } from "@melog/shared";
 
-export default function EmotionInputPage() {
+function EmotionInputContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [selectedOption, setSelectedOption] = useState<"voice" | "text" | null>(
@@ -107,5 +107,13 @@ export default function EmotionInputPage() {
         </div>
       </div>
     </Layout>
+  );
+}
+
+export default function EmotionInputPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <EmotionInputContent />
+    </Suspense>
   );
 }
