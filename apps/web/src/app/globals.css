@@ -33,7 +33,6 @@ body {
 
 /* 모바일 터치 최적화 */
 button,
-input,
 textarea,
 select {
   font-family: inherit;
@@ -43,7 +42,18 @@ select {
   -moz-appearance: none;
   appearance: none;
   outline: none;
-  border: none;
+  background: transparent;
+}
+
+/* input 요소는 border 스타일을 유지하도록 별도 설정 */
+input {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  outline: none;
   background: transparent;
 }
 

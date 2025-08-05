@@ -1,19 +1,9 @@
 {
-  "/_not-found/page": "app/_not-found/page.js",
-  "/emotion/record/page": "app/emotion/record/page.js",
-  "/emotion/analysis/page": "app/emotion/analysis/page.js",
-  "/emotion/input/page": "app/emotion/input/page.js",
-  "/emotion/result/page": "app/emotion/result/page.js",
+  "/page": "app/page.js",
+  "/onboarding/page": "app/onboarding/page.js",
+  "/feed/page": "app/feed/page.js",
   "/emotion/page": "app/emotion/page.js",
   "/emotion/select/page": "app/emotion/select/page.js",
-  "/emotion/final/page": "app/emotion/final/page.js",
-  "/emotion/write/page": "app/emotion/write/page.js",
-  "/onboarding/page": "app/onboarding/page.js",
-  "/calendar/page": "app/calendar/page.js",
-  "/favicon.ico/route": "app/favicon.ico/route.js",
-  "/page": "app/page.js",
-  "/feed/page": "app/feed/page.js",
-  "/emotion/skip/page": "app/emotion/skip/page.js",
-  "/feed/[id]/page": "app/feed/[id]/page.js",
-  "/profile/page": "app/profile/page.js"
+  "/emotion/input/page": "app/emotion/input/page.js",
+  "/emotion/skip/page": "app/emotion/skip/page.js"
 }

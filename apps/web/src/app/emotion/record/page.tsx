@@ -79,7 +79,7 @@ export default function EmotionRecordPage() {
     <Layout showTabBar={false}>
       <div className="min-h-screen bg-white flex flex-col">
         {/* Header */}
-        <div className="flex items-center px-4 py-6">
+        <div className="flex items-center py-6">
           <button
             onClick={handleBack}
             className="w-6 h-6 flex items-center justify-center"

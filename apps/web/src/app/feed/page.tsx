@@ -67,7 +67,7 @@ export default function FeedPage() {
               <div className="text-center">
                 <p className="text-sm text-black">대표 감정</p>
                 {hasData ? (
-                  <div className="flex items-center justify-center mt-1">
+                  <div className="flex items-center justify-center mt-1 p-1 bg-white rounded-md">
                     <div className="w-4 h-4 bg-gray-300 rounded-full mr-2"></div>
                     <span className="text-xs text-black">매우 기쁨</span>
                   </div>
@@ -87,11 +87,10 @@ export default function FeedPage() {
         </div>
 
         {/* Content */}
-        <div className="flex-1 px-4">
+        <div className="flex-1">
           {!hasData ? (
             /* No Data State */
             <div className="flex flex-col items-center justify-center py-12">
-              <div className="w-px h-8 bg-black mb-8"></div>
               <p className="text-sm text-black mb-8">
                 아직 기록된 감정이 없어요
               </p>

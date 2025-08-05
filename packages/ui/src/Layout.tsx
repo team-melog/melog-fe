@@ -16,15 +16,15 @@ export default function Layout({
   const { theme } = useAppStore();
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-svh bg-gray-100">
       {/* Mobile-first layout - 고정 너비 384px, 데스크탑에서도 모바일 크기 유지 */}
-      <div className="mx-auto w-[384px] bg-white min-h-screen shadow-xl relative">
+      <div className="mx-auto w-[384px] bg-white min-h-svh shadow-xl relative">
         <div
-          className={`min-h-screen transition-colors duration-300 ${
+          className={`min-h-svh transition-colors duration-300 ${
             theme === "dark" ? "dark bg-gray-900" : "bg-white"
           } ${className}`}
         >
-          <main className={`px-4 w-full ${showTabBar ? "pb-20" : ""}`}>
+          <main className={`px-4 w-full ${showTabBar ? "" : ""}`}>
             {children}
           </main>
         </div>

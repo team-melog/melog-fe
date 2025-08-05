@@ -1,1 +1,1 @@
-self.__NEXT_FONT_MANIFEST='{"pages":{},"app":{"/Users/mun/Documents/vibe/melog-frontend/apps/web/src/app/layout":["static/media/cfbb0c9b4a7de532-s.p.woff2"]},"appUsingSizeAdjust":true,"pagesUsingSizeAdjust":false}';
+self.__NEXT_FONT_MANIFEST="{\"pages\":{},\"app\":{\"/Users/mun/Documents/vibe/melog-frontend/apps/web/src/app/layout\":[\"static/media/cfbb0c9b4a7de532-s.p.woff2\"]},\"appUsingSizeAdjust\":true,\"pagesUsingSizeAdjust\":false}"
