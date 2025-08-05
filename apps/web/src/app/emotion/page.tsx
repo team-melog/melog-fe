@@ -75,13 +75,13 @@ export default function EmotionPage() {
         </div>
 
         {/* Theme Toggle (Hidden by default) */}
-        <button
+        {/* <button
           onClick={toggleTheme}
           className="fixed top-4 right-4 p-2 bg-gray-200 rounded-full opacity-50 hover:opacity-100 transition-opacity"
           title="테마 변경"
         >
           {theme === 'light' ? '🌙' : '☀️'}
-        </button>
+        </button> */}
       </div>
     </Layout>
   );

@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { Layout, Button } from "@melog/ui";
-import { useAppStore } from "@melog/shared";
-import { useRouter } from "next/navigation";
+import { Layout, Button } from '@melog/ui';
+import { useAppStore } from '@melog/shared';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
   const router = useRouter();
@@ -10,11 +10,11 @@ export default function Home() {
 
   const handleStart = () => {
     // 닉네임 입력 화면으로 이동
-    router.push("/onboarding");
+    router.push('/onboarding');
   };
 
   const toggleTheme = () => {
-    setTheme(theme === "light" ? "dark" : "light");
+    setTheme(theme === 'light' ? 'dark' : 'light');
   };
 
   return (
@@ -49,13 +49,13 @@ export default function Home() {
           </Button>
 
           {/* Theme Toggle (Hidden by default, can be accessed via dev tools) */}
-          <button
+          {/* <button
             onClick={toggleTheme}
             className="fixed top-4 right-4 p-2 bg-gray-200 rounded-full opacity-50 hover:opacity-100 transition-opacity"
             title="테마 변경"
           >
             {theme === "light" ? "🌙" : "☀️"}
-          </button>
+          </button> */}
         </div>
       </div>
     </Layout>

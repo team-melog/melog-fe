@@ -56,7 +56,7 @@ export default function BottomTabBar({ className = '' }: BottomTabBarProps) {
 
   return (
     <div
-      className={`w-[384px] fixed bottom-0 left-1/2 transform -translate-x-1/2 bg-white border-t border-[#E3E2E2] h-[60px] z-50 ${className}`}
+      className={`w-[360px] fixed bottom-0 left-1/2 transform -translate-x-1/2 bg-white border-t border-[#E3E2E2] h-[60px] z-50 ${className}`}
     >
       <div className="flex justify-around items-center h-full px-8">
         {tabs.map(tab => {

@@ -17,8 +17,8 @@ export default function Layout({
 
   return (
     <div className="min-h-svh bg-gray-100">
-      {/* Mobile-first layout - 고정 너비 384px, 데스크탑에서도 모바일 크기 유지 */}
-      <div className="mx-auto w-[384px] bg-white min-h-svh shadow-xl relative">
+      {/* Mobile-first layout - 고정 너비 360px, 데스크탑에서도 모바일 크기 유지 */}
+      <div className="mx-auto w-[360px] bg-white min-h-svh shadow-xl relative">
         <div
           className={`min-h-svh transition-colors duration-300 ${
             theme === 'dark' ? 'dark bg-gray-900' : 'bg-white'

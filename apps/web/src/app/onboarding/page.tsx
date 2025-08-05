@@ -1,50 +1,50 @@
-"use client";
+'use client';
 
-import { Layout, Button, Input } from "@melog/ui";
-import { useAppStore } from "@melog/shared";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { Layout, Button, Input } from '@melog/ui';
+import { useAppStore } from '@melog/shared';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 export default function OnboardingPage() {
   const router = useRouter();
   const { setUser } = useAppStore();
-  const [nickname, setNickname] = useState("");
-  const [error, setError] = useState("");
+  const [nickname, setNickname] = useState('');
+  const [error, setError] = useState('');
 
   const handleNicknameSubmit = () => {
     // 유효성 검사
     if (!nickname.trim()) {
-      setError("닉네임을 입력해주세요");
+      setError('닉네임을 입력해주세요');
       return;
     }
 
     if (nickname.trim().length < 2) {
-      setError("닉네임은 2글자 이상 입력해주세요");
+      setError('닉네임은 2글자 이상 입력해주세요');
       return;
     }
 
     if (nickname.trim().length > 10) {
-      setError("닉네임은 10글자 이하로 입력해주세요");
+      setError('닉네임은 10글자 이하로 입력해주세요');
       return;
     }
 
     // 특수문자 제한 (일부만 허용)
     const specialCharRegex = /[#%&]/;
     if (specialCharRegex.test(nickname)) {
-      setError("특수문자 #, %, &는 사용할 수 없습니다");
+      setError('특수문자 #, %, &는 사용할 수 없습니다');
       return;
     }
 
     // 유효한 경우 사용자 정보 저장
     setUser({ name: nickname.trim() });
-    setError("");
+    setError('');
 
     // 홈 화면으로 이동
-    router.push("/emotion");
+    router.push('/emotion');
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
+    if (e.key === 'Enter') {
       handleNicknameSubmit();
     }
   };
@@ -78,9 +78,9 @@ export default function OnboardingPage() {
                 type="text"
                 placeholder="닉네임을 입력하세요 (2~10자)"
                 value={nickname}
-                onChange={(e) => {
+                onChange={e => {
                   setNickname(e.target.value);
-                  setError(""); // 입력 시 에러 메시지 초기화
+                  setError(''); // 입력 시 에러 메시지 초기화
                 }}
                 onKeyPress={handleKeyPress}
                 className="w-full"

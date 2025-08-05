@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import { Layout } from "@melog/ui";
-import { AudioRecorder } from "@melog/ui";
-import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { Layout } from '@melog/ui';
+import { AudioRecorder } from '@melog/ui';
+import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
 
 export default function EmotionRecordPage() {
   const router = useRouter();
   const [isRecording, setIsRecording] = useState(false);
   const [timeLeft, setTimeLeft] = useState(60); // 60초 (1분)
   const [recordedAudio, setRecordedAudio] = useState<string | null>(null);
-  const [transcription, setTranscription] = useState<string>("");
+  const [transcription, setTranscription] = useState<string>('');
 
   // 타이머 효과
   useEffect(() => {
@@ -18,7 +18,7 @@ export default function EmotionRecordPage() {
 
     if (isRecording && timeLeft > 0) {
       interval = setInterval(() => {
-        setTimeLeft((prev) => {
+        setTimeLeft(prev => {
           if (prev <= 1) {
             setIsRecording(false);
             return 0;
@@ -37,9 +37,9 @@ export default function EmotionRecordPage() {
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return `${mins.toString().padStart(2, "0")}:${secs
+    return `${mins.toString().padStart(2, '0')}:${secs
       .toString()
-      .padStart(2, "0")}`;
+      .padStart(2, '0')}`;
   };
 
   const handleStartRecording = () => {
@@ -53,14 +53,14 @@ export default function EmotionRecordPage() {
 
   const handleDeleteRecording = () => {
     setRecordedAudio(null);
-    setTranscription("");
+    setTranscription('');
     setTimeLeft(60);
     setIsRecording(false);
   };
 
   const handleSaveRecording = () => {
     // 녹음 완료 후 감정 분석 화면으로 이동
-    router.push("/emotion/analysis");
+    router.push('/emotion/analysis');
   };
 
   const handleTranscriptionComplete = (text: string) => {
@@ -68,7 +68,7 @@ export default function EmotionRecordPage() {
   };
 
   const handleAudioError = (error: string) => {
-    console.error("음성 인식 오류:", error);
+    console.error('음성 인식 오류:', error);
   };
 
   const handleBack = () => {
@@ -107,8 +107,6 @@ export default function EmotionRecordPage() {
             </div>
             <p className="text-base font-semibold text-black text-center">
               일러스트
-              <br />
-              혹은 애니메이션
             </p>
           </div>
 
@@ -142,8 +140,8 @@ export default function EmotionRecordPage() {
               disabled={!recordedAudio && !isRecording}
               className={`w-12 h-12 rounded-lg flex items-center justify-center ${
                 recordedAudio || isRecording
-                  ? "bg-gray-400 hover:bg-gray-500"
-                  : "bg-gray-200 text-gray-400"
+                  ? 'bg-gray-400 hover:bg-gray-500'
+                  : 'bg-gray-200 text-gray-400'
               }`}
             >
               <span className="text-sm font-semibold text-black">저장</span>

@@ -1,31 +1,33 @@
-"use client";
+'use client';
 
-import { Layout } from "@melog/ui";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useState, Suspense } from "react";
-import { intensityLabels } from "@melog/shared";
+import { Layout } from '@melog/ui';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useState, Suspense } from 'react';
+import { intensityLabels } from '@melog/shared';
+import { useAppStore } from '@melog/shared';
 
 function EmotionInputContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [selectedOption, setSelectedOption] = useState<"voice" | "text" | null>(
+  const { user } = useAppStore();
+  const [selectedOption, setSelectedOption] = useState<'voice' | 'text' | null>(
     null
   );
 
   // URL 파라미터에서 선택한 감정 정보 가져오기
-  const selectedEmotion = searchParams.get("emotion");
-  const selectedIntensity = searchParams.get("intensity");
+  const selectedEmotion = searchParams.get('emotion');
+  const selectedIntensity = searchParams.get('intensity');
 
   const handleVoiceSelect = () => {
-    setSelectedOption("voice");
+    setSelectedOption('voice');
     // 녹음 화면으로 이동
-    router.push("/emotion/record");
+    router.push('/emotion/record');
   };
 
   const handleTextSelect = () => {
-    setSelectedOption("text");
+    setSelectedOption('text');
     // 텍스트 입력 화면으로 이동
-    router.push("/emotion/write");
+    router.push('/emotion/write');
   };
 
   const handleBack = () => {
@@ -49,12 +51,12 @@ function EmotionInputContent() {
         <div className="flex-1 flex flex-col items-center justify-center px-4">
           {/* Title */}
           <h1 className="text-2xl font-semibold text-center text-black mb-12 leading-tight">
-            왜{" "}
+            왜{' '}
             {selectedIntensity &&
-              intensityLabels[parseInt(selectedIntensity) - 1]}{" "}
-            {selectedEmotion || "_____"} 을 골랐나요?
+              intensityLabels[parseInt(selectedIntensity) - 1]}{' '}
+            {selectedEmotion || '_____'} 을 골랐나요?
             <br />
-            이야기를 들려주세요
+            {user?.name || '사용자'} 님의 이야기를 듣고 싶어요
           </h1>
 
           {/* Selection Options */}
@@ -63,14 +65,14 @@ function EmotionInputContent() {
             <button
               onClick={handleVoiceSelect}
               className={`flex flex-col items-center space-y-4 transition-all ${
-                selectedOption === "voice" ? "scale-105" : "hover:scale-102"
+                selectedOption === 'voice' ? 'scale-105' : 'hover:scale-102'
               }`}
             >
               <div
                 className={`w-24 h-24 rounded-full flex items-center justify-center transition-colors ${
-                  selectedOption === "voice"
-                    ? "bg-gray-400"
-                    : "bg-gray-300 hover:bg-gray-350"
+                  selectedOption === 'voice'
+                    ? 'bg-gray-400'
+                    : 'bg-gray-300 hover:bg-gray-350'
                 }`}
               >
                 <span className="text-2xl">🎤</span>
@@ -82,14 +84,14 @@ function EmotionInputContent() {
             <button
               onClick={handleTextSelect}
               className={`flex flex-col items-center space-y-4 transition-all ${
-                selectedOption === "text" ? "scale-105" : "hover:scale-102"
+                selectedOption === 'text' ? 'scale-105' : 'hover:scale-102'
               }`}
             >
               <div
                 className={`w-24 h-24 rounded-full flex items-center justify-center transition-colors ${
-                  selectedOption === "text"
-                    ? "bg-gray-400"
-                    : "bg-gray-300 hover:bg-gray-350"
+                  selectedOption === 'text'
+                    ? 'bg-gray-400'
+                    : 'bg-gray-300 hover:bg-gray-350'
                 }`}
               >
                 <span className="text-2xl">✏️</span>
@@ -101,7 +103,9 @@ function EmotionInputContent() {
           {/* Instructions */}
           <div className="text-center text-gray-600 max-w-xs">
             <p className="text-sm">
-              음성으로 녹음하거나 텍스트로 직접 작성할 수 있습니다
+              AI가 이야기를 분석하고
+              <br />
+              진짜 감정을 찾아줄게요
             </p>
           </div>
         </div>
