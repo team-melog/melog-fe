@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useMemo } from "react";
-import { Layout } from "@melog/ui";
-import { useAppStore, useEmotionStore, EMOTIONS } from "@melog/shared";
+import { useMemo } from 'react';
+import { Layout } from '@melog/ui';
+import { useAppStore, useEmotionStore, EMOTIONS } from '@melog/shared';
 
 export default function ProfilePage() {
   const { user } = useAppStore();
@@ -14,7 +14,7 @@ export default function ProfilePage() {
   // 사용자 가입일부터 현재까지의 일수 계산
   const daysSinceJoin = useMemo(() => {
     // 임시로 2025년 1월 1일부터 계산 (실제로는 사용자 가입일을 사용)
-    const joinDate = new Date("2025-01-01");
+    const joinDate = new Date('2025-01-01');
     const today = new Date();
     const diffTime = Math.abs(today.getTime() - joinDate.getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -29,7 +29,7 @@ export default function ProfilePage() {
     const currentYear = new Date().getFullYear();
 
     // 현재 월의 감정 데이터만 필터링
-    const monthlyEntries = entries.filter((entry) => {
+    const monthlyEntries = entries.filter(entry => {
       const entryDate = new Date(entry.timestamp);
       return (
         entryDate.getMonth() === currentMonth &&
@@ -41,7 +41,7 @@ export default function ProfilePage() {
 
     // 감정별 개수 계산
     const emotionCounts: { [key: string]: number } = {};
-    monthlyEntries.forEach((entry) => {
+    monthlyEntries.forEach(entry => {
       emotionCounts[entry.emotion] = (emotionCounts[entry.emotion] || 0) + 1;
     });
 
@@ -52,7 +52,7 @@ export default function ProfilePage() {
         emotion,
         percentage: Math.round((count / totalEntries) * 100),
         count,
-        color: EMOTIONS[emotion as keyof typeof EMOTIONS]?.color || "#gray-300",
+        color: EMOTIONS[emotion as keyof typeof EMOTIONS]?.color || '#gray-300',
         name: EMOTIONS[emotion as keyof typeof EMOTIONS]?.name || emotion,
       })
     );
@@ -72,22 +72,22 @@ export default function ProfilePage() {
 
     // 임시 키워드 데이터
     return [
-      { keyword: "지침", count: 8 },
-      { keyword: "혼란", count: 3 },
-      { keyword: "의지", count: 2 },
+      { keyword: '지침', count: 8 },
+      { keyword: '혼란', count: 3 },
+      { keyword: '의지', count: 2 },
     ];
   }, [hasEmotionData]);
 
   return (
-    <Layout>
-      <div className="min-h-screen bg-white">
+    <Layout showTabBar={true}>
+      <div className="min-h-screen bg-white pb-20">
         {/* 프로필 섹션 */}
         <div className="px-4 py-6">
           <div className="flex items-center mb-6">
             <div className="w-16 h-16 bg-gray-300 rounded-full mr-4"></div>
             <div>
               <h1 className="text-xl font-semibold text-gray-900">
-                {user?.name || "닉네임명"}
+                {user?.name || '닉네임명'}
               </h1>
             </div>
           </div>
@@ -123,7 +123,7 @@ export default function ProfilePage() {
                 {/* 바 차트 */}
                 <div className="w-full h-5 bg-gray-200 rounded-full overflow-hidden mb-4">
                   <div className="flex h-full">
-                    {monthlyStats.emotionPercentages.map((emotion) => (
+                    {monthlyStats.emotionPercentages.map(emotion => (
                       <div
                         key={emotion.emotion}
                         className="h-full"
@@ -138,7 +138,7 @@ export default function ProfilePage() {
 
                 {/* 감정별 상세 정보 */}
                 <div className="space-y-3">
-                  {monthlyStats.emotionPercentages.map((emotion) => (
+                  {monthlyStats.emotionPercentages.map(emotion => (
                     <div
                       key={emotion.emotion}
                       className="flex items-center justify-between"

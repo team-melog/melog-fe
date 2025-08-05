@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useState, useMemo } from "react";
-import { useRouter } from "next/navigation";
-import { Layout } from "@melog/ui";
-import { useEmotionStore } from "@melog/shared";
-import { EMOTIONS } from "@melog/shared";
+import { useState, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
+import { Layout } from '@melog/ui';
+import { useEmotionStore } from '@melog/shared';
+import { EMOTIONS } from '@melog/shared';
 
 export default function CalendarPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -29,8 +29,8 @@ export default function CalendarPage() {
   // 날짜를 YYYY-MM-DD 형식으로 변환 (시간 제외)
   const formatDateOnly = (date: Date) => {
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   };
 
@@ -38,7 +38,7 @@ export default function CalendarPage() {
   const emotionDataByDate = useMemo(() => {
     const data: { [key: string]: { emotion: string; color: string } } = {};
 
-    entries.forEach((entry) => {
+    entries.forEach(entry => {
       const dateKey = formatDateOnly(entry.timestamp);
       const emotionConfig = EMOTIONS[entry.emotion];
 
@@ -83,9 +83,9 @@ export default function CalendarPage() {
 
   // 월 이름 가져오기
   const getMonthName = (date: Date) => {
-    return new Intl.DateTimeFormat("ko-KR", {
-      year: "numeric",
-      month: "long",
+    return new Intl.DateTimeFormat('ko-KR', {
+      year: 'numeric',
+      month: 'long',
     }).format(date);
   };
 
@@ -103,8 +103,8 @@ export default function CalendarPage() {
   };
 
   return (
-    <Layout>
-      <div className="space-y-6">
+    <Layout showTabBar={true}>
+      <div className="space-y-6 pb-20">
         {/* AI 월별 요약 섹션 */}
         <div className="bg-gray-100 rounded-xl p-4">
           <div className="space-y-2">
@@ -164,7 +164,7 @@ export default function CalendarPage() {
 
           {/* 요일 헤더 */}
           <div className="grid grid-cols-7 gap-1">
-            {["일", "월", "화", "수", "목", "금", "토"].map((day) => (
+            {['일', '월', '화', '수', '목', '금', '토'].map(day => (
               <div key={day} className="h-8 flex items-center justify-center">
                 <span className="text-sm font-medium text-gray-600">{day}</span>
               </div>
@@ -179,7 +179,7 @@ export default function CalendarPage() {
               const isToday = formatDateOnly(new Date()) === dateString;
 
               // 해당 날짜의 감정 엔트리 찾기
-              const dayEntries = entries.filter((entry) => {
+              const dayEntries = entries.filter(entry => {
                 const entryDate = formatDateOnly(entry.timestamp);
                 return entryDate === dateString;
               });
@@ -188,7 +188,7 @@ export default function CalendarPage() {
                 <div
                   key={index}
                   className={`aspect-square flex flex-col items-center justify-center relative ${
-                    emotionData ? "cursor-pointer hover:bg-gray-50" : ""
+                    emotionData ? 'cursor-pointer hover:bg-gray-50' : ''
                   }`}
                   onClick={() => {
                     if (dayEntries.length > 0) {
@@ -210,9 +210,9 @@ export default function CalendarPage() {
                     className={`text-sm font-medium relative z-10 ${
                       isCurrentMonth
                         ? isToday
-                          ? "text-blue-600 font-bold"
-                          : "text-gray-900"
-                        : "text-gray-400"
+                          ? 'text-blue-600 font-bold'
+                          : 'text-gray-900'
+                        : 'text-gray-400'
                     }`}
                   >
                     {date.getDate()}

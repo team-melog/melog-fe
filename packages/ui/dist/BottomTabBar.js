@@ -1,33 +1,31 @@
 'use client';
-import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import { jsx as _jsx } from "react/jsx-runtime";
 import { useRouter, usePathname } from 'next/navigation';
+import { HomeIcon, FeedIcon, CalendarIcon, ProfileIcon } from './assets/svgs';
 const tabs = [
     {
         id: 'home',
         label: '홈',
-        icon: '🏠',
-        activeIcon: '🏠',
+        icon: HomeIcon,
         path: '/',
+        activePath: '/emotion',
     },
     {
         id: 'feed',
         label: '피드',
-        icon: '📊',
-        activeIcon: '📊',
+        icon: FeedIcon,
         path: '/feed',
     },
     {
         id: 'calendar',
         label: '캘린더',
-        icon: '📅',
-        activeIcon: '📅',
+        icon: CalendarIcon,
         path: '/calendar',
     },
     {
         id: 'profile',
         label: '마이',
-        icon: '👤',
-        activeIcon: '👤',
+        icon: ProfileIcon,
         path: '/profile',
     },
 ];
@@ -39,10 +37,10 @@ export default function BottomTabBar({ className = '' }) {
             router.push(path);
         }
     };
-    return (_jsxs("div", { className: `fixed bottom-0 left-1/2 transform -translate-x-1/2 w-[384px] bg-white border-t border-gray-200 shadow-lg ${className}`, children: [_jsx("div", { className: "flex items-center justify-around py-2", children: tabs.map(tab => {
-                    const isActive = pathname === tab.path;
-                    return (_jsxs("button", { onClick: () => handleTabPress(tab.path), className: `flex flex-col items-center justify-center py-2 px-3 min-w-0 flex-1 transition-all duration-200 relative ${isActive
-                            ? 'text-blue-600'
-                            : 'text-gray-500 hover:text-gray-700 active:text-blue-500'}`, children: [_jsx("div", { className: `text-xl mb-1 transition-transform duration-200 ${isActive ? 'scale-110' : 'scale-100'}`, children: isActive ? tab.activeIcon : tab.icon }), _jsx("span", { className: `text-xs font-medium transition-colors duration-200 ${isActive ? 'text-blue-600' : 'text-gray-500'}`, children: tab.label }), isActive && (_jsx("div", { className: "absolute bottom-0 w-6 h-0.5 bg-blue-600 rounded-t-full" }))] }, tab.id));
-                }) }), _jsx("div", { className: "flex justify-center pb-2", children: _jsx("div", { className: "w-32 h-1 bg-gray-300 rounded-full" }) })] }));
+    //  className={`fixed bottom-0 left-1/2 transform -translate-x-1/2  bg-white border-t border-gray-200 shadow-lg ${className}`}
+    return (_jsx("div", { className: `w-[384px] fixed bottom-0 left-1/2 transform -translate-x-1/2 bg-white border-t border-[#E3E2E2] h-[60px] z-50 ${className}`, children: _jsx("div", { className: "flex justify-around items-center h-full px-8", children: tabs.map(tab => {
+                const isActive = pathname === tab.path || pathname === tab.activePath;
+                const IconComponent = tab.icon;
+                return (_jsx("button", { onClick: () => handleTabPress(tab.path), className: "flex flex-col items-center justify-center flex-1 h-full", children: _jsx(IconComponent, { className: "w-7 h-7 mb-1", isActive: isActive }) }, tab.id));
+            }) }) }));
 }

@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { Layout, Button } from "@melog/ui";
-import { useAppStore, useEmotionStore, EMOTIONS } from "@melog/shared";
-import { useRouter } from "next/navigation";
+import { Layout, Button } from '@melog/ui';
+import { useAppStore, useEmotionStore, EMOTIONS } from '@melog/shared';
+import { useRouter } from 'next/navigation';
 
 export default function FeedPage() {
   const router = useRouter();
@@ -13,7 +13,7 @@ export default function FeedPage() {
   const hasData = entries.length > 0;
 
   const handleEmotionRecord = () => {
-    router.push("/emotion/select");
+    router.push('/emotion/select');
   };
 
   const handleCardClick = (entryId: string) => {
@@ -21,11 +21,11 @@ export default function FeedPage() {
   };
 
   // 실제 감정 데이터를 카드 형태로 변환
-  const emotionCards = entries.map((entry) => {
+  const emotionCards = entries.map(entry => {
     const date = new Date(entry.timestamp);
-    const formattedDate = new Intl.DateTimeFormat("ko-KR", {
-      month: "2-digit",
-      day: "2-digit",
+    const formattedDate = new Intl.DateTimeFormat('ko-KR', {
+      month: '2-digit',
+      day: '2-digit',
     }).format(date);
 
     const emotionConfig = EMOTIONS[entry.emotion];
@@ -34,14 +34,14 @@ export default function FeedPage() {
       id: entry.id,
       date: formattedDate,
       emotion: emotionConfig?.name || entry.emotion,
-      color: emotionConfig?.color || "#gray-300",
+      color: emotionConfig?.color || '#gray-300',
       hasVoice: !!entry.voiceNote,
     };
   });
 
   return (
     <Layout showTabBar={true}>
-      <div className="min-h-screen bg-white flex flex-col">
+      <div className="min-h-screen bg-white flex flex-col pb-20">
         {/* Header */}
         <div className="px-4 py-6">
           {/* Profile Section */}
@@ -49,7 +49,7 @@ export default function FeedPage() {
             <div className="w-16 h-16 bg-gray-300 rounded-full mr-4"></div>
             <div>
               <h1 className="text-xl font-semibold text-black">
-                {user?.name || "닉네임명"}
+                {user?.name || '닉네임명'}
               </h1>
             </div>
           </div>
@@ -79,7 +79,7 @@ export default function FeedPage() {
               <div className="text-center">
                 <p className="text-sm text-black">음성 녹음</p>
                 <p className="text-sm font-semibold text-black">
-                  {hasData ? entries.filter((e) => e.voiceNote).length : 8}
+                  {hasData ? entries.filter(e => e.voiceNote).length : 8}
                 </p>
               </div>
             </div>
@@ -106,7 +106,7 @@ export default function FeedPage() {
             <div className="space-y-4">
               {/* Emotion Cards Grid */}
               <div className="grid grid-cols-3 gap-1">
-                {emotionCards.map((card) => (
+                {emotionCards.map(card => (
                   <button
                     key={card.id}
                     onClick={() => handleCardClick(card.id)}

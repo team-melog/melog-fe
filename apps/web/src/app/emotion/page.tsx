@@ -3,6 +3,7 @@
 import { Layout, Button } from '@melog/ui';
 import { useAppStore } from '@melog/shared';
 import { useRouter } from 'next/navigation';
+import MainIcon from '@/assets/icons/MainIcon.svg';
 
 export default function EmotionPage() {
   const router = useRouter();
@@ -23,16 +24,17 @@ export default function EmotionPage() {
 
   return (
     <Layout showTabBar={true}>
-      <div className="min-h-screen font-meetme bg-white flex flex-col">
+      <div className="min-h-screen font-meetme bg-white flex flex-col pb-20">
         {/* Main Content */}
-        <div className="flex-1 flex flex-col px-4 py-6">
+        <div className="flex-1 flex flex-col py-6">
           {/* Calendar Bar */}
-          <div className="bg-gray-100 rounded-xl p-4 mb-6">
+          <div className="h-[125px] rounded-xl py-3 px-4 mb-6 border border-[#EAE9E9] flex flex-col justify-between">
+            <span className="text-lg">지난 일주일</span>
             <div className="flex justify-between items-center">
               {daysOfWeek.map((day, index) => (
                 <div key={day} className="flex flex-col items-center">
                   <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium mb-1 ${
+                    className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium mb-2 ${
                       index === today.getDay() ? 'bg-gray-300' : 'bg-gray-200'
                     }`}
                   >
@@ -47,23 +49,25 @@ export default function EmotionPage() {
           </div>
 
           {/* Main Title */}
-          <h1 className="text-3xl text-center text-black mb-8 leading-tight">
-            오늘 {user?.name || '사용자'}님의 감정에 <br />
+          <h1 className="text-3xl text-center text-black my-8 leading-tight">
+            오늘 &nbsp;
+            <span className="border-b-2 border-[black]">
+              {user?.name || '사용자'}님의 감정
+            </span>
+            에 <br />
             가장 가까운 색은?
           </h1>
 
           {/* Main Illustration */}
-          <div className="flex flex-col items-center mb-8">
-            <div className="w-36 h-36 bg-gray-300 rounded-lg mb-4 flex items-center justify-center">
-              <span className="text-4xl">🎨</span>
-            </div>
+          <div className="flex flex-col items-center mb-20">
+            <MainIcon className="w-36 h-36" />
           </div>
 
           {/* Record Button */}
           <div className="flex justify-center">
             <Button
               onClick={handleEmotionRecord}
-              className="bg-gray-400 hover:bg-gray-500 text-black py-3 px-8 rounded-lg transition-colors text-xl"
+              className="w-3/5 bg-[#13273A] hover:bg-[#2a4967] text-white py-3 px-8 rounded-3xl transition-colors text-xl"
             >
               색상 선택하기
             </Button>
