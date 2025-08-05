@@ -1,9 +1,0 @@
-{
-  "/page": "app/page.js",
-  "/onboarding/page": "app/onboarding/page.js",
-  "/feed/page": "app/feed/page.js",
-  "/emotion/page": "app/emotion/page.js",
-  "/emotion/select/page": "app/emotion/select/page.js",
-  "/emotion/input/page": "app/emotion/input/page.js",
-  "/emotion/skip/page": "app/emotion/skip/page.js"
-}
