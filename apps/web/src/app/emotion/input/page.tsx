@@ -9,7 +9,7 @@ import { useAppStore } from '@melog/shared';
 function EmotionInputContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { user } = useAppStore();
+  const user = useAppStore(state => state.user);
   const [selectedOption, setSelectedOption] = useState<'voice' | 'text' | null>(
     null
   );

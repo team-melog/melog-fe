@@ -1,21 +1,21 @@
 'use client';
 
 import { Layout, Button } from '@melog/ui';
-import { useAppStore } from '@melog/shared';
 import { useRouter } from 'next/navigation';
 
 export default function Home() {
   const router = useRouter();
-  const { theme, setTheme } = useAppStore();
+  // const theme = useAppStore((state) => state.theme);
+  // const setTheme = useAppStore((state) => state.setTheme);
 
   const handleStart = () => {
     // 닉네임 입력 화면으로 이동
     router.push('/onboarding');
   };
 
-  const toggleTheme = () => {
-    setTheme(theme === 'light' ? 'dark' : 'light');
-  };
+  // const toggleTheme = () => {
+  //   setTheme(theme === 'light' ? 'dark' : 'light');
+  // };
 
   return (
     <Layout showTabBar={false}>

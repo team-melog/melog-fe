@@ -13,7 +13,7 @@ export default function Layout({
   className = '',
   showTabBar = true,
 }: LayoutProps) {
-  const { theme } = useAppStore();
+  const theme = useAppStore(state => state.theme);
 
   return (
     <div className="min-h-svh bg-gray-100">

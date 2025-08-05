@@ -6,13 +6,13 @@ import './globals.css';
 
 const pretendard = localFont({
   src: '../../public/static/fonts/PretendardGOVVariable.woff2',
-  display: 'swap',
+  display: 'optional',
   weight: '45 920',
   variable: '--font-pretendard',
 });
 const meetme = localFont({
   src: '../../public/static/fonts/OwnglyphMeetme.ttf',
-  display: 'swap',
+  display: 'optional',
   weight: '400',
   variable: '--font-meetme',
 });

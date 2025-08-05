@@ -8,7 +8,7 @@ import { EMOTIONS } from '@melog/shared';
 
 export default function CalendarPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const { entries } = useEmotionStore();
+  const entries = useEmotionStore(state => state.entries);
   const router = useRouter();
 
   // 현재 월의 첫 번째 날과 마지막 날 계산

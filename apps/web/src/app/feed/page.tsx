@@ -6,8 +6,8 @@ import { useRouter } from 'next/navigation';
 
 export default function FeedPage() {
   const router = useRouter();
-  const { user } = useAppStore();
-  const { entries } = useEmotionStore();
+  const user = useAppStore(state => state.user);
+  const entries = useEmotionStore(state => state.entries);
 
   // 실제 데이터 사용
   const hasData = entries.length > 0;
