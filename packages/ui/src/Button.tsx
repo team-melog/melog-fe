@@ -1,11 +1,11 @@
-import { ButtonHTMLAttributes, ReactNode } from 'react'
-import { cn } from './utils'
+import { ButtonHTMLAttributes, ReactNode } from 'react';
+import { cn } from './utils';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  children: ReactNode
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost'
-  size?: 'sm' | 'md' | 'lg'
-  isLoading?: boolean
+  children: ReactNode;
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
+  size?: 'sm' | 'md' | 'lg';
+  isLoading?: boolean;
 }
 
 const buttonVariants = {
@@ -13,13 +13,13 @@ const buttonVariants = {
   secondary: 'bg-gray-600 hover:bg-gray-700 text-white',
   outline: 'border border-gray-300 hover:bg-gray-50 text-gray-700',
   ghost: 'hover:bg-gray-100 text-gray-700',
-}
+};
 
 const buttonSizes = {
   sm: 'px-3 py-1.5 text-sm',
   md: 'px-4 py-2 text-base',
   lg: 'px-6 py-3 text-lg',
-}
+};
 
 export default function Button({
   children,
@@ -65,5 +65,5 @@ export default function Button({
       )}
       {children}
     </button>
-  )
+  );
 }

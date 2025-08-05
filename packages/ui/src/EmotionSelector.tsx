@@ -1,20 +1,35 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { EMOTIONS, INTENSITY_LEVELS, getEmotionConfig, getIntensityOpacity, useEmotionStore } from '@melog/shared'
-import type { EmotionType, IntensityLevel, EmotionSelection } from '@melog/shared'
+import { useState } from 'react';
+import {
+  EMOTIONS,
+  INTENSITY_LEVELS,
+  getEmotionConfig,
+  getIntensityOpacity,
+  useEmotionStore,
+} from '@melog/shared';
+import type {
+  EmotionType,
+  IntensityLevel,
+  EmotionSelection,
+} from '@melog/shared';
 
 interface EmotionCircleProps {
-  emotion: EmotionType
-  intensity: IntensityLevel
-  isSelected: boolean
-  onClick: () => void
+  emotion: EmotionType;
+  intensity: IntensityLevel;
+  isSelected: boolean;
+  onClick: () => void;
 }
 
-function EmotionCircle({ emotion, intensity, isSelected, onClick }: EmotionCircleProps) {
-  const config = getEmotionConfig(emotion)
-  const opacity = getIntensityOpacity(intensity)
-  
+function EmotionCircle({
+  emotion,
+  intensity,
+  isSelected,
+  onClick,
+}: EmotionCircleProps) {
+  const config = getEmotionConfig(emotion);
+  const opacity = getIntensityOpacity(intensity);
+
   return (
     <button
       onClick={onClick}
@@ -39,40 +54,50 @@ function EmotionCircle({ emotion, intensity, isSelected, onClick }: EmotionCircl
         <div className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-blue-500 rounded-full border border-white" />
       )}
     </button>
-  )
+  );
 }
 
 interface EmotionSelectorProps {
-  onSelectionChange?: (selection: EmotionSelection | null) => void
-  className?: string
+  onSelectionChange?: (selection: EmotionSelection | null) => void;
+  className?: string;
 }
 
-export default function EmotionSelector({ onSelectionChange, className = '' }: EmotionSelectorProps) {
-  const { setCurrentEntry } = useEmotionStore()
-  const [selectedEmotion, setSelectedEmotion] = useState<EmotionType | null>(null)
-  const [selectedIntensity, setSelectedIntensity] = useState<IntensityLevel | null>(null)
+export default function EmotionSelector({
+  onSelectionChange,
+  className = '',
+}: EmotionSelectorProps) {
+  const { setCurrentEntry } = useEmotionStore();
+  const [selectedEmotion, setSelectedEmotion] = useState<EmotionType | null>(
+    null
+  );
+  const [selectedIntensity, setSelectedIntensity] =
+    useState<IntensityLevel | null>(null);
 
-  const handleCircleClick = (emotion: EmotionType, intensity: IntensityLevel) => {
-    const isSameSelection = selectedEmotion === emotion && selectedIntensity === intensity
-    
+  const handleCircleClick = (
+    emotion: EmotionType,
+    intensity: IntensityLevel
+  ) => {
+    const isSameSelection =
+      selectedEmotion === emotion && selectedIntensity === intensity;
+
     if (isSameSelection) {
-      setSelectedEmotion(null)
-      setSelectedIntensity(null)
-      setCurrentEntry(null)
-      onSelectionChange?.(null)
+      setSelectedEmotion(null);
+      setSelectedIntensity(null);
+      setCurrentEntry(null);
+      onSelectionChange?.(null);
     } else {
-      setSelectedEmotion(emotion)
-      setSelectedIntensity(intensity)
-      
-      const selection: EmotionSelection = { emotion, intensity }
-      setCurrentEntry(selection)
-      onSelectionChange?.(selection)
+      setSelectedEmotion(emotion);
+      setSelectedIntensity(intensity);
+
+      const selection: EmotionSelection = { emotion, intensity };
+      setCurrentEntry(selection);
+      onSelectionChange?.(selection);
     }
-  }
+  };
 
   const isSelected = (emotion: EmotionType, intensity: IntensityLevel) => {
-    return selectedEmotion === emotion && selectedIntensity === intensity
-  }
+    return selectedEmotion === emotion && selectedIntensity === intensity;
+  };
 
   return (
     <div className={`w-full ${className}`}>
@@ -86,17 +111,17 @@ export default function EmotionSelector({ onSelectionChange, className = '' }: E
       </div>
 
       <div className="grid grid-cols-6 gap-2">
-        {Object.keys(EMOTIONS).map((emotionKey) => {
-          const emotion = emotionKey as EmotionType
-          const config = getEmotionConfig(emotion)
-          
+        {Object.keys(EMOTIONS).map(emotionKey => {
+          const emotion = emotionKey as EmotionType;
+          const config = getEmotionConfig(emotion);
+
           return (
             <div key={emotion} className="flex flex-col items-center space-y-1">
               <div className="text-xs font-medium text-gray-700 text-center mb-1">
                 {config.name}
               </div>
               <div className="flex flex-col space-y-1">
-                {INTENSITY_LEVELS.map((intensity) => (
+                {INTENSITY_LEVELS.map(intensity => (
                   <EmotionCircle
                     key={`${emotion}-${intensity}`}
                     emotion={emotion}
@@ -107,17 +132,18 @@ export default function EmotionSelector({ onSelectionChange, className = '' }: E
                 ))}
               </div>
             </div>
-          )
+          );
         })}
       </div>
 
       {selectedEmotion && selectedIntensity && (
         <div className="mt-4 p-3 bg-blue-50 rounded-lg text-center">
           <p className="text-sm font-medium text-gray-800">
-            {getEmotionConfig(selectedEmotion).icon} {getEmotionConfig(selectedEmotion).name} (강도: {selectedIntensity})
+            {getEmotionConfig(selectedEmotion).icon}{' '}
+            {getEmotionConfig(selectedEmotion).name} (강도: {selectedIntensity})
           </p>
         </div>
       )}
     </div>
-  )
+  );
 }

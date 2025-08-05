@@ -1,6 +1,6 @@
-import { ReactNode } from "react";
-import { useAppStore } from "@melog/shared";
-import BottomTabBar from "./BottomTabBar";
+import { ReactNode } from 'react';
+import { useAppStore } from '@melog/shared';
+import BottomTabBar from './BottomTabBar';
 
 interface LayoutProps {
   children: ReactNode;
@@ -10,7 +10,7 @@ interface LayoutProps {
 
 export default function Layout({
   children,
-  className = "",
+  className = '',
   showTabBar = true,
 }: LayoutProps) {
   const { theme } = useAppStore();
@@ -21,10 +21,10 @@ export default function Layout({
       <div className="mx-auto w-[384px] bg-white min-h-svh shadow-xl relative">
         <div
           className={`min-h-svh transition-colors duration-300 ${
-            theme === "dark" ? "dark bg-gray-900" : "bg-white"
+            theme === 'dark' ? 'dark bg-gray-900' : 'bg-white'
           } ${className}`}
         >
-          <main className={`px-4 w-full ${showTabBar ? "" : ""}`}>
+          <main className={`px-4 w-full ${showTabBar ? '' : ''}`}>
             {children}
           </main>
         </div>

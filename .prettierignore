@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+**/.next/
+**/dist/
+**/build/
+**/out/
+
+# Cache files
+**/.turbo/
+**/.cache/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+
+# Git
+.git/
+
+# Package manager
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
