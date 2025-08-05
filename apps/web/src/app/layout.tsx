@@ -10,6 +10,12 @@ const pretendard = localFont({
   weight: '45 920',
   variable: '--font-pretendard',
 });
+const meetme = localFont({
+  src: '../../public/static/fonts/OwnglyphMeetme.ttf',
+  display: 'swap',
+  weight: '400',
+  variable: '--font-meetme',
+});
 
 export const metadata: Metadata = {
   title: 'ME:LOG - 감정 기록 서비스',
@@ -23,8 +29,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="kr" className={`${pretendard.variable}`}>
-      <body className={`${pretendard.variable} font-sans antialiased`}>
+    <html lang="ko" className={`${pretendard.className}`}>
+      <body className={`${meetme.variable} font-sans antialiased`}>
         {children}
       </body>
     </html>
