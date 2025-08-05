@@ -104,9 +104,9 @@ export default function CalendarPage() {
 
   return (
     <Layout showTabBar={true}>
-      <div className="space-y-6 pb-20">
+      <div className="min-h-screen bg-white flex flex-col pb-20">
         {/* AI 월별 요약 섹션 */}
-        <div className="bg-gray-100 rounded-xl p-4">
+        <div className="bg-gray-100 rounded-xl p-4 my-6 mx-4">
           <div className="space-y-2">
             <h2 className="text-base font-bold text-gray-900">AI 월별 요약</h2>
             <p className="text-sm text-gray-700">
@@ -116,16 +116,13 @@ export default function CalendarPage() {
         </div>
 
         {/* 캘린더 섹션 */}
-        <div className="space-y-4">
+        <div className="flex-1 flex flex-col px-4">
           {/* 월 헤더 */}
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-center mb-4">
             <div className="flex items-center space-x-2">
-              <h1 className="text-xl font-semibold text-gray-900">
-                {getMonthName(currentDate)}
-              </h1>
               <button
                 onClick={goToPreviousMonth}
-                className="p-1 hover:bg-gray-100 rounded"
+                className="p-1 hover:bg-gray-100 rounded w-6 h-6 flex items-center justify-center"
               >
                 <svg
                   className="w-5 h-5"
@@ -141,9 +138,12 @@ export default function CalendarPage() {
                   />
                 </svg>
               </button>
+              <h1 className="text-xl font-semibold text-gray-900">
+                {getMonthName(currentDate)}
+              </h1>
               <button
                 onClick={goToNextMonth}
-                className="p-1 hover:bg-gray-100 rounded"
+                className="p-1 hover:bg-gray-100 rounded w-6 h-6 flex items-center justify-center"
               >
                 <svg
                   className="w-5 h-5"
@@ -162,64 +162,72 @@ export default function CalendarPage() {
             </div>
           </div>
 
-          {/* 요일 헤더 */}
-          <div className="grid grid-cols-7 gap-1">
-            {['일', '월', '화', '수', '목', '금', '토'].map(day => (
-              <div key={day} className="h-8 flex items-center justify-center">
-                <span className="text-sm font-medium text-gray-600">{day}</span>
-              </div>
-            ))}
-          </div>
-
-          {/* 캘린더 그리드 */}
-          <div className="grid grid-cols-7 gap-1">
-            {calendarDays.map(({ date, isCurrentMonth }, index) => {
-              const dateString = formatDateOnly(date);
-              const emotionData = emotionDataByDate[dateString];
-              const isToday = formatDateOnly(new Date()) === dateString;
-
-              // 해당 날짜의 감정 엔트리 찾기
-              const dayEntries = entries.filter(entry => {
-                const entryDate = formatDateOnly(entry.timestamp);
-                return entryDate === dateString;
-              });
-
-              return (
-                <div
-                  key={index}
-                  className={`aspect-square flex flex-col items-center justify-center relative ${
-                    emotionData ? 'cursor-pointer hover:bg-gray-50' : ''
-                  }`}
-                  onClick={() => {
-                    if (dayEntries.length > 0) {
-                      // 첫 번째 엔트리로 이동 (여러 개가 있을 경우)
-                      router.push(`/feed/${dayEntries[0].id}`);
-                    }
-                  }}
-                >
-                  {/* 감정 색상 원 - 피드 데이터가 있을 때만 표시 */}
-                  {emotionData && (
-                    <div
-                      className="absolute top-1 w-10 h-10 rounded-full opacity-80"
-                      style={{ backgroundColor: emotionData.color }}
-                    />
-                  )}
-
-                  {/* 날짜 텍스트 */}
-                  <span
-                    className={`text-sm font-medium relative z-10 ${
-                      isCurrentMonth
-                        ? isToday
-                          ? 'text-blue-600 font-bold'
-                          : 'text-gray-900'
-                        : 'text-gray-400'
-                    }`}
-                  >
-                    {date.getDate()}
+          <div className="flex-1 flex flex-col gap-2">
+            {/* 요일 헤더 */}
+            <div className="grid grid-cols-7 gap-1">
+              {['일', '월', '화', '수', '목', '금', '토'].map(day => (
+                <div key={day} className="h-8 flex items-center justify-center">
+                  <span className="text-sm font-medium text-gray-900">
+                    {day}
                   </span>
                 </div>
-              );
-            })}
+              ))}
+            </div>
+
+            {/* 캘린더 그리드 */}
+            <div className="flex-1 grid grid-cols-7 gap-1">
+              {calendarDays.map(({ date, isCurrentMonth }, index) => {
+                const dateString = formatDateOnly(date);
+                const emotionData = emotionDataByDate[dateString];
+                const isToday = formatDateOnly(new Date()) === dateString;
+
+                // 해당 날짜의 감정 엔트리 찾기
+                const dayEntries = entries.filter(entry => {
+                  const entryDate = formatDateOnly(entry.timestamp);
+                  return entryDate === dateString;
+                });
+
+                return (
+                  <div
+                    key={index}
+                    className={`h-[69px] flex flex-col items-center justify-center relative ${
+                      emotionData ? 'cursor-pointer hover:bg-gray-50' : ''
+                    }`}
+                    onClick={() => {
+                      if (dayEntries.length > 0) {
+                        // 첫 번째 엔트리로 이동 (여러 개가 있을 경우)
+                        router.push(`/feed/${dayEntries[0].id}`);
+                      }
+                    }}
+                  >
+                    {/* 감정 색상 원 - 현재 달의 날짜에만 표시 */}
+                    {isCurrentMonth && (
+                      <div
+                        className={`w-10 h-10 rounded-full mb-2 ${
+                          emotionData ? 'opacity-80' : 'bg-gray-200'
+                        }`}
+                        style={
+                          emotionData
+                            ? { backgroundColor: emotionData.color }
+                            : {}
+                        }
+                      />
+                    )}
+
+                    {/* 날짜 텍스트 - 현재 달의 날짜에만 표시 */}
+                    {isCurrentMonth && (
+                      <span
+                        className={`text-sm font-medium ${
+                          isToday ? 'text-blue-600 font-bold' : 'text-gray-900'
+                        }`}
+                      >
+                        {date.getDate()}
+                      </span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>
