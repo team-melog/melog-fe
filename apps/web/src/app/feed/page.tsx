@@ -3,18 +3,23 @@
 import { Layout, Button } from '@melog/ui';
 import { useAppStore, useEmotionStore, EMOTIONS } from '@melog/shared';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { useEffect } from 'react';
 
 export default function FeedPage() {
   const router = useRouter();
   const user = useAppStore(state => state.user);
   const entries = useEmotionStore(state => state.entries);
 
+  // emotion 관련 페이지들 prefetch
+  useEffect(() => {
+    router.prefetch('/emotion/select');
+    router.prefetch('/emotion/record');
+    router.prefetch('/emotion/write');
+  }, [router]);
+
   // 실제 데이터 사용
   const hasData = entries.length > 0;
-
-  const handleEmotionRecord = () => {
-    router.push('/emotion/select');
-  };
 
   const handleCardClick = (entryId: string) => {
     router.push(`/feed/${entryId}`);
@@ -94,12 +99,11 @@ export default function FeedPage() {
               <p className="text-sm text-black mb-8">
                 아직 기록된 감정이 없어요
               </p>
-              <Button
-                onClick={handleEmotionRecord}
-                className="bg-gray-400 hover:bg-gray-500 text-black font-semibold py-3 px-8 rounded-lg transition-colors text-xl"
-              >
-                감정 기록하기
-              </Button>
+              <Link href="/emotion/select" prefetch={true}>
+                <Button className="bg-gray-400 hover:bg-gray-500 text-black font-semibold py-3 px-8 rounded-lg transition-colors text-xl">
+                  감정 기록하기
+                </Button>
+              </Link>
             </div>
           ) : (
             /* Has Data State */
@@ -135,14 +139,15 @@ export default function FeedPage() {
                 ))}
 
                 {/* Add New Button */}
-                <button
-                  onClick={handleEmotionRecord}
+                <Link
+                  href="/emotion/select"
                   className="aspect-square bg-gray-300 border border-white flex items-center justify-center hover:bg-gray-400 transition-colors"
+                  prefetch={true}
                 >
                   <div className="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center">
                     <span className="text-lg">+</span>
                   </div>
-                </button>
+                </Link>
               </div>
             </div>
           )}

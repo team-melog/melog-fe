@@ -1,6 +1,7 @@
 'use client';
 
-import { useRouter, usePathname } from 'next/navigation';
+import { usePathname } from 'next/navigation';
+import Link from 'next/link';
 import { HomeIcon, FeedIcon, CalendarIcon, ProfileIcon } from './assets/svgs';
 
 interface TabItem {
@@ -44,15 +45,7 @@ const tabs: TabItem[] = [
 ];
 
 export default function BottomTabBar({ className = '' }: BottomTabBarProps) {
-  const router = useRouter();
   const pathname = usePathname();
-
-  const handleTabPress = (path: string) => {
-    if (pathname !== path) {
-      router.push(path);
-    }
-  };
-  //  className={`fixed bottom-0 left-1/2 transform -translate-x-1/2  bg-white border-t border-gray-200 shadow-lg ${className}`}
 
   return (
     <div
@@ -64,13 +57,14 @@ export default function BottomTabBar({ className = '' }: BottomTabBarProps) {
           const IconComponent = tab.icon;
 
           return (
-            <button
+            <Link
               key={tab.id}
-              onClick={() => handleTabPress(tab.path)}
+              href={tab.path}
               className="flex flex-col items-center justify-center flex-1 h-full"
+              prefetch={true}
             >
               <IconComponent className="w-7 h-7 mb-1" isActive={isActive} />
-            </button>
+            </Link>
           );
         })}
       </div>

@@ -3,13 +3,18 @@
 import { Layout, Button, Input } from '@melog/ui';
 import { useAppStore } from '@melog/shared';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function OnboardingPage() {
   const router = useRouter();
   const { setUser } = useAppStore();
   const [nickname, setNickname] = useState('');
   const [error, setError] = useState('');
+
+  // emotion 페이지 prefetch
+  useEffect(() => {
+    router.prefetch('/emotion');
+  }, [router]);
 
   const handleNicknameSubmit = () => {
     // 유효성 검사

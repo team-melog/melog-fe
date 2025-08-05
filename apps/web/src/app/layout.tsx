@@ -6,13 +6,13 @@ import './globals.css';
 
 const pretendard = localFont({
   src: '../../public/static/fonts/PretendardGOVVariable.woff2',
-  display: 'optional',
+  display: 'swap',
   weight: '45 920',
   variable: '--font-pretendard',
 });
 const meetme = localFont({
   src: '../../public/static/fonts/OwnglyphMeetme.ttf',
-  display: 'optional',
+  display: 'swap',
   weight: '400',
   variable: '--font-meetme',
 });
@@ -30,6 +30,22 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" className={`${pretendard.className}`}>
+      <head>
+        <link
+          rel="preload"
+          href="/static/fonts/PretendardGOVVariable.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="preload"
+          href="/static/fonts/OwnglyphMeetme.ttf"
+          as="font"
+          type="font/ttf"
+          crossOrigin="anonymous"
+        />
+      </head>
       <body className={`${meetme.variable} font-sans antialiased`}>
         {children}
       </body>

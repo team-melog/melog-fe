@@ -2,11 +2,21 @@
 
 import { Layout, Button } from '@melog/ui';
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function Home() {
   const router = useRouter();
   // const theme = useAppStore((state) => state.theme);
   // const setTheme = useAppStore((state) => state.setTheme);
+
+  // 1뎁스 페이지들 prefetch
+  useEffect(() => {
+    router.prefetch('/onboarding');
+    router.prefetch('/feed');
+    router.prefetch('/calendar');
+    router.prefetch('/profile');
+    router.prefetch('/emotion');
+  }, [router]);
 
   const handleStart = () => {
     // 닉네임 입력 화면으로 이동
