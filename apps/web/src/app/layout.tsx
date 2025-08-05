@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import './globals.css';
 
-// Test comment for git hook testing - final test
+// Test comment for Husky + lint-staged test
 
 const pretendard = localFont({
   src: '../../public/static/fonts/PretendardGOVVariable.woff2',
