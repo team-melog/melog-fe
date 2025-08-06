@@ -46,7 +46,7 @@ export default function FeedPage() {
 
   return (
     <Layout showTabBar={true}>
-      <div className="min-h-screen bg-white flex flex-col pb-20">
+      <div className="bg-white flex flex-col">
         {/* Header */}
         <div className="px-4 py-6">
           {/* Profile Section */}

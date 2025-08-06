@@ -24,7 +24,7 @@ export default function EmotionPage() {
 
   return (
     <Layout showTabBar={true}>
-      <div className="min-h-screen font-meetme bg-white flex flex-col pb-20">
+      <div className="min-h-svh font-meetme bg-white flex flex-col">
         {/* Main Content */}
         <div className="flex-1 flex flex-col py-6">
           {/* Calendar Bar */}
@@ -46,29 +46,31 @@ export default function EmotionPage() {
             </div>
           </div>
 
-          {/* Main Title */}
-          <h1 className="text-3xl text-center text-black my-8 leading-tight">
-            오늘 &nbsp;
-            <span className="border-b-2 border-[black]">
-              {user?.name || '사용자'}님의 감정
-            </span>
-            에 <br />
-            가장 가까운 색은?
-          </h1>
+          <div className="h-[calc(90svh-225px)] flex flex-col justify-between">
+            {/* Main Title */}
+            <h1 className="text-3xl text-center text-black leading-tight">
+              오늘 &nbsp;
+              <span className="border-b-2 border-[black]">
+                {user?.name || '사용자'}님의 감정
+              </span>
+              에 <br />
+              가장 가까운 색은?
+            </h1>
 
-          {/* Main Illustration */}
-          <div className="flex flex-col items-center mb-20">
-            <MainIcon className="w-36 h-36" />
-          </div>
+            {/* Main Illustration */}
+            <div className="flex flex-col items-center">
+              <MainIcon className="w-36 h-36" />
+            </div>
 
-          {/* Record Button */}
-          <div className="flex justify-center">
-            <Button
-              onClick={handleEmotionRecord}
-              className="w-3/5 bg-[#060607] hover:bg-[#2a2a2a] text-white py-3 px-8 rounded-3xl transition-colors text-xl"
-            >
-              색상 선택하기
-            </Button>
+            {/* Record Button */}
+            <div className="flex justify-center">
+              <Button
+                onClick={handleEmotionRecord}
+                className="w-3/5 bg-[#060607] hover:bg-[#2a2a2a] text-white py-3 px-8 rounded-3xl transition-colors text-xl"
+              >
+                색상 선택하기
+              </Button>
+            </div>
           </div>
         </div>
 

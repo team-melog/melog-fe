@@ -1,6 +1,6 @@
 'use client';
 
-import { Layout } from '@melog/ui';
+import { Layout, LeftIcon } from '@melog/ui';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, Suspense } from 'react';
 import { intensityLabels } from '@melog/shared';
@@ -31,19 +31,19 @@ function EmotionInputContent() {
 
   return (
     <Layout showTabBar={false}>
-      <div className="min-h-screen bg-white flex flex-col">
+      <div className="bg-white flex flex-col">
         {/* Header */}
-        <div className="flex items-center py-6 px-4">
+        <div className="flex items-center py-3">
           <button
             onClick={handleBack}
             className="w-6 h-6 flex items-center justify-center"
           >
-            <span className="text-2xl">←</span>
+            <LeftIcon />
           </button>
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 flex flex-col items-center justify-between px-4 pb-10">
+        <div className="h-[calc(95svh-48px)] flex flex-col items-center justify-between px-4">
           {/* Title */}
           <div className="text-center mb-12">
             <h1 className="text-3xl font-meetme text-black leading-tight">
@@ -55,7 +55,7 @@ function EmotionInputContent() {
             </h1>
           </div>
 
-          <div>
+          <div className="w-full">
             {/* Instructions */}
             <div className="text-center text-gray-500 mb-12">
               <p className="text-xl font-meetme leading-tight">
@@ -70,15 +70,15 @@ function EmotionInputContent() {
               {/* Voice Recording Option */}
               <button
                 onClick={handleVoiceSelect}
-                className="w-full bg-[#13273A] hover:bg-[#2a4967] text-white py-3 px-8 rounded-3xl transition-colors text-xl font-meetme"
+                className="w-full bg-[#060607] hover:bg-[#2a4967] text-white py-3 px-8 rounded-3xl transition-colors text-xl font-meetme"
               >
-                음성으로 말하기
+                확인
               </button>
 
               {/* Text Input Option */}
               <button
                 onClick={handleTextSelect}
-                className="w-full bg-[#13273A] hover:bg-[#2a4967] text-white py-3 px-8 rounded-3xl transition-colors text-xl font-meetme"
+                className="w-full border border-[#060607] text-[#060607] py-3 px-8 rounded-3xl transition-colors text-xl font-meetme"
               >
                 텍스트로 기록하기
               </button>

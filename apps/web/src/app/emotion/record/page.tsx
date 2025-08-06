@@ -1,6 +1,6 @@
 'use client';
 
-import { Layout, MicrophoneIcon } from '@melog/ui';
+import { Layout, LeftIcon, MicrophoneIcon } from '@melog/ui';
 import { AudioRecorder } from '@melog/ui';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
@@ -9,7 +9,7 @@ export default function EmotionRecordPage() {
   const router = useRouter();
   const [isRecording, setIsRecording] = useState(false);
   const [timeLeft, setTimeLeft] = useState(60); // 60초 (1분)
-  const [recordedAudio, setRecordedAudio] = useState<string | null>(null);
+  // const [recordedAudio, setRecordedAudio] = useState<string | null>(null);
   const [transcription, setTranscription] = useState<string>('');
 
   // 타이머 효과
@@ -49,12 +49,12 @@ export default function EmotionRecordPage() {
     setIsRecording(false);
   };
 
-  const handleDeleteRecording = () => {
-    setRecordedAudio(null);
-    setTranscription('');
-    setTimeLeft(60);
-    setIsRecording(false);
-  };
+  // const handleDeleteRecording = () => {
+  //   setRecordedAudio(null);
+  //   setTranscription('');
+  //   setTimeLeft(60);
+  //   setIsRecording(false);
+  // };
 
   const handleFinishRecording = () => {
     // 녹음 완료 후 감정 분석 화면으로 이동
@@ -82,7 +82,7 @@ export default function EmotionRecordPage() {
             onClick={handleBack}
             className="w-6 h-6 flex items-center justify-center"
           >
-            <span className="text-2xl text-white">←</span>
+            <LeftIcon color="white" />
           </button>
           <button
             onClick={handleFinishRecording}

@@ -28,7 +28,9 @@ export default function Layout({
             theme === 'dark' ? 'dark bg-gray-900' : 'bg-white'
           } ${className}`}
         >
-          <main className={`w-full ${isOnBoardingPage ? '' : 'px-4'} `}>
+          <main
+            className={`w-full min-h-svh ${isOnBoardingPage ? '' : 'px-4'} `}
+          >
             {children}
           </main>
         </div>

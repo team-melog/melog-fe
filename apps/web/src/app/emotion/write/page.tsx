@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { Layout, Button } from "@melog/ui";
-import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { Layout, Button, LeftIcon } from '@melog/ui';
+import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
 
 export default function EmotionWritePage() {
   const router = useRouter();
-  const [text, setText] = useState("");
+  const [text, setText] = useState('');
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
   // 키보드 표시 여부 감지 (간단한 구현)
@@ -17,8 +17,8 @@ export default function EmotionWritePage() {
       setIsKeyboardVisible(isVisible);
     };
 
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -28,7 +28,7 @@ export default function EmotionWritePage() {
   const handleSave = () => {
     if (text.trim()) {
       // 텍스트 저장 후 감정 분석 화면으로 이동
-      router.push("/emotion/analysis");
+      router.push('/emotion/analysis');
     }
   };
 
@@ -42,12 +42,12 @@ export default function EmotionWritePage() {
     <Layout showTabBar={false}>
       <div className="min-h-screen bg-white flex flex-col">
         {/* Header */}
-        <div className="flex items-center py-6">
+        <div className="flex items-center py-3">
           <button
             onClick={handleBack}
             className="w-6 h-6 flex items-center justify-center"
           >
-            <span className="text-2xl">←</span>
+            <LeftIcon />
           </button>
         </div>
 
@@ -67,7 +67,7 @@ export default function EmotionWritePage() {
                 onChange={handleTextChange}
                 placeholder="오늘의 감정에 대해 자유롭게 작성해주세요..."
                 className="w-full h-full bg-transparent border-none outline-none resize-none text-black placeholder-gray-500"
-                style={{ minHeight: "300px" }}
+                style={{ minHeight: '300px' }}
               />
             </div>
           </div>
@@ -75,7 +75,7 @@ export default function EmotionWritePage() {
           {/* Save Button - 키보드 위에 고정 */}
           <div
             className={`py-4 transition-all duration-300 ${
-              isKeyboardVisible ? "pb-8" : ""
+              isKeyboardVisible ? 'pb-8' : ''
             }`}
           >
             <Button
@@ -83,8 +83,8 @@ export default function EmotionWritePage() {
               disabled={!isTextValid}
               className={`w-full py-3 rounded-lg font-semibold text-base transition-colors ${
                 isTextValid
-                  ? "bg-gray-400 hover:bg-gray-500 text-black"
-                  : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                  ? 'bg-gray-400 hover:bg-gray-500 text-black'
+                  : 'bg-gray-200 text-gray-400 cursor-not-allowed'
               }`}
             >
               저장

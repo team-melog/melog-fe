@@ -1,9 +1,11 @@
-"use client";
+'use client';
 
-import { Layout, Button } from "@melog/ui";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { emotions, intensityLabels } from "@melog/shared";
+import { Layout, Button, LeftIcon, CheckIcon } from '@melog/ui';
+import { useAppStore } from '@melog/shared';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { emotions, intensityLabels } from '@melog/shared';
+import React from 'react';
 
 interface EmotionSelection {
   emotion: string;
@@ -13,6 +15,7 @@ interface EmotionSelection {
 
 export default function EmotionSelectPage() {
   const router = useRouter();
+  const { user } = useAppStore();
   const [selectedEmotion, setSelectedEmotion] =
     useState<EmotionSelection | null>(null);
 
@@ -30,7 +33,7 @@ export default function EmotionSelectPage() {
 
   const handleSkip = () => {
     // 건너뛰기 시 건너뛰기 전용 화면으로 이동
-    router.push("/emotion/skip");
+    router.push('/emotion/skip');
   };
 
   const handleNext = () => {
@@ -47,103 +50,127 @@ export default function EmotionSelectPage() {
 
   return (
     <Layout showTabBar={false}>
-      <div className="min-h-screen bg-white flex flex-col">
+      <div className="font-meetme bg-white flex flex-col">
         {/* Header */}
-        <div className="flex items-center py-6">
+        <div className="flex items-center py-3">
           <button
             onClick={() => router.back()}
             className="w-6 h-6 flex items-center justify-center"
           >
-            <span className="text-2xl">←</span>
+            <LeftIcon />
           </button>
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 flex flex-col overflow-hidden">
-          {/* Title */}
-          <h1 className="text-xl font-semibold text-center text-black mb-10">
-            오늘은 &nbsp;
-            {selectedEmotion ? (
-              <span>
-                {selectedEmotion?.intensity &&
-                  intensityLabels[selectedEmotion?.intensity - 1]}
-                &nbsp;
-                {selectedEmotion?.emotion}
-              </span>
-            ) : (
-              <span>_______</span>
-            )}
-          </h1>
+        <div className="flex-1 flex flex-col">
+          {/* Title Section */}
+          <div className="text-center mb-2">
+            <p className="text-2xl text-[#656a76] mb-2">
+              {user?.name || '사용자'}님의 감정
+            </p>
+            <div className="text-4xl flex items-end justify-center h-[42px]">
+              <span className="text-[#060607]">오늘은&nbsp;</span>
+
+              {selectedEmotion ? (
+                <span className="border-b-[2px] border-[#060607]">
+                  {selectedEmotion?.intensity &&
+                    intensityLabels[selectedEmotion?.intensity - 1]}
+                  &nbsp;
+                  {selectedEmotion?.emotion}
+                </span>
+              ) : (
+                <div className="w-20 h-[2px] bg-[#060607] ml-2"></div>
+              )}
+            </div>
+          </div>
 
           {/* Emotion Grid */}
-          <div className="flex-1 space-y-4 overflow-y-auto">
-            {emotions.map((emotion) => (
-              <div key={emotion.name} className="space-y-2">
-                {/* Emotion Name */}
-                <div className="flex items-center">
-                  <span className="text-sm font-semibold text-black w-12">
-                    {emotion.name}
-                  </span>
-
-                  {/* Intensity Labels */}
-                  <div className="flex-1 flex justify-between px-2">
-                    {intensityLabels.map((label) => (
-                      <span
-                        key={label}
-                        className="text-xs font-medium text-black whitespace-nowrap"
-                        style={{ width: "40px", textAlign: "center" }}
-                      >
-                        {label}
-                      </span>
-                    ))}
+          <div className="mt-2">
+            {/* Grid Container */}
+            <div
+              className="grid gap-0 text-lg text-[#2a2a2a]"
+              style={{ gridTemplateColumns: '30px repeat(5, 1fr)' }}
+            >
+              {/* Header Row */}
+              <div></div> {/* Empty cell for alignment */}
+              <div className="text-center flex items-center justify-center">
+                조금
+              </div>
+              <div className="text-center flex items-center justify-center">
+                조금많이
+              </div>
+              <div className="text-center flex items-center justify-center">
+                적당히
+              </div>
+              <div className="text-center flex items-center justify-center">
+                많이
+              </div>
+              <div className="text-center flex items-center justify-center">
+                매우
+              </div>
+            </div>
+            <div
+              className="grid gap-0 h-[calc(95svh-300px)] text-lg text-[#2a2a2a]"
+              style={{ gridTemplateColumns: '30px repeat(5, 1fr)' }}
+            >
+              {/* Emotion Rows */}
+              {emotions.map((emotion, rowIndex) => (
+                <React.Fragment key={emotion.name}>
+                  {/* Emotion Name */}
+                  <div className="flex items-center justify-center">
+                    <span className="text-lg text-[#2a2a2a] text-center">
+                      {emotion.name}
+                    </span>
                   </div>
-                </div>
 
-                {/* Color Circles */}
-                <div className="flex justify-between items-center">
-                  <div className="w-12"></div> {/* Spacer for emotion name */}
-                  <div className="flex-1 flex justify-between px-2">
-                    {emotion.colors.map((color, intensityIndex) => (
+                  {/* Color Cells */}
+                  {emotion.colors.map((color, colIndex) => (
+                    <div
+                      key={colIndex}
+                      className={`relative flex items-center justify-center border-r border-b border-[#eae9e9] ${
+                        colIndex === 4 ? 'border-r-0' : ''
+                      } ${
+                        rowIndex === emotions.length - 1 ? 'border-b-0' : ''
+                      }`}
+                    >
                       <button
-                        key={intensityIndex}
                         onClick={() =>
-                          handleEmotionSelect(
-                            emotion.name,
-                            intensityIndex,
-                            color
-                          )
+                          handleEmotionSelect(emotion.name, colIndex, color)
                         }
-                        className={`w-10 h-10 rounded-full border-2 transition-all ${
+                        className={`w-3/4 h-3/4 min-w-[40px] min-h-[40px] transition-all ${
                           selectedEmotion?.emotion === emotion.name &&
-                          selectedEmotion?.intensity === intensityIndex + 1
-                            ? "border-black scale-110"
-                            : "border-gray-300 hover:border-gray-400"
+                          selectedEmotion?.intensity === colIndex + 1
+                            ? ''
+                            : 'hover:bg-gray-50'
                         }`}
                         style={{ backgroundColor: color }}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ))}
+                      >
+                        {selectedEmotion?.emotion === emotion.name &&
+                          selectedEmotion?.intensity === colIndex + 1 && (
+                            <CheckIcon className="absolute right-1 bottom-1" />
+                          )}
+                      </button>
+                    </div>
+                  ))}
+                </React.Fragment>
+              ))}
+            </div>
           </div>
 
           {/* Bottom Buttons */}
-          <div className="py-4 space-y-3 flex-shrink-0">
-            {selectedEmotion && (
-              <Button
-                onClick={handleNext}
-                className="w-full bg-gray-400 hover:bg-gray-500 text-black font-semibold py-3 px-6 rounded-lg transition-colors"
-              >
-                다음
-              </Button>
-            )}
-
+          <div className="py-6 space-y-5 flex flex-col items-center">
             <Button
               onClick={handleSkip}
-              className="w-full bg-gray-300 hover:bg-gray-400 text-black font-semibold py-3 px-6 rounded-lg transition-colors"
+              className="bg-transparent text-[#36393f] font-meetme text-xl p-0 px-0 transition-colors underline w-fit rounded-none hover:bg-transparent "
             >
-              건너뛰기
+              감정을 잘 모르겠어요
+            </Button>
+
+            <Button
+              onClick={handleNext}
+              className="w-full bg-[#b5b8c0] hover:bg-[#a0a4ad] text-white font-meetme text-xl py-3 px-6 rounded-3xl transition-colors"
+            >
+              다음
             </Button>
           </div>
         </div>

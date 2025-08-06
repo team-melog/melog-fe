@@ -1,6 +1,6 @@
 'use client';
 
-import { Layout } from '@melog/ui';
+import { Layout, LeftIcon } from '@melog/ui';
 import { useAppStore } from '@melog/shared';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -32,12 +32,12 @@ export default function EmotionSkipPage() {
     <Layout showTabBar={false}>
       <div className="min-h-screen bg-white flex flex-col">
         {/* Header */}
-        <div className="flex items-center py-6">
+        <div className="flex items-center py-3">
           <button
             onClick={handleBack}
             className="w-6 h-6 flex items-center justify-center"
           >
-            <span className="text-2xl">←</span>
+            <LeftIcon />
           </button>
         </div>
 
