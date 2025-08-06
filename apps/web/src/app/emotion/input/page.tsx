@@ -10,22 +10,17 @@ function EmotionInputContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const user = useAppStore(state => state.user);
-  const [selectedOption, setSelectedOption] = useState<'voice' | 'text' | null>(
-    null
-  );
 
   // URL 파라미터에서 선택한 감정 정보 가져오기
   const selectedEmotion = searchParams.get('emotion');
   const selectedIntensity = searchParams.get('intensity');
 
   const handleVoiceSelect = () => {
-    setSelectedOption('voice');
     // 녹음 화면으로 이동
     router.push('/emotion/record');
   };
 
   const handleTextSelect = () => {
-    setSelectedOption('text');
     // 텍스트 입력 화면으로 이동
     router.push('/emotion/write');
   };
@@ -38,7 +33,7 @@ function EmotionInputContent() {
     <Layout showTabBar={false}>
       <div className="min-h-screen bg-white flex flex-col">
         {/* Header */}
-        <div className="flex items-center py-6">
+        <div className="flex items-center py-6 px-4">
           <button
             onClick={handleBack}
             className="w-6 h-6 flex items-center justify-center"
@@ -48,65 +43,46 @@ function EmotionInputContent() {
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 flex flex-col items-center justify-center px-4">
+        <div className="flex-1 flex flex-col items-center justify-between px-4 pb-10">
           {/* Title */}
-          <h1 className="text-2xl font-semibold text-center text-black mb-12 leading-tight">
-            왜{' '}
-            {selectedIntensity &&
-              intensityLabels[parseInt(selectedIntensity) - 1]}{' '}
-            {selectedEmotion || '_____'} 을 골랐나요?
-            <br />
-            {user?.name || '사용자'} 님의 이야기를 듣고 싶어요
-          </h1>
-
-          {/* Selection Options */}
-          <div className="flex space-x-8 mb-12">
-            {/* Voice Recording Option */}
-            <button
-              onClick={handleVoiceSelect}
-              className={`flex flex-col items-center space-y-4 transition-all ${
-                selectedOption === 'voice' ? 'scale-105' : 'hover:scale-102'
-              }`}
-            >
-              <div
-                className={`w-24 h-24 rounded-full flex items-center justify-center transition-colors ${
-                  selectedOption === 'voice'
-                    ? 'bg-gray-400'
-                    : 'bg-gray-300 hover:bg-gray-350'
-                }`}
-              >
-                <span className="text-2xl">🎤</span>
-              </div>
-              <span className="text-xl font-semibold text-black">녹음</span>
-            </button>
-
-            {/* Text Input Option */}
-            <button
-              onClick={handleTextSelect}
-              className={`flex flex-col items-center space-y-4 transition-all ${
-                selectedOption === 'text' ? 'scale-105' : 'hover:scale-102'
-              }`}
-            >
-              <div
-                className={`w-24 h-24 rounded-full flex items-center justify-center transition-colors ${
-                  selectedOption === 'text'
-                    ? 'bg-gray-400'
-                    : 'bg-gray-300 hover:bg-gray-350'
-                }`}
-              >
-                <span className="text-2xl">✏️</span>
-              </div>
-              <span className="text-xl font-semibold text-black">텍스트</span>
-            </button>
+          <div className="text-center mb-12">
+            <h1 className="text-3xl font-meetme text-black leading-tight">
+              왜{' '}
+              <span className="inline-block w-12 h-12 bg-red-500 rounded-lg mr-2"></span>
+              색상을 골랐나요?
+              <br />
+              {user?.name || '사용자'}님의 이야기를 듣고 싶어요
+            </h1>
           </div>
 
-          {/* Instructions */}
-          <div className="text-center text-gray-600 max-w-xs">
-            <p className="text-sm">
-              AI가 이야기를 분석하고
-              <br />
-              진짜 감정을 찾아줄게요
-            </p>
+          <div>
+            {/* Instructions */}
+            <div className="text-center text-gray-500 mb-12">
+              <p className="text-xl font-meetme leading-tight">
+                AI가 이야기를 분석하고
+                <br />
+                진짜 감정을 찾아줄게요
+              </p>
+            </div>
+
+            {/* Selection Options */}
+            <div className="w-full space-y-4">
+              {/* Voice Recording Option */}
+              <button
+                onClick={handleVoiceSelect}
+                className="w-full bg-[#13273A] hover:bg-[#2a4967] text-white py-3 px-8 rounded-3xl transition-colors text-xl font-meetme"
+              >
+                음성으로 말하기
+              </button>
+
+              {/* Text Input Option */}
+              <button
+                onClick={handleTextSelect}
+                className="w-full bg-[#13273A] hover:bg-[#2a4967] text-white py-3 px-8 rounded-3xl transition-colors text-xl font-meetme"
+              >
+                텍스트로 기록하기
+              </button>
+            </div>
           </div>
         </div>
       </div>
