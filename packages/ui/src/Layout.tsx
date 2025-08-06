@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { useAppStore } from '@melog/shared';
 import BottomTabBar from './BottomTabBar';
+import { usePathname } from 'next/navigation';
 
 interface LayoutProps {
   children: ReactNode;
@@ -15,6 +16,9 @@ export default function Layout({
 }: LayoutProps) {
   const theme = useAppStore(state => state.theme);
 
+  const pathname = usePathname();
+  const isOnBoardingPage = pathname === '/onboarding';
+
   return (
     <div className="min-h-svh bg-gray-100">
       {/* Mobile-first layout - 고정 너비 360px, 데스크탑에서도 모바일 크기 유지 */}
@@ -24,7 +28,7 @@ export default function Layout({
             theme === 'dark' ? 'dark bg-gray-900' : 'bg-white'
           } ${className}`}
         >
-          <main className={`px-4 w-full ${showTabBar ? '' : ''}`}>
+          <main className={`w-full ${isOnBoardingPage ? '' : 'px-4'} `}>
             {children}
           </main>
         </div>

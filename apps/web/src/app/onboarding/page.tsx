@@ -24,19 +24,19 @@ export default function OnboardingPage() {
     }
 
     if (nickname.trim().length < 2) {
-      setError('닉네임은 2글자 이상 입력해주세요');
+      setError('2~10글자 사이로 입력해주세요');
       return;
     }
 
     if (nickname.trim().length > 10) {
-      setError('닉네임은 10글자 이하로 입력해주세요');
+      setError('2~10글자 사이로 입력해주세요');
       return;
     }
 
     // 특수문자 제한 (일부만 허용)
     const specialCharRegex = /[#%&]/;
     if (specialCharRegex.test(nickname)) {
-      setError('특수문자 #, %, &는 사용할 수 없습니다');
+      setError('닉네임에는 한글, 영어만 가능합니다');
       return;
     }
 
@@ -54,46 +54,64 @@ export default function OnboardingPage() {
     }
   };
 
+  const onValidateNickname = (value: string) => {
+    // 모든 특수문자 제한 (한글, 영문, 숫자만 허용)
+    const specialCharRegex = /[^가-힣a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ\s]/;
+    if (specialCharRegex.test(value)) {
+      setError('닉네임에는 한글, 영어만 가능합니다');
+      return false;
+    }
+
+    if (value.trim().length > 10) {
+      setError('2~10글자 사이로 입력해주세요');
+      return false;
+    }
+    return true;
+  };
+
+  const handleNicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setError('');
+    const value = e.target.value;
+    setNickname(value);
+
+    // 특수문자 검증
+    if (!onValidateNickname(value)) {
+      return;
+    }
+  };
+
   return (
     <Layout showTabBar={false}>
       <div className="min-h-screen bg-white flex flex-col">
-        {/* Header */}
-        <div className="flex items-center py-6">
-          <button
-            onClick={() => router.back()}
-            className="w-6 h-6 flex items-center justify-center"
-          >
-            <span className="text-2xl">←</span>
-          </button>
-        </div>
-
         {/* Main Content */}
-        <div className="flex-1 flex flex-col items-center justify-between py-8">
-          <div className="flex flex-col w-full h-full">
-            {/* Main Title */}
-            <h1 className="text-2xl font-semibold text-black mb-8 leading-tight">
-              ME:LOG에서 사용할
+        <div className="flex-1 flex flex-col pt-8">
+          {/* Main Title */}
+          <div className="flex-1 flex flex-col px-4 py-10">
+            <h1 className="text-4xl font-meetme text-[#060607] mb-6 leading-tight">
+              Me:log에서 사용할
               <br />
               닉네임을 입력해 주세요
             </h1>
 
             {/* Nickname Input */}
-            <div className="w-full max-w-sm space-y-4">
-              <Input
-                type="text"
-                placeholder="닉네임을 입력하세요 (2~10자)"
-                value={nickname}
-                onChange={e => {
-                  setNickname(e.target.value);
-                  setError(''); // 입력 시 에러 메시지 초기화
-                }}
-                onKeyPress={handleKeyPress}
-                className="w-full"
-                maxLength={10}
-              />
+            <div className="w-full max-w-sm mx-auto space-y-2">
+              <div className="relative">
+                <Input
+                  type="text"
+                  placeholder=""
+                  value={nickname}
+                  onChange={handleNicknameChange}
+                  onKeyPress={handleKeyPress}
+                  className="w-full text-3xl font-meetme border-none border-b-2 border-black rounded-none focus:ring-0 focus:border-black"
+                  maxLength={10}
+                />
+                <div className="w-full h-0.5 bg-black mt-2"></div>
+              </div>
 
               {error && (
-                <p className="text-red-500 text-sm text-center">{error}</p>
+                <p className="font-meetme text-[#FF5A5A] text-md ml-2">
+                  {error}
+                </p>
               )}
             </div>
           </div>
@@ -102,7 +120,7 @@ export default function OnboardingPage() {
           <Button
             onClick={handleNicknameSubmit}
             disabled={!nickname.trim()}
-            className="w-full bg-gray-400 hover:bg-gray-500 disabled:bg-gray-200 disabled:text-gray-400 text-black font-semibold py-3 px-6 rounded-lg transition-colors"
+            className="w-full bg-[#060607] hover:bg-[#2a2a2a] disabled:bg-[#B5B8C0] text-white font-meetme text-xl py-3 px-6transition-colors rounded-none"
           >
             확인
           </Button>
