@@ -1,13 +1,11 @@
 'use client';
 
-import { Layout, Button } from '@melog/ui';
+import { Layout, Button, MelogLogoIcon } from '@melog/ui';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 export default function Home() {
   const router = useRouter();
-  // const theme = useAppStore((state) => state.theme);
-  // const setTheme = useAppStore((state) => state.setTheme);
 
   // 1뎁스 페이지들 prefetch
   useEffect(() => {
@@ -23,49 +21,37 @@ export default function Home() {
     router.push('/onboarding');
   };
 
-  // const toggleTheme = () => {
-  //   setTheme(theme === 'light' ? 'dark' : 'light');
-  // };
-
   return (
     <Layout showTabBar={false}>
-      {/* 온보딩 화면 - Figma 온보딩_3 기반 */}
-      <div className="min-h-screen bg-white flex flex-col">
+      {/* 온보딩 화면 - Figma 온보딩 기반 */}
+      <div className="font-meetme min-h-screen bg-white flex flex-col">
         {/* Main Content */}
-        <div className="flex-1 flex flex-col items-center justify-center px-8 py-12">
-          {/* Main Title */}
-          <h1 className="text-2xl font-semibold text-center text-black mb-4 leading-tight">
-            AI가 분석해주는
-            <br />
-            나의 진짜 감정
-          </h1>
-
-          {/* Subtitle */}
-          <p className="text-base text-center text-black mb-12 leading-6">
-            당신의 감정을 더 입체적으로 이해해보세요
-          </p>
-
-          {/* Main Illustration */}
-          <div className="w-36 h-36 bg-gray-300 rounded-lg mb-8 flex items-center justify-center">
-            <span className="text-4xl">🎨</span>
+        <div className="flex-1 flex flex-col items-center justify-center px-4 py-12">
+          <div className="flex flex-col items-center justify-center">
+            {/* Main Title */}
+            <MelogLogoIcon />
+            <h1 className="text-4xl text-center text-[#060607] mb-6 leading-tight mt-2">
+              AI가 분석해주는
+              <br />
+              나의 진짜 감정
+            </h1>
+            {/* Subtitle */}
+            <p className="text-2xl text-center text-[#4e515b] mb-12 leading-tight">
+              오늘의 감정을 입체적으로 이해해 보세요
+            </p>
           </div>
 
+          {/* Main Illustration Placeholder */}
+          <div className="w-60 h-60 mb-20 flex items-center justify-center bg-gray-200 rounded-lg">
+            {/* 이미지 영역 - 실제 이미지는 제외 */}
+          </div>
           {/* Start Button */}
           <Button
             onClick={handleStart}
-            className="w-full max-w-sm bg-gray-400 hover:bg-gray-500 text-black font-semibold py-3 px-6 rounded-lg transition-colors"
+            className="w-4/5 h-12 bg-[#060607] hover:bg-[#2a2a2a] text-white text-xl py-3 px-6 rounded-3xl transition-colors"
           >
             시작하기
           </Button>
-
-          {/* Theme Toggle (Hidden by default, can be accessed via dev tools) */}
-          {/* <button
-            onClick={toggleTheme}
-            className="fixed top-4 right-4 p-2 bg-gray-200 rounded-full opacity-50 hover:opacity-100 transition-opacity"
-            title="테마 변경"
-          >
-            {theme === "light" ? "🌙" : "☀️"}
-          </button> */}
         </div>
       </div>
     </Layout>
