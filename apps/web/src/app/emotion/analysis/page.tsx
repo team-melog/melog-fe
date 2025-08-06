@@ -27,24 +27,24 @@ export default function EmotionAnalysisPage() {
 
   return (
     <Layout showTabBar={false}>
-      <div className="font-meetme min-h-screen bg-white flex flex-col">
+      <div className="font-meetme min-h-screen bg-[#111416] flex flex-col">
         {/* Main Content */}
         <div className="flex-1 flex flex-col items-center justify-center px-4">
           {/* Title */}
-          <h1 className="text-3xl font-medium text-center text-black ">
+          <h1 className="text-3xl font-meetme text-center text-white mb-4">
             AI가 감정을 분석중이에요
           </h1>
 
-          <div className="text-xl text-center text-black mt-8 mb-12">
-            조금만 기다려주세요
+          <div className="text-2xl font-meetme text-center text-[#a5a5a5] mb-12">
+            조금만 기다려 주세요
           </div>
 
-          {/* Loading Illustration */}
+          {/* Loading Animation */}
           <div className="flex flex-col items-center mb-12">
-            <div className="w-36 h-36 bg-gray-300 rounded-lg mb-4 flex items-center justify-center">
-              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-gray-600"></div>
+            <div className="w-52 h-52 bg-gray-800 rounded-lg mb-4 flex items-center justify-center">
+              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-white"></div>
             </div>
-            <p className="text-base text-black text-center">랜덤 일러스트</p>
+            <p className="text-base text-white text-center">홈 애니메이션</p>
           </div>
         </div>
       </div>
