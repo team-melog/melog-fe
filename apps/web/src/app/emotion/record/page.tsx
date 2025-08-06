@@ -1,6 +1,6 @@
 'use client';
 
-import { Layout } from '@melog/ui';
+import { Layout, MicrophoneIcon } from '@melog/ui';
 import { AudioRecorder } from '@melog/ui';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
@@ -37,9 +37,7 @@ export default function EmotionRecordPage() {
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs
-      .toString()
-      .padStart(2, '0')}`;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
   const handleStartRecording = () => {
@@ -58,7 +56,7 @@ export default function EmotionRecordPage() {
     setIsRecording(false);
   };
 
-  const handleSaveRecording = () => {
+  const handleFinishRecording = () => {
     // 녹음 완료 후 감정 분석 화면으로 이동
     router.push('/emotion/analysis');
   };
@@ -77,75 +75,84 @@ export default function EmotionRecordPage() {
 
   return (
     <Layout showTabBar={false}>
-      <div className="min-h-screen bg-white flex flex-col">
+      <div className="min-h-screen bg-[#111416] flex flex-col">
         {/* Header */}
-        <div className="flex items-center py-6">
+        <div className="flex items-center justify-between py-6 px-4">
           <button
             onClick={handleBack}
             className="w-6 h-6 flex items-center justify-center"
           >
-            <span className="text-2xl">←</span>
+            <span className="text-2xl text-white">←</span>
+          </button>
+          <button
+            onClick={handleFinishRecording}
+            className="text-[#ff9292] font-meetme text-xl"
+          >
+            종료하기
           </button>
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 flex flex-col items-center justify-center px-4">
-          {/* Status Text */}
-          <h1 className="text-2xl font-semibold text-center text-black mb-4">
-            듣고 있어요..
-          </h1>
+        <div className="flex-1 flex flex-col items-center justify-between px-4 py-10">
+          <div className="flex flex-col items-center justify-center">
+            <h1 className="text-3xl font-meetme text-center text-white mb-4">
+              목소리를 듣고 있어요
+            </h1>
 
-          {/* Timer */}
-          <div className="text-xl font-semibold text-black mb-8">
-            {formatTime(timeLeft)}
+            {/* Timer */}
+            <div className="text-2xl font-meetme text-[#dddddd] mb-12">
+              {isRecording ? formatTime(timeLeft) : '일시정지됨'}
+            </div>
           </div>
 
-          {/* Main Illustration */}
-          <div className="flex flex-col items-center mb-12">
-            <div className="w-36 h-36 bg-gray-300 rounded-lg mb-4 flex items-center justify-center">
-              <span className="text-4xl">🎙️</span>
-            </div>
-            <p className="text-base font-semibold text-black text-center">
-              일러스트
-            </p>
+          {/* Audio Visualization */}
+          <div className="flex items-end space-x-2 mb-12">
+            <div className="w-4 h-12 bg-[#6bfcc1] rounded-lg"></div>
+            <div className="w-4 h-8 bg-[#fff471] rounded-lg"></div>
+            <div className="w-4 h-8 bg-[#ffbbdd] rounded-lg"></div>
+            <div className="w-4 h-8 bg-[#6ba1db] rounded-lg"></div>
+            <div className="w-4 h-6 bg-[#fff471] rounded-lg"></div>
           </div>
 
           {/* Recording Controls */}
           <div className="flex items-center space-x-8 mb-8">
             {/* Delete Button */}
-            <button
+            {/* <button
               onClick={handleDeleteRecording}
-              className="w-12 h-12 bg-gray-400 rounded-lg flex items-center justify-center"
+              className="w-12 h-12 bg-gray-600 rounded-lg flex items-center justify-center"
             >
-              <span className="text-sm font-semibold text-black">삭제</span>
-            </button>
+              <span className="text-sm font-semibold text-white">삭제</span>
+            </button> */}
 
             {/* Main Record/Pause Button */}
             <button
               onClick={
                 isRecording ? handlePauseRecording : handleStartRecording
               }
-              className="w-24 h-24 bg-gray-400 rounded-full flex items-center justify-center"
+              className="w-20 h-20 bg-white rounded-full flex items-center justify-center"
             >
               {isRecording ? (
-                <span className="text-2xl">⏸️</span>
+                <div className="flex space-x-1">
+                  <div className="w-3 h-7 bg-black"></div>
+                  <div className="w-3 h-7 bg-black"></div>
+                </div>
               ) : (
-                <span className="text-2xl">🎤</span>
+                <MicrophoneIcon color="black" />
               )}
             </button>
 
             {/* Save Button */}
-            <button
-              onClick={handleSaveRecording}
+            {/* <button
+              onClick={handleFinishRecording}
               disabled={!recordedAudio && !isRecording}
               className={`w-12 h-12 rounded-lg flex items-center justify-center ${
                 recordedAudio || isRecording
-                  ? 'bg-gray-400 hover:bg-gray-500'
-                  : 'bg-gray-200 text-gray-400'
+                  ? 'bg-gray-600 hover:bg-gray-500'
+                  : 'bg-gray-700 text-gray-400'
               }`}
             >
-              <span className="text-sm font-semibold text-black">저장</span>
-            </button>
+              <span className="text-sm font-semibold text-white">저장</span>
+            </button> */}
           </div>
 
           {/* Audio Recorder Component (Hidden but functional) */}
@@ -159,11 +166,11 @@ export default function EmotionRecordPage() {
 
           {/* Transcription Display */}
           {transcription && (
-            <div className="w-full max-w-sm bg-gray-100 rounded-lg p-4 mb-4">
-              <p className="text-sm text-gray-700">
+            <div className="w-full max-w-sm bg-gray-800 rounded-lg p-4 mb-4">
+              <p className="text-sm text-gray-300">
                 <strong>음성 인식 결과:</strong>
               </p>
-              <p className="text-sm text-gray-600 mt-2">{transcription}</p>
+              <p className="text-sm text-gray-400 mt-2">{transcription}</p>
             </div>
           )}
         </div>
