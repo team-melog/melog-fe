@@ -27,7 +27,7 @@ export default function EmotionAnalysisPage() {
 
   return (
     <Layout showTabBar={false}>
-      <div className="font-meetme min-h-screen bg-[#111416] flex flex-col">
+      <div className="font-meetme min-h-svh bg-[#111416] flex flex-col">
         {/* Main Content */}
         <div className="flex-1 flex flex-col items-center justify-center px-4">
           {/* Title */}
@@ -44,7 +44,6 @@ export default function EmotionAnalysisPage() {
             <div className="w-52 h-52 bg-gray-800 rounded-lg mb-4 flex items-center justify-center">
               <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-white"></div>
             </div>
-            <p className="text-base text-white text-center">홈 애니메이션</p>
           </div>
         </div>
       </div>

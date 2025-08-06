@@ -17,12 +17,15 @@ export default function Layout({
   const theme = useAppStore(state => state.theme);
 
   const pathname = usePathname();
-  const isOnBoardingPage = pathname === '/onboarding';
+  const isOnBoardingPage =
+    pathname === '/onboarding' ||
+    pathname.includes('/emotion/record') ||
+    pathname.includes('/emotion/analysis');
 
   return (
     <div className="min-h-svh bg-gray-100">
       {/* Mobile-first layout - 고정 너비 360px, 데스크탑에서도 모바일 크기 유지 */}
-      <div className="mx-auto w-[360px] bg-white min-h-svh shadow-xl relative">
+      <div className="mx-auto min-w-[360px] sm:w-[360px] bg-white min-h-svh shadow-xl relative">
         <div
           className={`min-h-svh transition-colors duration-300 ${
             theme === 'dark' ? 'dark bg-gray-900' : 'bg-white'

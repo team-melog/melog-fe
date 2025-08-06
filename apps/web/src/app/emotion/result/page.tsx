@@ -133,7 +133,7 @@ export default function EmotionResultPage() {
           <div className="space-y-4">
             <Button
               onClick={handleKeepColor}
-              className={`w-full py-4 rounded-xl font-meetme text-xl transition-colors border-2 ${
+              className={`w-full py-4 rounded-xl font-meetme text-xl transition-colors border-2 bg-white ${
                 selectedOption === 'keep'
                   ? 'bg-gray-500 text-white border-gray-500'
                   : 'bg-white hover:bg-gray-50 text-black border-[#36393f]'

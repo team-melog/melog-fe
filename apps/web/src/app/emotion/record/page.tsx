@@ -75,9 +75,9 @@ export default function EmotionRecordPage() {
 
   return (
     <Layout showTabBar={false}>
-      <div className="min-h-screen bg-[#111416] flex flex-col">
+      <div className="min-h-svh bg-[#111416] flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between py-6 px-4">
+        <div className="flex items-center justify-between py-3 px-4">
           <button
             onClick={handleBack}
             className="w-6 h-6 flex items-center justify-center"
@@ -93,7 +93,7 @@ export default function EmotionRecordPage() {
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 flex flex-col items-center justify-between px-4 py-10">
+        <div className="flex-1 flex flex-col items-center justify-between px-4">
           <div className="flex flex-col items-center justify-center">
             <h1 className="text-3xl font-meetme text-center text-white mb-4">
               목소리를 듣고 있어요

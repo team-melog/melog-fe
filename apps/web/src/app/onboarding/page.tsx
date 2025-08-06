@@ -82,7 +82,7 @@ export default function OnboardingPage() {
 
   return (
     <Layout showTabBar={false}>
-      <div className="min-h-screen bg-white flex flex-col">
+      <div className="min-h-svh bg-white flex flex-col">
         {/* Main Content */}
         <div className="flex-1 flex flex-col pt-8">
           {/* Main Title */}

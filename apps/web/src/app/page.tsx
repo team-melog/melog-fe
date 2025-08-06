@@ -24,7 +24,7 @@ export default function Home() {
   return (
     <Layout showTabBar={false}>
       {/* 온보딩 화면 - Figma 온보딩 기반 */}
-      <div className="font-meetme min-h-screen bg-white flex flex-col">
+      <div className="font-meetme min-h-svh bg-white flex flex-col">
         {/* Main Content */}
         <div className="flex-1 flex flex-col items-center justify-center px-4 py-12">
           <div className="flex flex-col items-center justify-center">
@@ -42,9 +42,7 @@ export default function Home() {
           </div>
 
           {/* Main Illustration Placeholder */}
-          <div className="w-60 h-60 mb-20 flex items-center justify-center bg-gray-200 rounded-lg">
-            {/* 이미지 영역 - 실제 이미지는 제외 */}
-          </div>
+          <div className="w-[30svh] h-[30svh] mb-16 flex items-center justify-center bg-gray-200 rounded-lg"></div>
           {/* Start Button */}
           <Button
             onClick={handleStart}

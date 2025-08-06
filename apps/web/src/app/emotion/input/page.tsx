@@ -31,7 +31,7 @@ function EmotionInputContent() {
 
   return (
     <Layout showTabBar={false}>
-      <div className="bg-white flex flex-col">
+      <div className="min-h-svh bg-white flex flex-col">
         {/* Header */}
         <div className="flex items-center py-3">
           <button
@@ -43,7 +43,7 @@ function EmotionInputContent() {
         </div>
 
         {/* Main Content */}
-        <div className="h-[calc(95svh-48px)] flex flex-col items-center justify-between px-4">
+        <div className="flex-1 flex flex-col items-center justify-between px-4">
           {/* Title */}
           <div className="text-center mb-12">
             <h1 className="text-3xl font-meetme text-black leading-tight">
@@ -66,7 +66,7 @@ function EmotionInputContent() {
             </div>
 
             {/* Selection Options */}
-            <div className="w-full space-y-4">
+            <div className="w-full space-y-4 mb-10">
               {/* Voice Recording Option */}
               <button
                 onClick={handleVoiceSelect}
