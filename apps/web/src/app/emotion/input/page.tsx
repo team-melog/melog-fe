@@ -2,7 +2,7 @@
 
 import { Layout, LeftIcon } from '@melog/ui';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useState, Suspense } from 'react';
+import { Suspense } from 'react';
 import { intensityLabels } from '@melog/shared';
 import { useAppStore } from '@melog/shared';
 
@@ -43,20 +43,30 @@ function EmotionInputContent() {
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 flex flex-col items-center justify-between px-4">
+        <div className="flex-1 flex flex-col items-center justify-between px-4 pt-1">
           {/* Title */}
-          <div className="text-center mb-12">
+          <div className="text-center">
             <h1 className="text-3xl font-meetme text-black leading-tight">
-              왜{' '}
-              <span className="inline-block w-12 h-12 bg-red-500 rounded-lg mr-2"></span>
-              색상을 골랐나요?
+              왜&nbsp;
+              {selectedEmotion ? (
+                <span>
+                  {selectedIntensity &&
+                    intensityLabels[Number(selectedIntensity) - 1]}
+                  &nbsp;
+                  {selectedEmotion}
+                </span>
+              ) : (
+                <div className="w-20 h-[2px] bg-[#060607] ml-2"></div>
+              )}
+              색을 골랐나요?
               <br />
-              {user?.name || '사용자'}님의 이야기를 듣고 싶어요
+              {user?.name || '사용자'}님의 이야기를 들려주세요
             </h1>
           </div>
 
-          <div className="w-full">
-            {/* Instructions */}
+          <div>
+            <div className="w-[158px] h-[158px] bg-red-500 mb-6"></div>
+
             <div className="text-center text-gray-500 mb-12">
               <p className="text-xl font-meetme leading-tight">
                 AI가 이야기를 분석하고
@@ -64,15 +74,17 @@ function EmotionInputContent() {
                 진짜 감정을 찾아줄게요
               </p>
             </div>
+          </div>
 
+          <div className="w-full">
             {/* Selection Options */}
-            <div className="w-full space-y-4 mb-10">
+            <div className="w-full space-y-4 mb-4">
               {/* Voice Recording Option */}
               <button
                 onClick={handleVoiceSelect}
                 className="w-full bg-[#060607] hover:bg-[#2a4967] text-white py-3 px-8 rounded-3xl transition-colors text-xl font-meetme"
               >
-                확인
+                음성으로 녹음하기
               </button>
 
               {/* Text Input Option */}
