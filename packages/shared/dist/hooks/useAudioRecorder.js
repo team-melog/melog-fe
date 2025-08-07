@@ -20,7 +20,7 @@ export const useAudioRecorder = () => {
     // 타이머 시작
     const startTimer = useCallback(() => {
         intervalRef.current = setInterval(() => {
-            setRecordingTime((prev) => {
+            setRecordingTime(prev => {
                 if (prev >= MAX_RECORDING_TIME) {
                     // 60초 도달 시 자동 정지
                     stopRecording();
@@ -40,7 +40,8 @@ export const useAudioRecorder = () => {
     // 실시간 음성 인식 초기화
     const initializeSpeechRecognition = useCallback(() => {
         // Web Speech API 지원 확인
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const SpeechRecognition = window.SpeechRecognition ||
+            window.webkitSpeechRecognition;
         if (!SpeechRecognition) {
             isRecognitionSupported.current = false;
             return;
@@ -138,22 +139,24 @@ export const useAudioRecorder = () => {
                     echoCancellation: true,
                     noiseSuppression: true,
                     sampleRate: 44100,
-                }
+                },
             });
             streamRef.current = stream;
             audioChunksRef.current = [];
             // MediaRecorder 설정
             const mediaRecorder = new MediaRecorder(stream, {
-                mimeType: 'audio/webm;codecs=opus'
+                mimeType: 'audio/webm;codecs=opus',
             });
             mediaRecorderRef.current = mediaRecorder;
-            mediaRecorder.ondataavailable = (event) => {
+            mediaRecorder.ondataavailable = event => {
                 if (event.data.size > 0) {
                     audioChunksRef.current.push(event.data);
                 }
             };
             mediaRecorder.onstop = () => {
-                const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm;codecs=opus' });
+                const audioBlob = new Blob(audioChunksRef.current, {
+                    type: 'audio/webm;codecs=opus',
+                });
                 setAudioBlob(audioBlob);
                 // 실시간 음성 인식 정지
                 stopSpeechRecognition();
@@ -176,10 +179,16 @@ export const useAudioRecorder = () => {
             console.error('녹음 시작 오류:', err);
             setError('마이크 접근 권한이 필요합니다.');
         }
-    }, [startTimer, initializeSpeechRecognition, startSpeechRecognition, stopSpeechRecognition]);
+    }, [
+        startTimer,
+        initializeSpeechRecognition,
+        startSpeechRecognition,
+        stopSpeechRecognition,
+    ]);
     // 녹음 정지
     const stopRecording = useCallback(() => {
-        if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+        if (mediaRecorderRef.current &&
+            mediaRecorderRef.current.state !== 'inactive') {
             mediaRecorderRef.current.stop();
         }
         // 실시간 음성 인식 정지
@@ -190,7 +199,8 @@ export const useAudioRecorder = () => {
     }, [stopTimer, stopSpeechRecognition]);
     // 녹음 일시정지
     const pauseRecording = useCallback(() => {
-        if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
+        if (mediaRecorderRef.current &&
+            mediaRecorderRef.current.state === 'recording') {
             mediaRecorderRef.current.pause();
             setIsPaused(true);
             stopTimer();
@@ -200,7 +210,8 @@ export const useAudioRecorder = () => {
     }, [stopTimer, stopSpeechRecognition]);
     // 녹음 재개
     const resumeRecording = useCallback(() => {
-        if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'paused') {
+        if (mediaRecorderRef.current &&
+            mediaRecorderRef.current.state === 'paused') {
             mediaRecorderRef.current.resume();
             setIsPaused(false);
             startTimer();

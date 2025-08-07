@@ -1,53 +1,81 @@
 'use client';
 
 import { Layout, LeftIcon, MicrophoneIcon } from '@melog/ui';
-import { AudioRecorder } from '@melog/ui';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
+// import { useAudioRecorder } from '@melog/shared';
 
 export default function EmotionRecordPage() {
   const router = useRouter();
-  const [isRecording, setIsRecording] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(60); // 60초 (1분)
-  // const [recordedAudio, setRecordedAudio] = useState<string | null>(null);
   const [transcription, setTranscription] = useState<string>('');
 
-  // 타이머 효과
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
+  // const {
+  //   isRecording,
+  //   recordingTime,
+  //   realtimeText,
+  //   // interimText,
+  //   startRecording,
+  //   stopRecording,
+  //   resetRecording,
+  // } = useAudioRecorder();
 
-    if (isRecording && timeLeft > 0) {
-      interval = setInterval(() => {
-        setTimeLeft(prev => {
-          if (prev <= 1) {
-            setIsRecording(false);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    }
+  // 임시 상태 (실제 녹음 기능 주석처리)
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingTime, setRecordingTime] = useState(0);
+  const [realtimeText, setRealtimeText] = useState('');
 
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [isRecording, timeLeft]);
-
-  // 시간을 MM:SS 형식으로 변환
+  // 시간을 MM:SS 형식으로 변환 (남은 시간 표시)
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const handleStartRecording = () => {
+  // 남은 시간 계산 (60초 - 녹음 시간)
+  const timeLeft = Math.max(0, 60 - recordingTime);
+
+  // 임시 녹음 함수들
+  const startRecording = () => {
     setIsRecording(true);
-    setTimeLeft(60);
+    setRecordingTime(0);
+    setRealtimeText('');
+    setTranscription('');
   };
 
-  const handlePauseRecording = () => {
+  const stopRecording = () => {
     setIsRecording(false);
   };
+
+  const resetRecording = () => {
+    setIsRecording(false);
+    setRecordingTime(0);
+    setRealtimeText('');
+    setTranscription('');
+  };
+
+  // 임시 타이머 (실제 녹음 기능 주석처리)
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+
+    if (isRecording && recordingTime < 60) {
+      interval = setInterval(() => {
+        setRecordingTime(prev => prev + 1);
+      }, 1000);
+    } else if (recordingTime >= 60) {
+      setIsRecording(false);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isRecording, recordingTime]);
+
+  // 실시간 텍스트 업데이트 (임시)
+  useEffect(() => {
+    if (realtimeText) {
+      setTranscription(realtimeText);
+    }
+  }, [realtimeText]);
 
   // const handleDeleteRecording = () => {
   //   setRecordedAudio(null);
@@ -57,16 +85,18 @@ export default function EmotionRecordPage() {
   // };
 
   const handleFinishRecording = () => {
-    // 녹음 완료 후 감정 분석 화면으로 이동
-    router.push('/emotion/analysis');
-  };
+    // 음성이 없으면 결과 없음 페이지로, 있으면 감정 분석 페이지로 이동
+    const trimmedText = transcription.trim();
+    console.log('Transcription:', transcription);
+    console.log('Trimmed text:', trimmedText);
+    console.log('Text length:', trimmedText.length);
 
-  const handleTranscriptionComplete = (text: string) => {
-    setTranscription(text);
-  };
-
-  const handleAudioError = (error: string) => {
-    console.error('음성 인식 오류:', error);
+    if (!trimmedText || trimmedText.length < 2) {
+      // router.push('/emotion/no-result');
+      router.push('/emotion/analysis'); //임시
+    } else {
+      router.push('/emotion/analysis');
+    }
   };
 
   const handleBack = () => {
@@ -127,7 +157,13 @@ export default function EmotionRecordPage() {
             {/* Main Record/Pause Button */}
             <button
               onClick={
-                isRecording ? handlePauseRecording : handleStartRecording
+                isRecording
+                  ? () => {
+                      stopRecording();
+                      resetRecording();
+                      setTranscription('');
+                    }
+                  : startRecording
               }
               className="w-20 h-20 bg-white rounded-full flex items-center justify-center"
             >
@@ -155,24 +191,20 @@ export default function EmotionRecordPage() {
             </button> */}
           </div>
 
-          {/* Audio Recorder Component (Hidden but functional) */}
-          <div className="hidden">
-            <AudioRecorder
-              onTranscriptionComplete={handleTranscriptionComplete}
-              onError={handleAudioError}
-              maxDuration={60}
-            />
-          </div>
-
-          {/* Transcription Display */}
-          {transcription && (
+          {/* Real-time Transcription Display */}
+          {/* {(realtimeText || interimText) && (
             <div className="w-full max-w-sm bg-gray-800 rounded-lg p-4 mb-4">
               <p className="text-sm text-gray-300">
-                <strong>음성 인식 결과:</strong>
+                <strong>실시간 음성 인식:</strong>
               </p>
-              <p className="text-sm text-gray-400 mt-2">{transcription}</p>
+              <p className="text-sm text-gray-400 mt-2">{realtimeText}</p>
+              {interimText && (
+                <p className="text-sm text-gray-500 mt-1 italic">
+                  {interimText}...
+                </p>
+              )}
             </div>
-          )}
+          )} */}
         </div>
       </div>
     </Layout>
