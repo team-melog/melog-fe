@@ -22,7 +22,8 @@ export default function Layout({
     pathname.includes('/emotion/record') ||
     pathname.includes('/emotion/analysis') ||
     pathname.includes('/emotion/write') ||
-    pathname.includes('/feed');
+    pathname.includes('/feed') ||
+    pathname.includes('/profile');
 
   return (
     <div className="min-h-svh bg-gray-100">
