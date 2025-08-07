@@ -53,6 +53,11 @@ export default function CalendarPage() {
     return data;
   }, [entries]);
 
+  // 현재 월에 데이터가 있는지 확인
+  const hasDataInCurrentMonth = useMemo(() => {
+    return Object.keys(emotionDataByDate).length > 0;
+  }, [emotionDataByDate]);
+
   // 캘린더에 표시할 날짜들 생성
   const calendarDays = [];
 
@@ -104,19 +109,23 @@ export default function CalendarPage() {
 
   return (
     <Layout showTabBar={true}>
-      <div className="min-h-screen bg-white flex flex-col pb-20">
+      <div className=" min-h-screen bg-white flex flex-col pb-20">
         {/* AI 월별 요약 섹션 */}
-        <div className="bg-gray-100 rounded-xl p-4 my-6 mx-4">
+        <div className="bg-white border border-[#d0d2d7] rounded-[20px] p-4 my-6 mx-4">
           <div className="space-y-2">
-            <h2 className="text-base font-bold text-gray-900">AI 월별 요약</h2>
-            <p className="text-sm text-gray-700">
-              이번 달에는 기쁨이 늘고 분노가 줄었어요.
+            <h2 className="font-meetme text-[18px] font-normal text-[#36393f] tracking-[-0.18px] leading-[21.6px]">
+              AI 월별 요약
+            </h2>
+            <p className="text-[15px] font-pretendard text-[#060607] tracking-[-0.15px] leading-6">
+              {hasDataInCurrentMonth
+                ? '이번 달에는 기쁨이 늘고 분노가 줄었어요.'
+                : '감정을 기록하고 월별 기록을 확인해 보세요'}
             </p>
           </div>
         </div>
 
         {/* 캘린더 섹션 */}
-        <div className="flex-1 flex flex-col px-4">
+        <div className="flex-1 flex flex-col px-4 font-meetme">
           {/* 월 헤더 */}
           <div className="flex items-center justify-center mb-4">
             <div className="flex items-center space-x-2">
@@ -138,7 +147,7 @@ export default function CalendarPage() {
                   />
                 </svg>
               </button>
-              <h1 className="text-xl font-semibold text-gray-900">
+              <h1 className="text-[24px] font-normal text-black tracking-[-0.24px] leading-[28.8px]">
                 {getMonthName(currentDate)}
               </h1>
               <button
@@ -165,9 +174,15 @@ export default function CalendarPage() {
           <div className="flex-1 flex flex-col gap-2">
             {/* 요일 헤더 */}
             <div className="grid grid-cols-7 gap-1">
-              {['일', '월', '화', '수', '목', '금', '토'].map(day => (
-                <div key={day} className="h-8 flex items-center justify-center">
-                  <span className="text-sm font-medium text-gray-900">
+              {['일', '월', '화', '수', '목', '금', '토'].map((day, index) => (
+                <div key={day} className="h-6 flex items-center justify-center">
+                  <span
+                    className={`text-[17px] font-normal tracking-[-0.17px] leading-[20.4px] ${
+                      index === 0 || index === 6
+                        ? 'text-[#656a76]'
+                        : 'text-black'
+                    }`}
+                  >
                     {day}
                   </span>
                 </div>
@@ -190,7 +205,7 @@ export default function CalendarPage() {
                 return (
                   <div
                     key={index}
-                    className={`h-[69px] flex flex-col items-center justify-center relative ${
+                    className={`h-fit flex flex-col items-center justify-center relative ${
                       emotionData ? 'cursor-pointer hover:bg-gray-50' : ''
                     }`}
                     onClick={() => {
@@ -202,23 +217,31 @@ export default function CalendarPage() {
                   >
                     {/* 감정 색상 원 - 현재 달의 날짜에만 표시 */}
                     {isCurrentMonth && (
-                      <div
-                        className={`w-10 h-10 rounded-full mb-2 ${
-                          emotionData ? 'opacity-80' : 'bg-gray-200'
-                        }`}
-                        style={
-                          emotionData
-                            ? { backgroundColor: emotionData.color }
-                            : {}
-                        }
-                      />
+                      <div className="w-10 h-10 mb-2 flex items-center justify-center">
+                        {emotionData ? (
+                          // 감정 데이터가 있는 경우 - 감정 이미지 표시
+                          <div
+                            className="w-10 h-10"
+                            style={{ backgroundColor: emotionData.color }}
+                          />
+                        ) : (
+                          // 감정 데이터가 없는 경우 - 빈 원 표시
+                          <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
+                            <div
+                              className={`w-5 h-5 bg-opacity-50 rounded-sm ${
+                                isToday ? 'bg-[#D7E4FF]' : 'bg-[#ecedef]'
+                              }`}
+                            ></div>
+                          </div>
+                        )}
+                      </div>
                     )}
 
                     {/* 날짜 텍스트 - 현재 달의 날짜에만 표시 */}
                     {isCurrentMonth && (
                       <span
-                        className={`text-sm font-medium ${
-                          isToday ? 'text-blue-600 font-bold' : 'text-gray-900'
+                        className={`text-[17px] font-normal tracking-[-0.17px] leading-[20.4px] ${
+                          isToday ? 'text-[#6ba1db]' : 'text-black'
                         }`}
                       >
                         {date.getDate()}
