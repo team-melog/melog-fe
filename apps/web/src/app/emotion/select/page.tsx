@@ -168,7 +168,8 @@ export default function EmotionSelectPage() {
 
             <Button
               onClick={handleNext}
-              className="w-full bg-[#b5b8c0] hover:bg-[#a0a4ad] text-white font-meetme text-xl py-3 px-6 rounded-3xl transition-colors"
+              className="w-full bg-[#060607] disabled:bg-[#B5B8C0] disabled:opacity-100 text-white font-meetme text-xl py-3 px-6 rounded-3xl transition-colors"
+              disabled={!selectedEmotion}
             >
               다음
             </Button>
