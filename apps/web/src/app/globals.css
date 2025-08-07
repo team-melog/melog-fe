@@ -119,6 +119,42 @@ textarea {
   scrollbar-width: none;
 }
 
+/* textarea 커스텀 스크롤바 */
+textarea::-webkit-scrollbar {
+  display: block;
+  width: 9px;
+  -webkit-appearance: none;
+}
+textarea::-webkit-scrollbar-track {
+  background: transparent;
+}
+textarea::-webkit-scrollbar-thumb {
+  background: #ecedef;
+  border-radius: 4.5px;
+  border: none;
+}
+textarea::-webkit-scrollbar-thumb:hover {
+  background: #d1d5db;
+}
+/* 모바일에서 스크롤바 강제 표시 */
+textarea {
+  scrollbar-width: thin;
+  scrollbar-color: #ecedef transparent;
+  -webkit-overflow-scrolling: touch;
+  overflow: auto !important;
+}
+/* iOS Safari에서 스크롤바 표시 */
+@supports (-webkit-touch-callout: none) {
+  textarea {
+    -webkit-appearance: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  textarea::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 9px;
+  }
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;

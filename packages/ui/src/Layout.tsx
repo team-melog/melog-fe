@@ -20,7 +20,8 @@ export default function Layout({
   const isOnBoardingPage =
     pathname === '/onboarding' ||
     pathname.includes('/emotion/record') ||
-    pathname.includes('/emotion/analysis');
+    pathname.includes('/emotion/analysis') ||
+    pathname.includes('/emotion/write');
 
   return (
     <div className="min-h-svh bg-gray-100">
