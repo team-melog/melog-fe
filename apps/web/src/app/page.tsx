@@ -3,6 +3,7 @@
 import { Layout, Button, MelogLogoIcon } from '@melog/ui';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import HomeMainIcon from '@/assets/icons/HomeMainIcon.svg';
 
 export default function Home() {
   const router = useRouter();
@@ -42,7 +43,9 @@ export default function Home() {
           </div>
 
           {/* Main Illustration Placeholder */}
-          <div className="w-[30svh] h-[30svh] mb-16 flex items-center justify-center bg-gray-200 rounded-lg"></div>
+          <div className="h-[30svh] mb-16 flex items-center justify-center">
+            <HomeMainIcon />
+          </div>
           {/* Start Button */}
           <Button
             onClick={handleStart}
