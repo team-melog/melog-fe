@@ -21,7 +21,8 @@ export default function Layout({
     pathname === '/onboarding' ||
     pathname.includes('/emotion/record') ||
     pathname.includes('/emotion/analysis') ||
-    pathname.includes('/emotion/write');
+    pathname.includes('/emotion/write') ||
+    pathname.includes('/feed');
 
   return (
     <div className="min-h-svh bg-gray-100">
