@@ -1,5 +1,6 @@
 'use client';
 
+import LottieRecordLoading from '@/components/lotties/LottieRecordLoading';
 import { Layout, LeftIcon, MicrophoneIcon } from '@melog/ui';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
@@ -123,7 +124,7 @@ export default function EmotionRecordPage() {
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 flex flex-col items-center justify-between px-4">
+        <div className="flex-1 flex flex-col items-center justify-around px-4">
           <div className="flex flex-col items-center justify-center">
             <h1 className="text-3xl font-meetme text-center text-white mb-4">
               목소리를 듣고 있어요
@@ -136,12 +137,8 @@ export default function EmotionRecordPage() {
           </div>
 
           {/* Audio Visualization */}
-          <div className="flex items-end space-x-2 mb-12">
-            <div className="w-4 h-12 bg-[#6bfcc1] rounded-lg"></div>
-            <div className="w-4 h-8 bg-[#fff471] rounded-lg"></div>
-            <div className="w-4 h-8 bg-[#ffbbdd] rounded-lg"></div>
-            <div className="w-4 h-8 bg-[#6ba1db] rounded-lg"></div>
-            <div className="w-4 h-6 bg-[#fff471] rounded-lg"></div>
+          <div className="flex w-20 h-20">
+            <LottieRecordLoading />
           </div>
 
           {/* Recording Controls */}
