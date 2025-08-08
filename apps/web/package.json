@@ -13,6 +13,7 @@
   "dependencies": {
     "@melog/shared": "file:../../packages/shared",
     "@melog/ui": "file:../../packages/ui",
+    "lottie-react": "^2.4.1",
     "next": "^14.2.13",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
