@@ -1,5 +1,6 @@
 'use client';
 
+import LottieSelectCharacters from '@/components/lotties/LottieSelectCharacters';
 import { Layout } from '@melog/ui';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
@@ -40,9 +41,9 @@ export default function EmotionAnalysisPage() {
           </div>
 
           {/* Loading Animation */}
-          <div className="flex flex-col items-center mb-12">
-            <div className="w-52 h-52 bg-gray-800 rounded-lg mb-4 flex items-center justify-center">
-              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-white"></div>
+          <div className="flex flex-col items-center mb-12 mt-6">
+            <div className="w-[100px] h-[100px] flex items-center justify-center">
+              <LottieSelectCharacters />
             </div>
           </div>
         </div>
