@@ -3,20 +3,20 @@
 import { Layout, Button } from '@melog/ui';
 import { useAppStore } from '@melog/shared';
 import { useRouter } from 'next/navigation';
-import MainIcon from '@/assets/icons/MainIcon.svg';
+import LottieSelectCharacters from '@/components/lotties/LottieSelectCharacters';
 
 export default function EmotionPage() {
   const router = useRouter();
-  const { user, theme, setTheme } = useAppStore();
+  const { user } = useAppStore();
 
   const handleEmotionRecord = () => {
     // 감정 기록 화면으로 이동 (색 선택 화면)
     router.push('/emotion/select');
   };
 
-  const toggleTheme = () => {
-    setTheme(theme === 'light' ? 'dark' : 'light');
-  };
+  // const toggleTheme = () => {
+  //   setTheme(theme === 'light' ? 'dark' : 'light');
+  // };
 
   // 현재 날짜 정보
   const today = new Date();
@@ -58,8 +58,10 @@ export default function EmotionPage() {
             </h1>
 
             {/* Main Illustration */}
-            <div className="flex flex-col items-center">
-              <MainIcon className="w-36 h-36" />
+            <div className="flex justify-center">
+              <div className="w-40 h-40">
+                <LottieSelectCharacters />
+              </div>
             </div>
 
             {/* Record Button */}
