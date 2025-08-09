@@ -6,14 +6,18 @@ export const API_CONFIG = {
 
 export const API_ENDPOINTS = {
   EMOTION: {
-    RECORD: '/api/emotion/record',
-    ANALYZE: '/api/emotion/analyze',
-    HISTORY: '/api/emotion/history',
+    RECORD: '/emotion/record',
+    ANALYZE: '/emotion/analyze',
+    HISTORY: '/emotion/history',
   },
-  USER: '/api/users',
+  USER: '/users',
   FEED: {
-    LIST: '/api/feed',
-    DETAIL: '/api/feed/:id',
-    CREATE: '/api/feed/create',
+    LIST: '/feed',
+    DETAIL: '/feed/:id',
+    CREATE: '/feed/create',
   },
 } as const;
+
+export const QUERY_KEYS = {
+  NICKNAME: 'nickname',
+};

@@ -4,12 +4,14 @@ import { Layout, Button, Input } from '@melog/ui';
 import { useAppStore } from '@melog/shared';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
+import { useCreateNickname } from '../../features/user/hooks/useUserApi';
 
 export default function OnboardingPage() {
   const router = useRouter();
   const { setUser } = useAppStore();
   const [nickname, setNickname] = useState('');
   const [error, setError] = useState('');
+  const createNickname = useCreateNickname();
 
   // emotion 페이지 prefetch
   useEffect(() => {
@@ -44,8 +46,14 @@ export default function OnboardingPage() {
     setUser({ name: nickname.trim() });
     setError('');
 
-    // 홈 화면으로 이동
-    router.push('/emotion');
+    createNickname.mutate(nickname.trim(), {
+      onSuccess: () => {
+        router.push('/emotion');
+      },
+      onError: () => {
+        router.push('/emotion');
+      },
+    });
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {

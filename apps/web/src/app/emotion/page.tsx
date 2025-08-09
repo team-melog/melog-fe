@@ -4,10 +4,12 @@ import { Layout, Button } from '@melog/ui';
 import { useAppStore } from '@melog/shared';
 import { useRouter } from 'next/navigation';
 import LottieSelectCharacters from '@/components/lotties/LottieSelectCharacters';
+// import { useGetNickname } from '@/features/user/hooks/useUserApi';
 
 export default function EmotionPage() {
   const router = useRouter();
   const { user } = useAppStore();
+  // const { data: nickname } = useGetNickname(user?.name || '');
 
   const handleEmotionRecord = () => {
     // 감정 기록 화면으로 이동 (색 선택 화면)
