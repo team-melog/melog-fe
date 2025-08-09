@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 import { intensityLabels } from '@melog/shared';
 import { useAppStore } from '@melog/shared';
+import { svgComponents } from '@/assets/emotions/EmotionSprite';
 
 function EmotionInputContent() {
   const router = useRouter();
@@ -14,6 +15,22 @@ function EmotionInputContent() {
   // URL 파라미터에서 선택한 감정 정보 가져오기
   const selectedEmotion = searchParams.get('emotion');
   const selectedIntensity = searchParams.get('intensity');
+
+  // 감정과 강도에 따른 아이콘 ID 매핑
+  const emotionIcons: { [key: string]: string[] } = {
+    기쁨: ['Yellow1', 'Yellow2', 'Yellow3', 'Yellow4', 'Yellow5'],
+    설렘: ['Pink1', 'Pink2', 'Pink3', 'Pink4', 'Pink5'],
+    평온: ['Green1', 'Green2', 'Green3', 'Green4', 'Green5'],
+    분노: ['Red1', 'Red2', 'Red3', 'Red4', 'Red5'],
+    슬픔: ['Blue1', 'Blue2', 'Blue3', 'Blue4', 'Blue5'],
+    지침: ['Grey1', 'Grey2', 'Grey3', 'Grey4', 'Grey5'],
+  };
+  const selectedIconId =
+    emotionIcons[selectedEmotion || ''][Number(selectedIntensity) - 1];
+
+  const SvgComponent = selectedIconId ? svgComponents[selectedIconId] : null;
+
+  console.log('2', selectedEmotion, selectedIntensity, SvgComponent);
 
   const handleVoiceSelect = () => {
     // 녹음 화면으로 이동
@@ -67,6 +84,22 @@ function EmotionInputContent() {
           <div>
             <div className="w-[158px] h-[158px] bg-red-500 mb-6"></div>
 
+            {/* <div className="w-[158px] h-[158px] flex items-center justify-center">
+               {SvgComponent && (
+                <SvgComponent
+                  width={158}
+                  height={158}
+                  style={{
+                    width: '158px',
+                    height: '158px',
+                    minWidth: '158px',
+                    minHeight: '158px',
+                  }}
+                  className="!w-[158px] !h-[158px]"
+                />
+              )} 
+            </div> */}
+
             <div className="text-center text-gray-500 mb-12">
               <p className="text-xl font-meetme leading-tight">
                 AI가 이야기를 분석하고
@@ -82,7 +115,7 @@ function EmotionInputContent() {
               {/* Voice Recording Option */}
               <button
                 onClick={handleVoiceSelect}
-                className="w-full bg-[#060607] hover:bg-[#2a4967] text-white py-3 px-8 rounded-3xl transition-colors text-xl font-meetme"
+                className="w-full bg-[#060607] text-white py-3 px-8 rounded-3xl transition-colors text-xl font-meetme"
               >
                 음성으로 녹음하기
               </button>

@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { emotions, intensityLabels } from '@melog/shared';
 import React from 'react';
+import { EmotionSprite } from '@/assets/emotions';
 
 interface EmotionSelection {
   emotion: string;
@@ -127,7 +128,7 @@ export default function EmotionSelectPage() {
                   {emotion.colors.map((color, colIndex) => (
                     <div
                       key={colIndex}
-                      className={`relative flex items-center justify-center border-r border-b border-[#eae9e9] ${
+                      className={`flex items-center justify-center border-r border-b border-[#eae9e9] ${
                         colIndex === 4 ? 'border-r-0' : ''
                       } ${
                         rowIndex === emotions.length - 1 ? 'border-b-0' : ''
@@ -137,17 +138,21 @@ export default function EmotionSelectPage() {
                         onClick={() =>
                           handleEmotionSelect(emotion.name, colIndex, color)
                         }
-                        className={`w-3/4 h-3/4 min-w-[40px] min-h-[40px] transition-all ${
+                        className={`relative w-[50px] h-[50px] min-w-[40px] min-h-[40px] transition-all ${
                           selectedEmotion?.emotion === emotion.name &&
                           selectedEmotion?.intensity === colIndex + 1
                             ? ''
-                            : 'hover:bg-gray-50'
+                            : ''
                         }`}
-                        style={{ backgroundColor: color }}
                       >
+                        <EmotionSprite
+                          emotion={emotion.name}
+                          step={colIndex + 1}
+                          size={50}
+                        />
                         {selectedEmotion?.emotion === emotion.name &&
                           selectedEmotion?.intensity === colIndex + 1 && (
-                            <CheckIcon className="absolute right-1 bottom-1" />
+                            <CheckIcon className="absolute -right-[0px] -bottom-[0px]" />
                           )}
                       </button>
                     </div>

@@ -12,7 +12,7 @@
       "id": "image_0",
       "w": 900,
       "h": 900,
-      "u": "/lottie/images/",
+      "u": "/lottie/selectChractersImages/",
       "p": "img_0.png",
       "e": 0
     },
@@ -20,7 +20,7 @@
       "id": "image_1",
       "w": 900,
       "h": 900,
-      "u": "/lottie/images/",
+      "u": "/lottie/selectChractersImages/",
       "p": "img_1.png",
       "e": 0
     },
@@ -28,7 +28,7 @@
       "id": "image_2",
       "w": 900,
       "h": 900,
-      "u": "/lottie/images/",
+      "u": "/lottie/selectChractersImages/",
       "p": "img_2.png",
       "e": 0
     },
@@ -36,7 +36,7 @@
       "id": "image_3",
       "w": 900,
       "h": 900,
-      "u": "/lottie/images/",
+      "u": "/lottie/selectChractersImages/",
       "p": "img_3.png",
       "e": 0
     },
@@ -44,7 +44,7 @@
       "id": "image_4",
       "w": 900,
       "h": 900,
-      "u": "/lottie/images/",
+      "u": "/lottie/selectChractersImages/",
       "p": "img_4.png",
       "e": 0
     },
@@ -52,7 +52,7 @@
       "id": "image_5",
       "w": 900,
       "h": 900,
-      "u": "/lottie/images/",
+      "u": "/lottie/selectChractersImages/",
       "p": "img_5.png",
       "e": 0
     }
