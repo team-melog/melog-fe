@@ -11,18 +11,9 @@ const compat = new FlatCompat({
 
 const eslintConfig = [
   {
-    ignores: [
-      'node_modules/**',
-      '.next/**',
-      'dist/**',
-      'build/**',
-      'out/**',
-    ],
+    ignores: ['node_modules/**', '.next/**', 'dist/**', 'build/**', 'out/**'],
   },
-  ...compat.extends(
-    'next/core-web-vitals',
-    'next/typescript'
-  ),
+  ...compat.extends('next/core-web-vitals', 'next/typescript'),
   {
     rules: {
       'react/react-in-jsx-scope': 'off',

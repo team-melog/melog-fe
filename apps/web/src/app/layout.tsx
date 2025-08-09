@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import './globals.css';
+import Providers from './utils/Provider';
 
 // Test comment for Husky + lint-staged test
 
@@ -47,7 +48,7 @@ export default function RootLayout({
         />
       </head>
       <body className={`${meetme.variable} font-sans antialiased`}>
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

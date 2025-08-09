@@ -6,11 +6,15 @@ import { Suspense } from 'react';
 import { intensityLabels } from '@melog/shared';
 import { useAppStore } from '@melog/shared';
 import { svgComponents } from '@/assets/emotions/EmotionSprite';
+import { useCreateEmotionRecord } from '@/features/emotion';
 
 function EmotionInputContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const user = useAppStore(state => state.user);
+
+  // 감정 기록 생성 훅 사용
+  const { createRecord, loading, error } = useCreateEmotionRecord();
 
   // URL 파라미터에서 선택한 감정 정보 가져오기
   const selectedEmotion = searchParams.get('emotion');
@@ -32,14 +36,38 @@ function EmotionInputContent() {
 
   console.log('2', selectedEmotion, selectedIntensity, SvgComponent);
 
-  const handleVoiceSelect = () => {
-    // 녹음 화면으로 이동
-    router.push('/emotion/record');
+  const handleVoiceSelect = async () => {
+    try {
+      // 감정 기록 생성
+      if (selectedEmotion && selectedIntensity) {
+        await createRecord({
+          emotion: selectedEmotion,
+          intensity: Number(selectedIntensity),
+          description: '음성 녹음을 통한 감정 기록',
+        });
+      }
+      // 녹음 화면으로 이동
+      router.push('/emotion/record');
+    } catch (error) {
+      console.error('감정 기록 생성 실패:', error);
+    }
   };
 
-  const handleTextSelect = () => {
-    // 텍스트 입력 화면으로 이동
-    router.push('/emotion/write');
+  const handleTextSelect = async () => {
+    try {
+      // 감정 기록 생성
+      if (selectedEmotion && selectedIntensity) {
+        await createRecord({
+          emotion: selectedEmotion,
+          intensity: Number(selectedIntensity),
+          description: '텍스트 입력을 통한 감정 기록',
+        });
+      }
+      // 텍스트 입력 화면으로 이동
+      router.push('/emotion/write');
+    } catch (error) {
+      console.error('감정 기록 생성 실패:', error);
+    }
   };
 
   const handleBack = () => {
@@ -110,22 +138,39 @@ function EmotionInputContent() {
           </div>
 
           <div className="w-full">
+            {/* Error Display */}
+            {error && (
+              <div className="w-full bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                {error}
+              </div>
+            )}
+
             {/* Selection Options */}
             <div className="w-full space-y-4 mb-4">
               {/* Voice Recording Option */}
               <button
                 onClick={handleVoiceSelect}
-                className="w-full bg-[#060607] text-white py-3 px-8 rounded-3xl transition-colors text-xl font-meetme"
+                disabled={loading}
+                className={`w-full py-3 px-8 rounded-3xl transition-colors text-xl font-meetme ${
+                  loading
+                    ? 'bg-gray-400 text-white cursor-not-allowed'
+                    : 'bg-[#060607] text-white hover:bg-[#1a1a1a]'
+                }`}
               >
-                음성으로 녹음하기
+                {loading ? '처리 중...' : '음성으로 녹음하기'}
               </button>
 
               {/* Text Input Option */}
               <button
                 onClick={handleTextSelect}
-                className="w-full border border-[#060607] text-[#060607] py-3 px-8 rounded-3xl transition-colors text-xl font-meetme"
+                disabled={loading}
+                className={`w-full py-3 px-8 rounded-3xl transition-colors text-xl font-meetme ${
+                  loading
+                    ? 'border-gray-400 text-gray-400 cursor-not-allowed'
+                    : 'border border-[#060607] text-[#060607] hover:bg-[#060607] hover:text-white'
+                }`}
               >
-                텍스트로 기록하기
+                {loading ? '처리 중...' : '텍스트로 기록하기'}
               </button>
             </div>
           </div>
