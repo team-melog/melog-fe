@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-// declare module '*.svg' {
-//   import React from 'react';
-//   const SVGComponent: React.FunctionComponent<React.SVGProps<SVGSVGElement>>;
-//   export default SVGComponent;
-// }
 declare module '*.svg' {
-  import { FC, SVGProps } from 'react';
-  const content: FC<SVGProps<SVGElement>>;
-  export default content;
+  import React from 'react';
+  const SVGComponent: React.FunctionComponent<React.SVGProps<SVGSVGElement>>;
+  export default SVGComponent;
 }
+// declare module '*.svg' {
+//   import { FC, SVGProps } from 'react';
+//   const content: FC<SVGProps<SVGElement>>;
+//   export default content;
+// }
 
 declare module '*.svg?url' {
   const content: any;

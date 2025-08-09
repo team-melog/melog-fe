@@ -15,7 +15,6 @@ export default function FeedDetailPage() {
 
   const entryId = params.id as string;
   const entry = entries.find(e => e.id === entryId);
-  console.log('d', entries);
 
   if (!entry) {
     return (
