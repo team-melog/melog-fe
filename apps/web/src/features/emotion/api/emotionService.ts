@@ -36,41 +36,43 @@ export class EmotionService {
   }
 
   // 감정 기록 생성
-  static async createEmotionRecord(
+  static async createEmotion(
+    nickname: string,
     request: CreateEmotionRecordRequest
   ): Promise<EmotionRecordResponse> {
-    return apiClient.post<EmotionRecord>(API_ENDPOINTS.EMOTION.RECORD, request);
+    const url = API_ENDPOINTS.EMOTION.LIST.replace(':nickname', nickname);
+    return apiClient.post<EmotionRecord>(url, request);
   }
 
   // 감정 기록 조회 (페이지네이션)
-  static async getEmotionRecords(page = 1, limit = 10) {
+  static async getEmotionList(nickname: string, page: number, size: number) {
+    const url = API_ENDPOINTS.EMOTION.HISTORY.replace(':nickname', nickname);
+    // console.log('url', url, nickname, page, size);
     return apiClient.get<EmotionRecordsResponse>(
-      `${API_ENDPOINTS.EMOTION.HISTORY}?page=${page}&limit=${limit}`
+      `${url}?page=${page}&size=${size}`
     );
   }
 
   // 감정 기록 상세 조회
-  static async getEmotionRecord(id: string): Promise<EmotionRecordResponse> {
-    return apiClient.get<EmotionRecord>(
-      `${API_ENDPOINTS.EMOTION.RECORD}/${id}`
-    );
+  static async getEmotionDetail(id: string): Promise<EmotionRecordResponse> {
+    return apiClient.get<EmotionRecord>(`${API_ENDPOINTS.EMOTION.LIST}/${id}`);
   }
 
   // 감정 기록 수정
-  static async updateEmotionRecord(
+  static async updateEmotion(
     id: string,
     request: UpdateEmotionRecordRequest
   ): Promise<EmotionRecordResponse> {
     return apiClient.put<EmotionRecord>(
-      `${API_ENDPOINTS.EMOTION.RECORD}/${id}`,
+      `${API_ENDPOINTS.EMOTION.LIST}/${id}`,
       request
     );
   }
 
   // 감정 기록 삭제
-  static async deleteEmotionRecord(id: string): Promise<EmotionRecordResponse> {
+  static async deleteEmotion(id: string): Promise<EmotionRecordResponse> {
     return apiClient.delete<EmotionRecord>(
-      `${API_ENDPOINTS.EMOTION.RECORD}/${id}`
+      `${API_ENDPOINTS.EMOTION.LIST}/${id}`
     );
   }
 

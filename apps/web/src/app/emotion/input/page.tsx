@@ -5,8 +5,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 import { intensityLabels } from '@melog/shared';
 import { useAppStore } from '@melog/shared';
-import { svgComponents } from '@/assets/emotions/EmotionSprite';
 import { useCreateEmotionRecord } from '@/features/emotion';
+import { svgComponents } from '@/assets/svgs/EmotionSvg';
 
 function EmotionInputContent() {
   const router = useRouter();
@@ -14,7 +14,11 @@ function EmotionInputContent() {
   const user = useAppStore(state => state.user);
 
   // 감정 기록 생성 훅 사용
-  const { createRecord, loading, error } = useCreateEmotionRecord();
+  const {
+    mutate: createRecord,
+    isPending: loading,
+    error,
+  } = useCreateEmotionRecord();
 
   // URL 파라미터에서 선택한 감정 정보 가져오기
   const selectedEmotion = searchParams.get('emotion');
@@ -34,16 +38,17 @@ function EmotionInputContent() {
 
   const SvgComponent = selectedIconId ? svgComponents[selectedIconId] : null;
 
-  console.log('2', selectedEmotion, selectedIntensity, SvgComponent);
-
   const handleVoiceSelect = async () => {
     try {
       // 감정 기록 생성
       if (selectedEmotion && selectedIntensity) {
         await createRecord({
-          emotion: selectedEmotion,
-          intensity: Number(selectedIntensity),
-          description: '음성 녹음을 통한 감정 기록',
+          nickname: user?.name || '',
+          request: {
+            emotion: selectedEmotion,
+            intensity: Number(selectedIntensity),
+            description: '음성 녹음을 통한 감정 기록',
+          },
         });
       }
       // 녹음 화면으로 이동
@@ -58,9 +63,12 @@ function EmotionInputContent() {
       // 감정 기록 생성
       if (selectedEmotion && selectedIntensity) {
         await createRecord({
-          emotion: selectedEmotion,
-          intensity: Number(selectedIntensity),
-          description: '텍스트 입력을 통한 감정 기록',
+          nickname: user?.name || '',
+          request: {
+            emotion: selectedEmotion,
+            intensity: Number(selectedIntensity),
+            description: '텍스트 입력을 통한 감정 기록',
+          },
         });
       }
       // 텍스트 입력 화면으로 이동
@@ -110,23 +118,9 @@ function EmotionInputContent() {
           </div>
 
           <div>
-            <div className="w-[158px] h-[158px] bg-red-500 mb-6"></div>
-
-            {/* <div className="w-[158px] h-[158px] flex items-center justify-center">
-               {SvgComponent && (
-                <SvgComponent
-                  width={158}
-                  height={158}
-                  style={{
-                    width: '158px',
-                    height: '158px',
-                    minWidth: '158px',
-                    minHeight: '158px',
-                  }}
-                  className="!w-[158px] !h-[158px]"
-                />
-              )} 
-            </div> */}
+            <div className="w-[150px] h-[150px] flex items-center justify-center mb-4">
+              {SvgComponent && <SvgComponent width={150} height={150} />}
+            </div>
 
             <div className="text-center text-gray-500 mb-12">
               <p className="text-xl font-meetme leading-tight">
@@ -141,7 +135,7 @@ function EmotionInputContent() {
             {/* Error Display */}
             {error && (
               <div className="w-full bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                {error}
+                {error.message}
               </div>
             )}
 

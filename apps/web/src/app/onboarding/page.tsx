@@ -4,7 +4,7 @@ import { Layout, Button, Input } from '@melog/ui';
 import { useAppStore } from '@melog/shared';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { useCreateNickname } from '../../features/user/hooks/useUserApi';
+import { useCreateNickname } from '@/features/user/hooks/useUserApi';
 
 export default function OnboardingPage() {
   const router = useRouter();

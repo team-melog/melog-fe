@@ -28,7 +28,7 @@ export const useCreateNickname = () => {
     mutationKey: [QUERY_KEYS.NICKNAME],
     mutationFn: (nickname: string) => UserService.createNickname(nickname),
     onSuccess: (data, nickname) => {
-      console.log('data', data, nickname);
+      //   console.log('data', data, nickname);
       queryClient.setQueryData(userKeys.nickname(nickname), data);
       queryClient.invalidateQueries({ queryKey: userKeys.nicknames() });
     },

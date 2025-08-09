@@ -6,9 +6,9 @@ export const API_CONFIG = {
 
 export const API_ENDPOINTS = {
   EMOTION: {
-    RECORD: '/emotion/record',
-    ANALYZE: '/emotion/analyze',
-    HISTORY: '/emotion/history',
+    LIST: '/users/:nickname/emotions',
+    ANALYZE: '/users/:nickname/emotions',
+    HISTORY: '/users/:nickname/emotions',
   },
   USER: '/users',
   FEED: {
