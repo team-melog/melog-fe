@@ -46,30 +46,33 @@ export default function EmotionRecordPage() {
     }
   }, [audioBlob, setRecordedAudio]);
 
-  const handleFinishRecording = () => {
+  const handleFinishRecording = async () => {
+    await handleStopRecording();
+    // console.log('audioBlob', audioBlob);
+
     // 녹음된 오디오가 있으면 analysis 페이지로 이동
-    if (audioBlob) {
-      setStoreTranscription(transcription);
-      if (selectedEmotion) {
-        // 선택된 감정 정보를 URL 파라미터로 전달
-        const params = new URLSearchParams({
-          emotion: selectedEmotion,
-          intensity: selectedIntensity || '',
-          color: selectedColor || '',
-        });
-        router.push(`/emotion/analysis?${params.toString()}`);
-      }
-    } else {
-      // 녹음된 오디오가 없으면 no-result 페이지로
-      if (selectedEmotion) {
-        const params = new URLSearchParams({
-          emotion: selectedEmotion,
-          intensity: selectedIntensity || '',
-          color: selectedColor || '',
-        });
-        router.push(`/emotion/no-result?${params.toString()}`);
-      }
+    // if (audioBlob) {
+    setStoreTranscription(transcription);
+    if (selectedEmotion) {
+      // 선택된 감정 정보를 URL 파라미터로 전달
+      const params = new URLSearchParams({
+        emotion: selectedEmotion,
+        intensity: selectedIntensity || '',
+        color: selectedColor || '',
+      });
+      router.push(`/emotion/analysis?${params.toString()}`);
     }
+    // } else {
+    //   // 녹음된 오디오가 없으면 no-result 페이지로
+    //   if (selectedEmotion) {
+    //     const params = new URLSearchParams({
+    //       emotion: selectedEmotion,
+    //       intensity: selectedIntensity || '',
+    //       color: selectedColor || '',
+    //     });
+    //     router.push(`/emotion/no-result?${params.toString()}`);
+    //   }
+    // }
   };
 
   const handleBack = () => {
@@ -78,7 +81,7 @@ export default function EmotionRecordPage() {
     router.back();
   };
 
-  const handleStopRecording = () => {
+  const handleStopRecording = async () => {
     stopRecording();
   };
 

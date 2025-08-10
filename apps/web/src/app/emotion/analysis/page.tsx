@@ -100,13 +100,12 @@ export default function EmotionAnalysisPage() {
         });
         router.push(`/emotion/result?${params.toString()}`);
       }
-    } catch (error) {
-      console.error('감정 분석 실패:', error);
+    } catch (e) {
       // setAnalysisResult({
       //   success: false,
-      //   error: '알 수 없는 오류가 발생했습니다.',
+      //   error: e,
       // });
-      setAnalysisResult({ success: true, data: null }); // 테스트용
+      setAnalysisResult({ success: true, data: e }); // 테스트용
     } finally {
       setIsAnalyzing(false);
     }

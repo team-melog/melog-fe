@@ -1,9 +1,11 @@
 'use client';
 
+import React from 'react';
 import { Layout, Button } from '@melog/ui';
 import { useAppStore } from '@melog/shared';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
+import { svgComponents } from '@/assets/svgs/EmotionSvg';
 
 export default function EmotionResultPage() {
   const router = useRouter();
@@ -12,18 +14,55 @@ export default function EmotionResultPage() {
     'keep' | 'change' | null
   >(null);
 
+  const searchParams = useSearchParams();
+  const selectedEmotion = searchParams.get('emotion');
+  const selectedIntensity = Number(searchParams.get('intensity'));
+
   // 더미 감정 분석 결과 데이터
   const emotionResults = [
     { emotion: '지침', percentage: 50, color: '#dee1e2', textColor: '#838e96' },
     { emotion: '분노', percentage: 30, color: '#ffb8b8', textColor: '#ed3a3a' },
     { emotion: '평온', percentage: 20, color: '#ccffe4', textColor: '#0cda86' },
-  ];
+  ].sort((a, b) => b.percentage - a.percentage); // percentage 기준 내림차순 정렬
 
   // 더미 데이터
-  const testResult = '지침';
-  const mainEmotionColor = emotionResults.find(
-    el => el.emotion === testResult
-  )?.textColor; // 지침 색상
+  const mainEmotion = emotionResults[0]; // 정렬 후 0번째 인덱스가 가장 높은 percentage
+  const mainEmotionColor = mainEmotion.textColor;
+
+  const emotionIcons = {
+    기쁨: ['Yellow1', 'Yellow2', 'Yellow3', 'Yellow4', 'Yellow5'],
+    설렘: ['Pink1', 'Pink2', 'Pink3', 'Pink4', 'Pink5'],
+    평온: ['Green1', 'Green2', 'Green3', 'Green4', 'Green5'],
+    분노: ['Red1', 'Red2', 'Red3', 'Red4', 'Red5'],
+    슬픔: ['Blue1', 'Blue2', 'Blue3', 'Blue4', 'Blue5'],
+    지침: ['Grey1', 'Grey2', 'Grey3', 'Grey4', 'Grey5'],
+  };
+
+  // percentage를 5단계로 나누어 단계 계산 (0-20: 1단계, 21-40: 2단계, 41-60: 3단계, 61-80: 4단계, 81-100: 5단계)
+  const getEmotionStep = (percentage: number) => {
+    if (percentage <= 20) return 1;
+    if (percentage <= 40) return 2;
+    if (percentage <= 60) return 3;
+    if (percentage <= 80) return 4;
+    return 5;
+  };
+
+  // 각 감정에 대해 해당하는 단계의 아이콘 키를 계산하는 함수
+  const getEmotionIconKey = (emotion: string, percentage: number) => {
+    const step = getEmotionStep(percentage);
+    return emotionIcons[emotion as keyof typeof emotionIcons]?.[step - 1];
+  };
+
+  const mainEmotionIconKey = getEmotionIconKey(
+    mainEmotion.emotion,
+    mainEmotion.percentage
+  );
+  const selectedEmotionIconKey =
+    emotionIcons[selectedEmotion as keyof typeof emotionIcons]?.[
+      selectedIntensity - 1
+    ];
+
+  console.log('selectedEmotionIconKey', selectedEmotionIconKey);
 
   const aiSummary =
     '오늘 목소리에는 지침(50%), 분노(30%), 평온(20%)이 섞여 있었습니다. 업무량이 많아 몸과 마음이 무겁지만, 일 자체에는 여전히 흥미를 느끼고 있는 상태예요. 다만 주변 동료와의 관계나 환경에서 오는 스트레스가 피로감을 키우고 있어요.\n이런 상황에서는 잠깐의 휴식이나 가벼운 대화로 긴장을 풀어주는 것이 도움이 될 수 있습니다. 당신의 열정은 여전히 살아있으니, 에너지를 회복할 시간을 꼭 챙겨주세요.';
@@ -40,10 +79,6 @@ export default function EmotionResultPage() {
     router.push('/emotion/final');
   };
 
-  const handleBack = () => {
-    router.back();
-  };
-
   return (
     <Layout showTabBar={false}>
       <div className="min-h-screen bg-white flex flex-col py-10">
@@ -54,7 +89,9 @@ export default function EmotionResultPage() {
             AI가 정밀하게 분석한
             <br />
             오늘 {user?.name || '사용자'}님은&nbsp;
-            <span style={{ color: mainEmotionColor }}>{testResult}색</span>
+            <span style={{ color: mainEmotionColor }}>
+              {mainEmotion.emotion}색
+            </span>
             이에요
           </h1>
 
@@ -62,20 +99,60 @@ export default function EmotionResultPage() {
           <div className="flex flex-col mb-8">
             {/* Main Emotion Circle */}
             <div className="relative mb-4 px-6">
-              <div
-                className="w-40 h-40 rounded-lg flex items-center justify-center"
-                style={{ backgroundColor: mainEmotionColor }}
-              ></div>
+              <div className="w-40 h-40 rounded-lg flex items-center justify-center">
+                {mainEmotionIconKey && svgComponents[mainEmotionIconKey] ? (
+                  React.createElement(svgComponents[mainEmotionIconKey], {
+                    width: 160,
+                    height: 160,
+                  })
+                ) : (
+                  <span className="text-lg text-gray-500">
+                    {mainEmotion.emotion}
+                  </span>
+                )}
+              </div>
 
               {/* Secondary Emotion Circles */}
-              <div
-                className="absolute bottom-0 right-3 w-20 h-20 rounded-lg"
-                style={{ backgroundColor: '#ffb8b8' }}
-              />
-              <div
-                className="absolute top-0 right-3 w-20 h-20 rounded-lg"
-                style={{ backgroundColor: '#ccffe4' }}
-              />
+              <div className="absolute bottom-0 right-3 w-20 h-20 rounded-lg flex items-center justify-center">
+                {(() => {
+                  const secondEmotion = emotionResults[1]; // 분노 30%
+                  const secondEmotionIconKey = getEmotionIconKey(
+                    secondEmotion.emotion,
+                    secondEmotion.percentage
+                  );
+                  return secondEmotionIconKey &&
+                    svgComponents[secondEmotionIconKey] ? (
+                    React.createElement(svgComponents[secondEmotionIconKey], {
+                      width: 80,
+                      height: 80,
+                    })
+                  ) : (
+                    <span className="text-sm text-gray-500">
+                      {secondEmotion.emotion}
+                    </span>
+                  );
+                })()}
+              </div>
+              <div className="absolute top-0 right-3 w-20 h-20 rounded-lg flex items-center justify-center">
+                {(() => {
+                  const thirdEmotion = emotionResults[2]; // 평온 20%
+                  const thirdEmotionIconKey = getEmotionIconKey(
+                    thirdEmotion.emotion,
+                    thirdEmotion.percentage
+                  );
+                  return thirdEmotionIconKey &&
+                    svgComponents[thirdEmotionIconKey] ? (
+                    React.createElement(svgComponents[thirdEmotionIconKey], {
+                      width: 80,
+                      height: 80,
+                    })
+                  ) : (
+                    <span className="text-sm text-gray-500">
+                      {thirdEmotion.emotion}
+                    </span>
+                  );
+                })()}
+              </div>
             </div>
           </div>
 
@@ -135,12 +212,34 @@ export default function EmotionResultPage() {
               onClick={handleKeepColor}
               className={`w-full py-4 rounded-xl font-meetme text-xl transition-colors border-2 bg-white ${
                 selectedOption === 'keep'
-                  ? 'bg-gray-500 text-white border-gray-500'
-                  : 'bg-white hover:bg-gray-50 text-black border-[#36393f]'
+                  ? ' text-white border-gray-500'
+                  : 'bg-white text-black border-[#36393f]'
               }`}
             >
               <div className="flex items-center justify-center space-x-3">
-                <div className="w-10 h-10 rounded-full bg-red-500"></div>
+                <div className="w-10 h-10 rounded-full">
+                  {/* {SelectedSvgComponent && (
+                    <SelectedSvgComponent width={40} height={40} />
+                  )} */}
+
+                  {(() => {
+                    const selectedEmotionIconKey = getEmotionIconKey(
+                      selectedEmotion || '',
+                      selectedIntensity * 20
+                    );
+                    return (
+                      selectedEmotionIconKey &&
+                      svgComponents[selectedEmotionIconKey] &&
+                      React.createElement(
+                        svgComponents[selectedEmotionIconKey],
+                        {
+                          width: 40,
+                          height: 40,
+                        }
+                      )
+                    );
+                  })()}
+                </div>
                 <span>처음에 선택한 색상</span>
               </div>
             </Button>
@@ -149,12 +248,23 @@ export default function EmotionResultPage() {
               onClick={handleChangeColor}
               className={`w-full py-4 rounded-xl font-meetme text-xl transition-colors border-2 ${
                 selectedOption === 'change'
-                  ? 'bg-gray-500 text-white border-gray-500'
-                  : 'bg-white hover:bg-gray-50 text-black border-[#36393f]'
+                  ? 'text-white border-gray-500'
+                  : 'bg-white text-black border-[#36393f]'
               }`}
             >
               <div className="flex items-center justify-center space-x-3">
-                <div className="w-10 h-10 rounded-full bg-gray-400"></div>
+                <div className="w-10 h-10 rounded-full">
+                  {mainEmotionIconKey && svgComponents[mainEmotionIconKey] ? (
+                    React.createElement(svgComponents[mainEmotionIconKey], {
+                      width: 40,
+                      height: 40,
+                    })
+                  ) : (
+                    <span className="text-lg text-gray-500">
+                      {mainEmotion.emotion}
+                    </span>
+                  )}
+                </div>
                 <span>AI 감정진단 색</span>
               </div>
             </Button>

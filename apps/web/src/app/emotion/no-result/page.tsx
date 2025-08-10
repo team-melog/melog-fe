@@ -1,13 +1,25 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Layout } from '@melog/ui';
+import Blue3 from '@/assets/svgs/Blue3';
 
 export default function NoResultPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const selectedEmotion = searchParams.get('emotion');
+  const selectedIntensity = searchParams.get('intensity');
+  const selectedColor = searchParams.get('color');
 
   const handleRetryRecording = () => {
-    router.push('/emotion/record');
+    if (selectedEmotion) {
+      const params = new URLSearchParams({
+        emotion: selectedEmotion,
+        intensity: selectedIntensity || '',
+        color: selectedColor || '',
+      });
+      router.push(`/emotion/record?${params.toString()}`);
+    }
   };
 
   const handleGoHome = () => {
@@ -16,7 +28,7 @@ export default function NoResultPage() {
 
   return (
     <Layout showTabBar={false}>
-      <div className="font-meetme min-h-svh bg-white flex flex-col items-center justify-around px-4">
+      <div className="font-meetme min-h-svh bg-white flex flex-col items-center justify-around">
         <div className="flex flex-col items-center justify-center gap-10 mt-10">
           <div className="flex flex-col items-center justify-center">
             <h1 className="text-[32px] text-center font-normal text-[#060607] tracking-[-0.32px] leading-[38.4px] mb-4">
@@ -26,7 +38,7 @@ export default function NoResultPage() {
           </div>
           {/* 감정 이미지 */}
           <div className="w-20 h-20">
-            <div className="w-20 h-20 bg-blue-500"></div>
+            <Blue3 width={80} height={80} />
           </div>
         </div>
 
