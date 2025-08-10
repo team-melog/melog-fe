@@ -19,9 +19,12 @@ const meetme = localFont({
 });
 
 export const metadata: Metadata = {
-  title: 'ME:LOG - 감정 기록 서비스',
+  title: 'ME:LOG - 감정 회고 서비스',
   description:
-    '사진과 음성을 활용해 하루 1분 만에 감정을 기록하고 AI 분석 결과를 즉시 확인할 수 있는 웹 기반 감정 기록 서비스입니다.',
+    '음성 또는 텍스트로 하루의 감정을 기록하고 되돌아볼 수 있는 감정 회고 서비스입니다.',
+  openGraph: {
+    images: '/static/images/MelogOpenGraph.png',
+  },
 };
 
 export default function RootLayout({
