@@ -2,28 +2,32 @@
 
 import LottieRecordLoading from '@/components/lotties/LottieRecordLoading';
 import { Layout, LeftIcon, MicrophoneIcon } from '@melog/ui';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
-// import { useAudioRecorder } from '@melog/shared';
+import { useAudioRecorder } from '@melog/shared';
+import { useEmotionStore } from '@/features/store';
 
 export default function EmotionRecordPage() {
   const router = useRouter();
   const [transcription, setTranscription] = useState<string>('');
 
-  // const {
-  //   isRecording,
-  //   recordingTime,
-  //   realtimeText,
-  //   // interimText,
-  //   startRecording,
-  //   stopRecording,
-  //   resetRecording,
-  // } = useAudioRecorder();
+  // URL 파라미터에서 선택한 감정 정보 가져오기
+  const searchParams = useSearchParams();
+  const selectedEmotion = searchParams.get('emotion');
+  const selectedIntensity = searchParams.get('intensity');
+  const selectedColor = searchParams.get('color');
 
-  // 임시 상태 (실제 녹음 기능 주석처리)
-  const [isRecording, setIsRecording] = useState(false);
-  const [recordingTime, setRecordingTime] = useState(0);
-  const [realtimeText, setRealtimeText] = useState('');
+  const {
+    isRecording,
+    recordingTime,
+    startRecording,
+    stopRecording,
+    resetRecording,
+    audioBlob,
+  } = useAudioRecorder();
+
+  const { setRecordedAudio, setTranscription: setStoreTranscription } =
+    useEmotionStore();
 
   // 시간을 MM:SS 형식으로 변환 (남은 시간 표시)
   const formatTime = (seconds: number) => {
@@ -35,73 +39,47 @@ export default function EmotionRecordPage() {
   // 남은 시간 계산 (60초 - 녹음 시간)
   const timeLeft = Math.max(0, 60 - recordingTime);
 
-  // 임시 녹음 함수들
-  const startRecording = () => {
-    setIsRecording(true);
-    setRecordingTime(0);
-    setRealtimeText('');
-    setTranscription('');
-  };
-
-  const stopRecording = () => {
-    setIsRecording(false);
-  };
-
-  const resetRecording = () => {
-    setIsRecording(false);
-    setRecordingTime(0);
-    setRealtimeText('');
-    setTranscription('');
-  };
-
-  // 임시 타이머 (실제 녹음 기능 주석처리)
+  // 녹음 완료 시 오디오 파일 저장
   useEffect(() => {
-    let interval: NodeJS.Timeout;
-
-    if (isRecording && recordingTime < 60) {
-      interval = setInterval(() => {
-        setRecordingTime(prev => prev + 1);
-      }, 1000);
-    } else if (recordingTime >= 60) {
-      setIsRecording(false);
+    if (audioBlob) {
+      setRecordedAudio(audioBlob);
     }
-
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [isRecording, recordingTime]);
-
-  // 실시간 텍스트 업데이트 (임시)
-  useEffect(() => {
-    if (realtimeText) {
-      setTranscription(realtimeText);
-    }
-  }, [realtimeText]);
-
-  // const handleDeleteRecording = () => {
-  //   setRecordedAudio(null);
-  //   setTranscription('');
-  //   setTimeLeft(60);
-  //   setIsRecording(false);
-  // };
+  }, [audioBlob, setRecordedAudio]);
 
   const handleFinishRecording = () => {
-    // 음성이 없으면 결과 없음 페이지로, 있으면 감정 분석 페이지로 이동
-    const trimmedText = transcription.trim();
-    console.log('Transcription:', transcription);
-    console.log('Trimmed text:', trimmedText);
-    console.log('Text length:', trimmedText.length);
-
-    if (!trimmedText || trimmedText.length < 2) {
-      // router.push('/emotion/no-result');
-      router.push('/emotion/analysis'); //임시
+    // 녹음된 오디오가 있으면 analysis 페이지로 이동
+    if (audioBlob) {
+      setStoreTranscription(transcription);
+      if (selectedEmotion) {
+        // 선택된 감정 정보를 URL 파라미터로 전달
+        const params = new URLSearchParams({
+          emotion: selectedEmotion,
+          intensity: selectedIntensity || '',
+          color: selectedColor || '',
+        });
+        router.push(`/emotion/analysis?${params.toString()}`);
+      }
     } else {
-      router.push('/emotion/analysis');
+      // 녹음된 오디오가 없으면 no-result 페이지로
+      if (selectedEmotion) {
+        const params = new URLSearchParams({
+          emotion: selectedEmotion,
+          intensity: selectedIntensity || '',
+          color: selectedColor || '',
+        });
+        router.push(`/emotion/no-result?${params.toString()}`);
+      }
     }
   };
 
   const handleBack = () => {
+    stopRecording();
+    resetRecording();
     router.back();
+  };
+
+  const handleStopRecording = () => {
+    stopRecording();
   };
 
   return (
@@ -143,25 +121,9 @@ export default function EmotionRecordPage() {
 
           {/* Recording Controls */}
           <div className="flex items-center space-x-8 mb-8">
-            {/* Delete Button */}
-            {/* <button
-              onClick={handleDeleteRecording}
-              className="w-12 h-12 bg-gray-600 rounded-lg flex items-center justify-center"
-            >
-              <span className="text-sm font-semibold text-white">삭제</span>
-            </button> */}
-
             {/* Main Record/Pause Button */}
             <button
-              onClick={
-                isRecording
-                  ? () => {
-                      stopRecording();
-                      resetRecording();
-                      setTranscription('');
-                    }
-                  : startRecording
-              }
+              onClick={isRecording ? handleStopRecording : startRecording}
               className="w-20 h-20 bg-white rounded-full flex items-center justify-center"
             >
               {isRecording ? (
@@ -173,35 +135,17 @@ export default function EmotionRecordPage() {
                 <MicrophoneIcon color="black" />
               )}
             </button>
-
-            {/* Save Button */}
-            {/* <button
-              onClick={handleFinishRecording}
-              disabled={!recordedAudio && !isRecording}
-              className={`w-12 h-12 rounded-lg flex items-center justify-center ${
-                recordedAudio || isRecording
-                  ? 'bg-gray-600 hover:bg-gray-500'
-                  : 'bg-gray-700 text-gray-400'
-              }`}
-            >
-              <span className="text-sm font-semibold text-white">저장</span>
-            </button> */}
           </div>
 
           {/* Real-time Transcription Display */}
-          {/* {(realtimeText || interimText) && (
+          {transcription && (
             <div className="w-full max-w-sm bg-gray-800 rounded-lg p-4 mb-4">
               <p className="text-sm text-gray-300">
                 <strong>실시간 음성 인식:</strong>
               </p>
-              <p className="text-sm text-gray-400 mt-2">{realtimeText}</p>
-              {interimText && (
-                <p className="text-sm text-gray-500 mt-1 italic">
-                  {interimText}...
-                </p>
-              )}
+              <p className="text-sm text-gray-400 mt-2">{transcription}</p>
             </div>
-          )} */}
+          )}
         </div>
       </div>
     </Layout>

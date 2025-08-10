@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { emotions, intensityLabels } from '@melog/shared';
 import React from 'react';
 import { EmotionSprite } from '@/assets/emotions';
+import { useEmotionStore } from '@/features/store';
 
 interface EmotionSelection {
   emotion: string;
@@ -19,6 +20,7 @@ export default function EmotionSelectPage() {
   const { user } = useAppStore();
   const [selectedEmotion, setSelectedEmotion] =
     useState<EmotionSelection | null>(null);
+  const { setSelectedEmotion: setSelectedEmotionStore } = useEmotionStore();
 
   const handleEmotionSelect = (
     emotionName: string,
@@ -30,6 +32,9 @@ export default function EmotionSelectPage() {
       intensity: intensity + 1, // 1-5 강도로 변환
       color: color,
     });
+
+    // 스토어에 선택된 감정 정보 저장
+    setSelectedEmotionStore({ emotion: emotionName, intensity: intensity });
   };
 
   const handleSkip = () => {

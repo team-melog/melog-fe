@@ -2,30 +2,48 @@ import { apiClient } from '../../../shared/api';
 import { API_ENDPOINTS } from '../../../shared/api/config';
 import type {
   EmotionRecord,
-  EmotionAnalysisRequest,
-  EmotionAnalysisResult,
+  //   EmotionAnalysisRequest,
+  //   EmotionAnalysisResult,
   CreateEmotionRecordRequest,
   UpdateEmotionRecordRequest,
   EmotionStats,
   EmotionRecordResponse,
-  EmotionAnalysisResponse,
+  //   EmotionAnalysisResponse,
   EmotionRecordsResponse,
   EmotionStatsResponse,
 } from './types';
 
 export class EmotionService {
   // 감정 분석
-  static async analyzeEmotion(
-    request: EmotionAnalysisRequest
-  ): Promise<EmotionAnalysisResponse> {
-    const formData = new FormData();
-    formData.append('audioFile', request.audioFile);
-    if (request.description) {
-      formData.append('description', request.description);
-    }
+  //   static async analyzeEmotion(
+  //     request: EmotionAnalysisRequest
+  //   ): Promise<EmotionAnalysisResponse> {
+  //     const formData = new FormData();
+  //     formData.append('audioFile', request.audioFile);
+  //     if (request.userSelectedEmotion) {
+  //       formData.append('userSelectedEmotion', request.userSelectedEmotion);
+  //     }
 
-    return apiClient.post<EmotionAnalysisResult>(
-      API_ENDPOINTS.EMOTION.ANALYZE,
+  //     return apiClient.post<EmotionAnalysisResult>(
+  //       API_ENDPOINTS.EMOTION.ANALYZE,
+  //       formData,
+  //       {
+  //         headers: {
+  //           'Content-Type': 'multipart/form-data',
+  //         },
+  //       }
+  //     );
+  //   }
+
+  // 감정 기록 생성
+  static async createEmotion(
+    nickname: string,
+    request: CreateEmotionRecordRequest,
+    formData?: FormData
+  ) {
+    // FormData를 사용하여 파일과 함께 전송
+    return apiClient.post<EmotionRecord>(
+      API_ENDPOINTS.EMOTION.LIST.replace(':nickname', nickname),
       formData,
       {
         headers: {
@@ -33,15 +51,6 @@ export class EmotionService {
         },
       }
     );
-  }
-
-  // 감정 기록 생성
-  static async createEmotion(
-    nickname: string,
-    request: CreateEmotionRecordRequest
-  ): Promise<EmotionRecordResponse> {
-    const url = API_ENDPOINTS.EMOTION.LIST.replace(':nickname', nickname);
-    return apiClient.post<EmotionRecord>(url, request);
   }
 
   // 감정 기록 조회 (페이지네이션)

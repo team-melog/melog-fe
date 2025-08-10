@@ -5,6 +5,7 @@ import { useAppStore } from '@melog/shared';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { useCreateNickname } from '@/features/user/hooks/useUserApi';
+// import { apiClient } from '@/shared';
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -18,7 +19,7 @@ export default function OnboardingPage() {
     router.prefetch('/emotion');
   }, [router]);
 
-  const handleNicknameSubmit = () => {
+  const handleNicknameSubmit = async () => {
     // 유효성 검사
     if (!nickname.trim()) {
       setError('닉네임을 입력해주세요');
@@ -46,6 +47,15 @@ export default function OnboardingPage() {
     setUser({ name: nickname.trim() });
     setError('');
 
+    // try {
+    //   const response = await apiClient.post('/users', {
+    //     nickname: nickname.trim(),
+    //   });
+    //   console.log('response', response);
+    //   router.push('/emotion');
+    // } catch (e) {
+    //   console.error(e);
+    // }
     createNickname.mutate(nickname.trim(), {
       onSuccess: () => {
         router.push('/emotion');

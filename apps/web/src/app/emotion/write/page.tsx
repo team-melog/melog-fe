@@ -1,14 +1,21 @@
 'use client';
 
 import { Layout, LeftIcon } from '@melog/ui';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
+import { useEmotionStore } from '@/features/store';
 
 export default function EmotionWritePage() {
   const router = useRouter();
+  const { setTextarea, setRecordedAudio } = useEmotionStore();
   const [text, setText] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const searchParams = useSearchParams();
+  const selectedEmotion = searchParams.get('emotion');
+  const selectedIntensity = searchParams.get('intensity');
+  const selectedColor = searchParams.get('color');
 
   // 키보드 표시 여부 감지
   useEffect(() => {
@@ -91,8 +98,19 @@ export default function EmotionWritePage() {
 
   const handleSave = () => {
     if (isTextValid) {
-      // 텍스트 저장 후 감정 분석 화면으로 이동
-      router.push('/emotion/analysis');
+      // 텍스트를 전역 상태에 저장 / 오디오 리셋
+      setRecordedAudio(null);
+      setTextarea(text);
+
+      // 감정 분석 화면으로 이동
+      if (selectedEmotion) {
+        const params = new URLSearchParams({
+          emotion: selectedEmotion,
+          intensity: selectedIntensity || '',
+          color: selectedColor || '',
+        });
+        router.push(`/emotion/analysis?${params.toString()}`);
+      }
     } else {
       // 텍스트가 없으면 에러 메시지 표시
       setErrorMessage('텍스트를 입력해주세요');

@@ -5,24 +5,19 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 import { intensityLabels } from '@melog/shared';
 import { useAppStore } from '@melog/shared';
-import { useCreateEmotionRecord } from '@/features/emotion';
 import { svgComponents } from '@/assets/svgs/EmotionSvg';
+import { useEmotionStore } from '@/features/store';
 
 function EmotionInputContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const user = useAppStore(state => state.user);
-
-  // 감정 기록 생성 훅 사용
-  const {
-    mutate: createRecord,
-    isPending: loading,
-    error,
-  } = useCreateEmotionRecord();
+  const { setTextarea, setRecordedAudio } = useEmotionStore();
 
   // URL 파라미터에서 선택한 감정 정보 가져오기
   const selectedEmotion = searchParams.get('emotion');
   const selectedIntensity = searchParams.get('intensity');
+  const selectedColor = searchParams.get('color');
 
   // 감정과 강도에 따른 아이콘 ID 매핑
   const emotionIcons: { [key: string]: string[] } = {
@@ -39,42 +34,28 @@ function EmotionInputContent() {
   const SvgComponent = selectedIconId ? svgComponents[selectedIconId] : null;
 
   const handleVoiceSelect = async () => {
-    try {
-      // 감정 기록 생성
-      if (selectedEmotion && selectedIntensity) {
-        await createRecord({
-          nickname: user?.name || '',
-          request: {
-            emotion: selectedEmotion,
-            intensity: Number(selectedIntensity),
-            description: '음성 녹음을 통한 감정 기록',
-          },
-        });
-      }
-      // 녹음 화면으로 이동
-      router.push('/emotion/record');
-    } catch (error) {
-      console.error('감정 기록 생성 실패:', error);
+    if (selectedEmotion) {
+      // 선택된 감정 정보를 URL 파라미터로 전달
+      const params = new URLSearchParams({
+        emotion: selectedEmotion,
+        intensity: selectedIntensity || '',
+        color: selectedColor || '',
+      });
+      setTextarea('');
+      router.push(`/emotion/record?${params.toString()}`);
     }
   };
 
   const handleTextSelect = async () => {
-    try {
-      // 감정 기록 생성
-      if (selectedEmotion && selectedIntensity) {
-        await createRecord({
-          nickname: user?.name || '',
-          request: {
-            emotion: selectedEmotion,
-            intensity: Number(selectedIntensity),
-            description: '텍스트 입력을 통한 감정 기록',
-          },
-        });
-      }
-      // 텍스트 입력 화면으로 이동
-      router.push('/emotion/write');
-    } catch (error) {
-      console.error('감정 기록 생성 실패:', error);
+    if (selectedEmotion) {
+      // 선택된 감정 정보를 URL 파라미터로 전달
+      const params = new URLSearchParams({
+        emotion: selectedEmotion,
+        intensity: selectedIntensity || '',
+        color: selectedColor || '',
+      });
+      setRecordedAudio(null);
+      router.push(`/emotion/write?${params.toString()}`);
     }
   };
 
@@ -132,39 +113,21 @@ function EmotionInputContent() {
           </div>
 
           <div className="w-full">
-            {/* Error Display */}
-            {error && (
-              <div className="w-full bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                {error.message}
-              </div>
-            )}
-
-            {/* Selection Options */}
             <div className="w-full space-y-4 mb-4">
               {/* Voice Recording Option */}
               <button
                 onClick={handleVoiceSelect}
-                disabled={loading}
-                className={`w-full py-3 px-8 rounded-3xl transition-colors text-xl font-meetme ${
-                  loading
-                    ? 'bg-gray-400 text-white cursor-not-allowed'
-                    : 'bg-[#060607] text-white hover:bg-[#1a1a1a]'
-                }`}
+                className={`w-full py-3 px-8 rounded-3xl transition-colors text-xl font-meetme bg-[#060607] text-white hover:bg-[#1a1a1a]`}
               >
-                {loading ? '처리 중...' : '음성으로 녹음하기'}
+                음성으로 녹음하기
               </button>
 
               {/* Text Input Option */}
               <button
                 onClick={handleTextSelect}
-                disabled={loading}
-                className={`w-full py-3 px-8 rounded-3xl transition-colors text-xl font-meetme ${
-                  loading
-                    ? 'border-gray-400 text-gray-400 cursor-not-allowed'
-                    : 'border border-[#060607] text-[#060607] hover:bg-[#060607] hover:text-white'
-                }`}
+                className={`w-full py-3 px-8 rounded-3xl transition-colors text-xl font-meetme border border-[#060607] text-[#060607] hover:bg-[#060607] hover:text-white`}
               >
-                {loading ? '처리 중...' : '텍스트로 기록하기'}
+                텍스트로 기록하기
               </button>
             </div>
           </div>

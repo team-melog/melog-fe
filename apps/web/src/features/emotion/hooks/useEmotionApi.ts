@@ -67,19 +67,18 @@ export const useEmotionList = (
 
 // 감정 분석 훅
 export const useEmotionAnalysis = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (request: EmotionAnalysisRequest) =>
-      EmotionService.analyzeEmotion(request),
-    onSuccess: () => {
-      // 감정 분석 성공 시 관련 캐시 무효화
-      queryClient.invalidateQueries({ queryKey: emotionKeys.stats() });
-    },
-    onError: error => {
-      console.error('감정 분석 실패:', error);
-    },
-  });
+  // const queryClient = useQueryClient();
+  // return useMutation({
+  //   mutationFn: (request: EmotionAnalysisRequest) =>
+  //     EmotionService.analyzeEmotion(request),
+  //   onSuccess: () => {
+  //     // 감정 분석 성공 시 관련 캐시 무효화
+  //     queryClient.invalidateQueries({ queryKey: emotionKeys.stats() });
+  //   },
+  //   onError: error => {
+  //     console.error('감정 분석 실패:', error);
+  //   },
+  // });
 };
 
 // 감정 기록 생성 훅
@@ -93,7 +92,36 @@ export const useCreateEmotionRecord = () => {
     }: {
       nickname: string;
       request: CreateEmotionRecordRequest;
-    }) => EmotionService.createEmotion(nickname, request),
+    }) => {
+      // FormData를 사용하여 파일과 데이터를 함께 전송
+      const formData = new FormData();
+
+      console.log('request', request);
+      // 오디오 파일이 있는 경우
+      if (request.audioFile) {
+        formData.append('audioFile', request.audioFile);
+      }
+
+      // 텍스트가 있는 경우
+      if (request.text) {
+        formData.append('text', request.text);
+      }
+
+      // 사용자 선택 감정 정보
+      if (request.userSelectedEmotion && request.userSelectedEmotion.type) {
+        // userSelectedEmotion을 개별 필드로 분리해서 추가
+        formData.append(
+          'userSelectedEmotion[type]',
+          request.userSelectedEmotion.type
+        );
+        formData.append(
+          'userSelectedEmotion[percentage]',
+          request.userSelectedEmotion.percentage.toString()
+        );
+      }
+
+      return EmotionService.createEmotion(nickname, request, formData);
+    },
     onSuccess: () => {
       // 생성된 감정 기록을 캐시에 추가
       queryClient.invalidateQueries({ queryKey: emotionKeys.lists() });

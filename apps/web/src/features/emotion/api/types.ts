@@ -6,7 +6,7 @@ export interface EmotionRecord {
   userId: string;
   emotion: string;
   intensity: number;
-  description?: string;
+  userSelectedEmotion?: string; // {"type":"설렘","percentage":30}
   audioUrl?: string;
   createdAt: string;
   updatedAt: string;
@@ -15,7 +15,8 @@ export interface EmotionRecord {
 // 감정 분석 요청 타입
 export interface EmotionAnalysisRequest {
   audioFile: File;
-  description?: string;
+  text?: string;
+  userSelectedEmotion?: { type: string[]; percentage: number };
 }
 
 // 감정 분석 결과 타입
@@ -31,19 +32,18 @@ export interface EmotionAnalysisResult {
   };
 }
 
-// 감정 기록 생성 요청 타입
+// 감정 기록 생성 요청 타입 - 음섬 or 텍스트
 export interface CreateEmotionRecordRequest {
-  emotion: string;
-  intensity: number;
-  description?: string;
-  audioUrl?: string;
+  audioFile?: File;
+  text?: string;
+  userSelectedEmotion?: { type: string | null; percentage: number };
 }
 
 // 감정 기록 수정 요청 타입
 export interface UpdateEmotionRecordRequest {
   emotion?: string;
-  intensity?: number;
-  description?: string;
+  text?: number;
+  userSelectedEmotion?: { type: string[]; percentage: number };
 }
 
 // 감정 통계 타입
