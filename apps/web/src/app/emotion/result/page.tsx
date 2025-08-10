@@ -6,8 +6,9 @@ import { useAppStore } from '@melog/shared';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { svgComponents } from '@/assets/svgs/EmotionSvg';
+import SuspenseWrapper from '@/components/SuspenseWrapper';
 
-export default function EmotionResultPage() {
+function EmotionResultContent() {
   const router = useRouter();
   const { user } = useAppStore();
   const [selectedOption, setSelectedOption] = useState<
@@ -246,7 +247,7 @@ export default function EmotionResultPage() {
 
             <Button
               onClick={handleChangeColor}
-              className={`w-full py-4 rounded-xl font-meetme text-xl transition-colors border-2 ${
+              className={`w-full py-4 rounded-xl font-meetme text-xl transition-colors border-2 : ${
                 selectedOption === 'change'
                   ? 'text-white border-gray-500'
                   : 'bg-white text-black border-[#36393f]'
@@ -272,5 +273,13 @@ export default function EmotionResultPage() {
         </div>
       </div>
     </Layout>
+  );
+}
+
+export default function EmotionResultPage() {
+  return (
+    <SuspenseWrapper>
+      <EmotionResultContent />
+    </SuspenseWrapper>
   );
 }

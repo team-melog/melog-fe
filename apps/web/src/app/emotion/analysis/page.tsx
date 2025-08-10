@@ -7,8 +7,9 @@ import { useEmotionStore } from '@/features/store';
 import { useAppStore } from '@melog/shared';
 import { useCreateEmotionRecord } from '@/features/emotion';
 import { LottieSelectCharacters } from '@/components/lotties';
+import SuspenseWrapper from '@/components/SuspenseWrapper';
 
-export default function EmotionAnalysisPage() {
+function EmotionAnalysisContent() {
   const router = useRouter();
 
   const searchParams = useSearchParams();
@@ -16,7 +17,7 @@ export default function EmotionAnalysisPage() {
   const selectedIntensity = searchParams.get('intensity');
   const selectedColor = searchParams.get('color');
 
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<{
     success?: boolean;
     data?: unknown;
@@ -183,5 +184,13 @@ export default function EmotionAnalysisPage() {
         </div>
       </div>
     </Layout>
+  );
+}
+
+export default function EmotionAnalysisPage() {
+  return (
+    <SuspenseWrapper>
+      <EmotionAnalysisContent />
+    </SuspenseWrapper>
   );
 }

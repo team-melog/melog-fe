@@ -3,8 +3,9 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Layout } from '@melog/ui';
 import Blue3 from '@/assets/svgs/Blue3';
+import SuspenseWrapper from '@/components/SuspenseWrapper';
 
-export default function NoResultPage() {
+function NoResultContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const selectedEmotion = searchParams.get('emotion');
@@ -59,5 +60,13 @@ export default function NoResultPage() {
         </div>
       </div>
     </Layout>
+  );
+}
+
+export default function NoResultPage() {
+  return (
+    <SuspenseWrapper>
+      <NoResultContent />
+    </SuspenseWrapper>
   );
 }

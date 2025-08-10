@@ -4,8 +4,9 @@ import { Layout, LeftIcon } from '@melog/ui';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 import { useEmotionStore } from '@/features/store';
+import SuspenseWrapper from '@/components/SuspenseWrapper';
 
-export default function EmotionWritePage() {
+function EmotionWriteContent() {
   const router = useRouter();
   const { setTextarea, setRecordedAudio } = useEmotionStore();
   const [text, setText] = useState('');
@@ -195,5 +196,13 @@ export default function EmotionWritePage() {
         </div>
       </div>
     </Layout>
+  );
+}
+
+export default function EmotionWritePage() {
+  return (
+    <SuspenseWrapper>
+      <EmotionWriteContent />
+    </SuspenseWrapper>
   );
 }

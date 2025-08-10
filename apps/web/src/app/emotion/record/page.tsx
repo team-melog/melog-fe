@@ -6,10 +6,11 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { useAudioRecorder } from '@melog/shared';
 import { useEmotionStore } from '@/features/store';
+import SuspenseWrapper from '@/components/SuspenseWrapper';
 
-export default function EmotionRecordPage() {
+function EmotionRecordContent() {
   const router = useRouter();
-  const [transcription, setTranscription] = useState<string>('');
+  const [transcription] = useState<string>('');
 
   // URL 파라미터에서 선택한 감정 정보 가져오기
   const searchParams = useSearchParams();
@@ -26,8 +27,7 @@ export default function EmotionRecordPage() {
     audioBlob,
   } = useAudioRecorder();
 
-  const { setRecordedAudio, setTranscription: setStoreTranscription } =
-    useEmotionStore();
+  const { setRecordedAudio } = useEmotionStore();
 
   // 시간을 MM:SS 형식으로 변환 (남은 시간 표시)
   const formatTime = (seconds: number) => {
@@ -52,7 +52,7 @@ export default function EmotionRecordPage() {
 
     // 녹음된 오디오가 있으면 analysis 페이지로 이동
     // if (audioBlob) {
-    setStoreTranscription(transcription);
+    // setStoreTranscription(transcription);
     if (selectedEmotion) {
       // 선택된 감정 정보를 URL 파라미터로 전달
       const params = new URLSearchParams({
@@ -152,5 +152,13 @@ export default function EmotionRecordPage() {
         </div>
       </div>
     </Layout>
+  );
+}
+
+export default function EmotionRecordPage() {
+  return (
+    <SuspenseWrapper>
+      <EmotionRecordContent />
+    </SuspenseWrapper>
   );
 }
