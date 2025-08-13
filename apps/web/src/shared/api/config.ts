@@ -11,6 +11,7 @@ export const API_ENDPOINTS = {
     ANALYZE: '/users/:nickname/emotions',
     HISTORY: '/users/:nickname/emotions',
     MONTHLY: '/users/:nickname/emotions/calendar',
+    UPDATE: '/users/:nickname/emotions/:id/select',
   },
   USER: '/users',
   FEED: {

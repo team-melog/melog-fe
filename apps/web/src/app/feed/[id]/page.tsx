@@ -1,10 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { Layout, LeftIcon, TrashIcon } from '@melog/ui';
 import { useAppStore } from '@melog/shared';
 import { emotionColorsByStep } from '@/entities/emotion/types';
+import { useEmotionDetail } from '@/features/emotion/hooks/useEmotionApi';
 
 const testData = {
   id: 1,
@@ -25,6 +26,10 @@ export default function FeedDetailPage() {
   const router = useRouter();
   const { user } = useAppStore();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const params = useParams();
+  const emotionId = params.id as string;
+  const { data: emotionDetail } = useEmotionDetail(user?.name || '', emotionId);
+  console.log('emotionDetail', emotionId, emotionDetail);
 
   // testData를 사용하여 감정 데이터 표시
   // 실제로는 params.id에 따라 다른 데이터를 가져와야 함

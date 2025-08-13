@@ -134,13 +134,11 @@ export const useCreateEmotionRecord = () => {
 };
 
 // 감정 기록 상세 조회 훅
-export const useEmotionRecord = (id: string) => {
+export const useEmotionDetail = (nickname: string, id: string) => {
   return useQuery({
     queryKey: emotionKeys.detail(id),
-    queryFn: () => EmotionService.getEmotionDetail(id),
+    queryFn: () => EmotionService.getEmotionDetail(nickname, id),
     enabled: !!id,
-    staleTime: 5 * 60 * 1000, // 5분간 데이터를 fresh로 유지
-    gcTime: 10 * 60 * 1000, // 10분간 캐시 유지
   });
 };
 
@@ -150,12 +148,14 @@ export const useUpdateEmotionRecord = () => {
 
   return useMutation({
     mutationFn: ({
+      nickname,
       id,
       request,
     }: {
+      nickname: string;
       id: string;
       request: UpdateEmotionRecordRequest;
-    }) => EmotionService.updateEmotion(id, request),
+    }) => EmotionService.updateEmotion(nickname, id, request),
     onSuccess: (data, { id }) => {
       // 수정된 감정 기록 캐시 업데이트
       queryClient.setQueryData(emotionKeys.detail(id), data);
@@ -173,8 +173,9 @@ export const useDeleteEmotionRecord = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: string) => EmotionService.deleteEmotion(id),
-    onSuccess: (_, id) => {
+    mutationFn: ({ nickname, id }: { nickname: string; id: string }) =>
+      EmotionService.deleteEmotion(nickname, id),
+    onSuccess: (_, { id }) => {
       // 삭제된 감정 기록 캐시 제거
       queryClient.removeQueries({ queryKey: emotionKeys.detail(id) });
       queryClient.invalidateQueries({ queryKey: emotionKeys.lists() });

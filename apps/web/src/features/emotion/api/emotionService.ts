@@ -54,9 +54,9 @@ export class EmotionService {
     );
   }
 
-  // 감정 기록 조회 (페이지네이션)
+  // 감정 기록 목록 조회 (페이지네이션)
   static async getEmotionList(nickname: string, page: number, size: number) {
-    const url = API_ENDPOINTS.EMOTION.HISTORY.replace(':nickname', nickname);
+    const url = API_ENDPOINTS.EMOTION.LIST.replace(':nickname', nickname);
     // console.log('url', url, nickname, page, size);
     return apiClient.get<EmotionRecordsResponse>(
       `${url}?page=${page}&size=${size}`
@@ -64,33 +64,38 @@ export class EmotionService {
   }
 
   // 감정 기록 상세 조회
-  static async getEmotionDetail(id: string): Promise<EmotionRecordResponse> {
-    return apiClient.get<EmotionRecord>(`${API_ENDPOINTS.EMOTION.LIST}/${id}`);
+  static async getEmotionDetail(
+    nickname: string,
+    id: string
+  ): Promise<EmotionRecordResponse> {
+    const url = API_ENDPOINTS.EMOTION.LIST.replace(':nickname', nickname);
+    return apiClient.get<EmotionRecord>(`${url}/${id}`);
   }
 
   // 감정 기록 수정
   static async updateEmotion(
+    nickname: string,
     id: string,
     request: UpdateEmotionRecordRequest
   ): Promise<EmotionRecordResponse> {
     return apiClient.put<EmotionRecord>(
-      `${API_ENDPOINTS.EMOTION.LIST}/${id}`,
+      `${API_ENDPOINTS.EMOTION.UPDATE.replace(':nickname', nickname).replace(':id', id)}`,
       request
     );
   }
 
   // 감정 기록 삭제
-  static async deleteEmotion(id: string): Promise<EmotionRecordResponse> {
-    return apiClient.delete<EmotionRecord>(
-      `${API_ENDPOINTS.EMOTION.LIST}/${id}`
-    );
+  static async deleteEmotion(
+    nickname: string,
+    id: string
+  ): Promise<EmotionRecordResponse> {
+    const url = API_ENDPOINTS.EMOTION.LIST.replace(':nickname', nickname);
+    return apiClient.delete<EmotionRecord>(`${url}/${id}`);
   }
 
   // 감정 통계 조회
   static async getEmotionStats(): Promise<EmotionStatsResponse> {
-    return apiClient.get<EmotionStats>(
-      `${API_ENDPOINTS.EMOTION.HISTORY}/stats`
-    );
+    return apiClient.get<EmotionStats>(`${API_ENDPOINTS.EMOTION.LIST}/stats`);
   }
 
   // 캘린더 월별 조회
