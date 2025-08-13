@@ -101,6 +101,14 @@ export class EmotionService {
     const url = API_ENDPOINTS.CHART.replace(':nickname', nickname);
     return apiClient.get<EmotionStats>(`${url}?month=${month}`);
   }
+  // 월별 키워드 및 한줄 요약 조회
+  static async getEmotionInsight(
+    nickname: string,
+    month: string // YYYY-MM
+  ): Promise<EmotionStatsResponse> {
+    const url = API_ENDPOINTS.INSIGHT.replace(':nickname', nickname);
+    return apiClient.get<EmotionStats>(`${url}?month=${month}`);
+  }
 
   // 캘린더 월별 조회
   static async getEmotionMonthly(

@@ -14,6 +14,7 @@ export const emotionKeys = {
   details: () => [...emotionKeys.all, 'detail'] as const,
   detail: (id: string) => [...emotionKeys.details(), id] as const,
   chart: ['chart'] as const,
+  insight: ['insight'] as const,
   monthly: ['monthly'] as const,
 };
 
@@ -199,6 +200,14 @@ export const useEmotionMonthly = (nickname: string, month: string) => {
   return useQuery({
     queryKey: emotionKeys.monthly,
     queryFn: () => EmotionService.getEmotionMonthly(nickname, month),
+    enabled: !!month,
+  });
+};
+
+export const useEmotionInsight = (nickname: string, month: string) => {
+  return useQuery({
+    queryKey: emotionKeys.insight,
+    queryFn: () => EmotionService.getEmotionInsight(nickname, month),
     enabled: !!month,
   });
 };

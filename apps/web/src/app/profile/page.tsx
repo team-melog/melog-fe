@@ -7,6 +7,7 @@ import ProfileIcon from '@/assets/icons/ProfileIcon.svg';
 import Link from 'next/link';
 import { emotionIconsByStep } from '@/entities/emotion/types';
 import { svgComponents } from '@/assets/svgs/EmotionSvg';
+import { useEmotionChart, useEmotionInsight } from '@/features/emotion';
 
 const testData = {
   thisMonth: {
@@ -29,6 +30,23 @@ const testData = {
 
 export default function ProfilePage() {
   const { user } = useAppStore();
+
+  // 현재 날짜를 기반으로 YYYY-MM 형식 생성
+  const currentMonth =
+    new Date().getFullYear() +
+    '-' +
+    String(new Date().getMonth() + 1).padStart(2, '0');
+
+  const { data: emotionChart } = useEmotionChart(
+    user?.name || '',
+    currentMonth
+  );
+  const { data: emotionInsight } = useEmotionInsight(
+    user?.name || '',
+    currentMonth
+  );
+  console.log('Chart', emotionChart);
+  console.log('Insight', emotionInsight);
 
   // 감정 기록이 있는지 확인 (testData 사용)
   const hasEmotionData = true; // testData가 있으므로 항상 true

@@ -20,6 +20,7 @@ export const API_ENDPOINTS = {
     CREATE: '/feed/create',
   },
   CHART: '/users/:nickname/emotions/summary/chart',
+  INSIGHT: '/users/:nickname/emotions/summary/insight',
 } as const;
 
 export const QUERY_KEYS = {
