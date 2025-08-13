@@ -13,7 +13,7 @@ export const emotionKeys = {
     [...emotionKeys.lists(), nickname, page, size] as const,
   details: () => [...emotionKeys.all, 'detail'] as const,
   detail: (id: string) => [...emotionKeys.details(), id] as const,
-  stats: () => [...emotionKeys.all, 'stats'] as const,
+  chart: ['chart'] as const,
   monthly: ['monthly'] as const,
 };
 
@@ -73,7 +73,7 @@ export const useEmotionAnalysis = () => {
   //     EmotionService.analyzeEmotion(request),
   //   onSuccess: () => {
   //     // 감정 분석 성공 시 관련 캐시 무효화
-  //     queryClient.invalidateQueries({ queryKey: emotionKeys.stats() });
+  //     queryClient.invalidateQueries({ queryKey: emotionKeys.chart() });
   //   },
   //   onError: error => {
   //     console.error('감정 분석 실패:', error);
@@ -125,7 +125,7 @@ export const useCreateEmotionRecord = () => {
     onSuccess: () => {
       // 생성된 감정 기록을 캐시에 추가
       queryClient.invalidateQueries({ queryKey: emotionKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: emotionKeys.stats() });
+      queryClient.invalidateQueries({ queryKey: emotionKeys.chart });
     },
     onError: error => {
       console.error('감정 기록 생성 실패:', error);
@@ -160,7 +160,7 @@ export const useUpdateEmotionRecord = () => {
       // 수정된 감정 기록 캐시 업데이트
       queryClient.setQueryData(emotionKeys.detail(id), data);
       queryClient.invalidateQueries({ queryKey: emotionKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: emotionKeys.stats() });
+      queryClient.invalidateQueries({ queryKey: emotionKeys.chart });
     },
     onError: error => {
       console.error('감정 기록 수정 실패:', error);
@@ -179,7 +179,7 @@ export const useDeleteEmotionRecord = () => {
       // 삭제된 감정 기록 캐시 제거
       queryClient.removeQueries({ queryKey: emotionKeys.detail(id) });
       queryClient.invalidateQueries({ queryKey: emotionKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: emotionKeys.stats() });
+      queryClient.invalidateQueries({ queryKey: emotionKeys.chart });
     },
     onError: error => {
       console.error('감정 기록 삭제 실패:', error);
@@ -188,12 +188,10 @@ export const useDeleteEmotionRecord = () => {
 };
 
 // 감정 통계 훅
-export const useEmotionStats = () => {
+export const useEmotionChart = (nickname: string, month: string) => {
   return useQuery({
-    queryKey: emotionKeys.stats(),
-    queryFn: () => EmotionService.getEmotionStats(),
-    staleTime: 5 * 60 * 1000, // 5분간 데이터를 fresh로 유지
-    gcTime: 10 * 60 * 1000, // 10분간 캐시 유지
+    queryKey: emotionKeys.chart,
+    queryFn: () => EmotionService.getEmotionChart(nickname, month),
   });
 };
 

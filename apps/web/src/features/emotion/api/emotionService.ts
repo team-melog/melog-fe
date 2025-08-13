@@ -94,8 +94,12 @@ export class EmotionService {
   }
 
   // 감정 통계 조회
-  static async getEmotionStats(): Promise<EmotionStatsResponse> {
-    return apiClient.get<EmotionStats>(`${API_ENDPOINTS.EMOTION.LIST}/stats`);
+  static async getEmotionChart(
+    nickname: string,
+    month: string // YYYY-MM
+  ): Promise<EmotionStatsResponse> {
+    const url = API_ENDPOINTS.CHART.replace(':nickname', nickname);
+    return apiClient.get<EmotionStats>(`${url}?month=${month}`);
   }
 
   // 캘린더 월별 조회

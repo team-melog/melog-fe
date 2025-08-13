@@ -2,16 +2,36 @@
 
 import { useMemo } from 'react';
 import { Button, Layout } from '@melog/ui';
-import { useAppStore, useEmotionStore, EMOTIONS } from '@melog/shared';
+import { useAppStore } from '@melog/shared';
 import ProfileIcon from '@/assets/icons/ProfileIcon.svg';
 import Link from 'next/link';
+import { emotionIconsByStep } from '@/entities/emotion/types';
+import { svgComponents } from '@/assets/svgs/EmotionSvg';
+
+const testData = {
+  thisMonth: {
+    기쁨: 50,
+    지침: 30,
+    설렘: 10,
+  },
+  compareWithLastMonth: {
+    기쁨: -5,
+    설렘: 10,
+  },
+  topKeywords: [
+    { keyword: '기쁨', weight: 40 },
+    { keyword: '지침', weight: 22 },
+    { keyword: '설렘', weight: 18 },
+  ],
+  monthlySummary:
+    '지침과 피곤이 반복되는 한 달이었습니다. 감정 기복이 큰 경향이 보입니다.',
+};
 
 export default function ProfilePage() {
   const { user } = useAppStore();
-  const { entries } = useEmotionStore();
 
-  // 감정 기록이 있는지 확인
-  const hasEmotionData = entries.length > 0;
+  // 감정 기록이 있는지 확인 (testData 사용)
+  const hasEmotionData = true; // testData가 있으므로 항상 true
 
   // 사용자 가입일부터 현재까지의 일수 계산
   const daysSinceJoin = useMemo(() => {
@@ -23,61 +43,50 @@ export default function ProfilePage() {
     return diffDays;
   }, []);
 
-  // 현재 월의 감정 데이터 분석
+  // 현재 월의 감정 데이터 분석 (testData 사용)
   const monthlyStats = useMemo(() => {
     if (!hasEmotionData) return null;
 
-    const currentMonth = new Date().getMonth();
-    const currentYear = new Date().getFullYear();
+    // thisMonth 데이터를 기반으로 감정 분포도 생성
+    const totalWeight = Object.values(testData.thisMonth).reduce(
+      (sum, weight) => sum + weight,
+      0
+    );
+    const emotionPercentages = Object.entries(testData.thisMonth).map(
+      ([emotion, weight]) => {
+        // 가중치를 20으로 나누어 5단계 step 계산 (1-5)
+        const step = Math.ceil(weight / 20);
 
-    // 현재 월의 감정 데이터만 필터링
-    const monthlyEntries = entries.filter(entry => {
-      const entryDate = new Date(entry.timestamp);
-      return (
-        entryDate.getMonth() === currentMonth &&
-        entryDate.getFullYear() === currentYear
-      );
-    });
-
-    if (monthlyEntries.length === 0) return null;
-
-    // 감정별 개수 계산
-    const emotionCounts: { [key: string]: number } = {};
-    monthlyEntries.forEach(entry => {
-      emotionCounts[entry.emotion] = (emotionCounts[entry.emotion] || 0) + 1;
-    });
-
-    // 감정별 비율 계산
-    const totalEntries = monthlyEntries.length;
-    const emotionPercentages = Object.entries(emotionCounts).map(
-      ([emotion, count]) => ({
-        emotion,
-        percentage: Math.round((count / totalEntries) * 100),
-        count,
-        color: EMOTIONS[emotion as keyof typeof EMOTIONS]?.color || '#gray-300',
-        name: EMOTIONS[emotion as keyof typeof EMOTIONS]?.name || emotion,
-      })
+        return {
+          emotion,
+          percentage: Math.round((weight / totalWeight) * 100),
+          step: step,
+          color:
+            emotion === '기쁨'
+              ? '#FFD700'
+              : emotion === '지침'
+                ? '#DEE1E2'
+                : emotion === '불안'
+                  ? '#8A2BE2'
+                  : '#8A2BE2',
+        };
+      }
     );
 
-    // 비율 순으로 정렬
-    emotionPercentages.sort((a, b) => b.percentage - a.percentage);
-
     return {
-      totalEntries,
-      emotionPercentages: emotionPercentages.slice(0, 4), // 상위 4개만 표시
+      totalEntries: Object.keys(testData.thisMonth).length,
+      emotionPercentages: emotionPercentages,
     };
-  }, [entries, hasEmotionData]);
+  }, [hasEmotionData]);
 
-  // 감정 키워드 분석 (실제로는 AI 분석 결과에서 가져올 예정)
+  // 감정 키워드 분석 (testData 사용)
   const emotionKeywords = useMemo(() => {
     if (!hasEmotionData) return [];
 
-    // 임시 키워드 데이터
-    return [
-      { keyword: '지침', count: 8 },
-      { keyword: '혼란', count: 3 },
-      { keyword: '의지', count: 2 },
-    ];
+    return testData.topKeywords.map(item => ({
+      keyword: item.keyword,
+      weight: item.weight,
+    }));
   }, [hasEmotionData]);
 
   return (
@@ -154,12 +163,24 @@ export default function ProfilePage() {
                       className="flex items-center justify-between"
                     >
                       <div className="flex items-center space-x-2">
-                        <div
-                          className="w-6 h-6"
-                          style={{ backgroundColor: emotion.color }}
-                        />
+                        <div className="w-6 h-6 flex items-center justify-center">
+                          {(() => {
+                            // emotionIconsByStep에서 해당 감정과 단계에 맞는 SVG 컴포넌트 찾기
+                            const iconId =
+                              emotionIconsByStep[
+                                emotion.emotion as keyof typeof emotionIconsByStep
+                              ]?.[emotion.step - 1]; // 계산된 step 사용
+                            const SvgComponent = iconId
+                              ? svgComponents[iconId]
+                              : null;
+
+                            if (!SvgComponent) return null;
+
+                            return <SvgComponent width={24} height={24} />;
+                          })()}
+                        </div>
                         <span className="text-[17px] font-normal text-[#36393f] tracking-[-0.17px] leading-[20.4px]">
-                          {emotion.name}
+                          {emotion.emotion}
                         </span>
                       </div>
                       <span className="text-[17px] font-normal text-[#36393f] tracking-[-0.17px] leading-[20.4px]">
@@ -182,7 +203,7 @@ export default function ProfilePage() {
                         {keyword.keyword}
                       </span>
                       <span className="px-2 py-1 bg-[#dee1e2] border border-[#c0c2c4] rounded-lg text-[18px] font-normal text-[#838e96] tracking-[-0.18px] leading-[21.6px]">
-                        {keyword.count}회
+                        {keyword.weight}%
                       </span>
                     </div>
                   ))}
