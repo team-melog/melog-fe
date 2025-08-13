@@ -1,39 +1,47 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter, useParams } from 'next/navigation';
-import { Layout, LeftIcon, MuteIcon, TrashIcon } from '@melog/ui';
-import { useEmotionStore, useAppStore } from '@melog/shared';
-import { EMOTIONS } from '@melog/shared';
+import { useRouter } from 'next/navigation';
+import { Layout, LeftIcon, TrashIcon } from '@melog/ui';
+import { useAppStore } from '@melog/shared';
+import { emotionColorsByStep } from '@/entities/emotion/types';
+
+const testData = {
+  id: 1,
+  text: '요즘 너무 지쳐서 술마시고 싶어...',
+  summary: '최근 불안과 지침이 반복되는 상태입니다.',
+  emotions: [
+    { type: '지침', percentage: 40, step: 2 },
+    { type: '슬픔', percentage: 30, step: 2 },
+    { type: '분노', percentage: 30, step: 2 },
+  ],
+  userSelectedEmotion: {
+    type: '설렘',
+    percentage: 30,
+  },
+};
 
 export default function FeedDetailPage() {
   const router = useRouter();
-  const params = useParams();
-  const { entries, deleteEntry } = useEmotionStore();
   const { user } = useAppStore();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  const entryId = params.id as string;
-  const entry = entries.find(e => e.id === entryId);
+  // testData를 사용하여 감정 데이터 표시
+  // 실제로는 params.id에 따라 다른 데이터를 가져와야 함
+  const entry = testData;
 
-  if (!entry) {
-    return (
-      <Layout>
-        <div className="flex flex-col items-center justify-center min-h-screen">
-          <p className="text-gray-500">감정 기록을 찾을 수 없습니다.</p>
-          <button
-            onClick={() => router.back()}
-            className="mt-4 text-blue-600 hover:text-blue-700"
-          >
-            뒤로 가기
-          </button>
-        </div>
-      </Layout>
-    );
-  }
+  // 가장 높은 percentage를 가진 감정을 메인 감정으로 선택
+  const mainEmotion = entry.emotions.reduce((prev, current) =>
+    prev.percentage > current.percentage ? prev : current
+  );
 
-  const emotionConfig = EMOTIONS[entry.emotion];
-  const date = new Date(entry.timestamp);
+  // emotionColorsByStep에서 해당 감정과 단계에 맞는 색상 가져오기
+  const mainEmotionColor =
+    emotionColorsByStep[mainEmotion.type as keyof typeof emotionColorsByStep]?.[
+      mainEmotion.step - 1
+    ] || '#b1b6ba';
+
+  const date = new Date('2025-08-01'); // testData에 date가 없으므로 임시로 설정
   const formattedDate = new Intl.DateTimeFormat('ko-KR', {
     year: 'numeric',
     month: '2-digit',
@@ -41,35 +49,26 @@ export default function FeedDetailPage() {
     weekday: 'long',
   }).format(date);
 
-  // AI 감정 분석 결과 (더미 데이터)
-  const emotionResults = [
-    {
-      name: '지침',
-      percentage: 50,
-      color: '#dee1e2',
-      borderColor: '#c0c2c4',
-      textColor: '#838e96',
-    },
-    {
-      name: '분노',
-      percentage: 30,
-      color: '#ffb8b8',
-      borderColor: '#ff5a5a',
-      textColor: '#ed3a3a',
-    },
-    {
-      name: '평온',
-      percentage: 20,
-      color: '#ccffe4',
-      borderColor: '#6bfcc1',
-      textColor: '#0cda86',
-    },
-  ];
+  // AI 감정 분석 결과 (testData의 emotions 사용)
+  const emotionResults = entry.emotions.map(emotion => {
+    const colors =
+      emotionColorsByStep[emotion.type as keyof typeof emotionColorsByStep];
+    const color = colors ? colors[emotion.step - 1] : '#cccccc';
 
-  const aiSummary = `오늘 ${user?.name || '사용자'}님의 목소리에는 지침(50%), 분노(30%), 평온(20%)이 섞여 있었습니다. 업무량이 많아 몸과 마음이 무겁지만, 일 자체에는 여전히 흥미를 느끼고 있는 상태예요. 다만 주변 동료와의 관계나 환경에서 오는 스트레스가 피로감을 키우고 있어요.\n\n이런 상황에서는 잠깐의 휴식이나 가벼운 대화로 긴장을 풀어주는 것이 도움이 될 수 있습니다. 당신의 열정은 여전히 살아있으니, 에너지를 회복할 시간을 꼭 챙겨주세요.`;
+    return {
+      name: emotion.type,
+      percentage: emotion.percentage,
+      color: color,
+      borderColor: color,
+      textColor: '#1f2024',
+    };
+  });
+
+  const aiSummary = `${user?.name || '사용자'}님의 감정 분석 결과입니다. ${entry.emotions.map(e => `${e.type}(${e.percentage}%)`).join(', ')}가 감지되었습니다.\n\n${entry.summary}`;
 
   const handleDelete = () => {
-    deleteEntry(entryId);
+    // testData는 정적 데이터이므로 실제 삭제는 불가능
+    // 대신 피드 목록으로 이동
     router.push('/feed');
   };
 
@@ -115,27 +114,16 @@ export default function FeedDetailPage() {
             <div className="flex justify-center mb-6">
               <div className="relative">
                 <div
-                  className="w-[220px] h-[220px] bg-[#b1b6ba] flex items-center justify-center"
-                  style={{ backgroundColor: emotionConfig?.color || '#b1b6ba' }}
+                  className="w-[220px] h-[220px] rounded-full flex items-center justify-center"
+                  style={{ backgroundColor: mainEmotionColor }}
                 ></div>
-
-                {/* Sound Icon Overlay (if voice note exists) */}
-                {entry.voiceNote && (
-                  <div className="absolute z-10 bottom-4 right-4 w-12 h-12 bg-black bg-opacity-70 rounded-full flex items-center justify-center">
-                    {entry.voiceNote ? (
-                      <MuteIcon color="white" />
-                    ) : (
-                      <MuteIcon color="#1F2024" />
-                    )}
-                  </div>
-                )}
               </div>
             </div>
 
             {/* AI Emotion Diagnosis Card */}
             <div className="space-y-4">
               <h3 className="text-[26px] font-normal text-[#060607] tracking-[-0.26px] leading-[31.2px]">
-                지침색 (AI 감정진단)
+                {mainEmotion.type}색 (AI 감정진단)
               </h3>
 
               {/* Emotion Tags */}
