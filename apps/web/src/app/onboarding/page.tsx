@@ -5,6 +5,7 @@ import { useAppStore } from '@melog/shared';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { useCreateNickname } from '@/features/user/hooks/useUserApi';
+import UserService from '@/features/user/api/userService';
 // import { apiClient } from '@/shared';
 
 export default function OnboardingPage() {
@@ -47,15 +48,32 @@ export default function OnboardingPage() {
     setUser({ name: nickname.trim() });
     setError('');
 
-    // try {
-    //   const response = await apiClient.post('/users', {
-    //     nickname: nickname.trim(),
-    //   });
-    //   console.log('response', response);
-    //   router.push('/emotion');
-    // } catch (e) {
-    //   console.error(e);
-    // }
+    try {
+      // 닉네임이 이미 존재하는지 확인
+      const existingNickname = await UserService.getNickname(nickname.trim());
+
+      console.log('existingNickname', existingNickname);
+
+      // 이미 존재하는 경우 바로 emotion 페이지로 이동
+      // if (existingNickname) {
+      router.push('/emotion');
+      //   return;
+      // }
+    } catch (error: unknown) {
+      // 닉네임이 존재하지 않는 경우 새로 생성
+      // createNickname.mutate(nickname.trim(), {
+      //   onSuccess: () => {
+      //     router.push('/emotion');
+      //   },
+      //   onError: () => {
+      //     router.push('/emotion');
+      //   },
+      // });
+
+      console.error(error);
+      return;
+    }
+    // 닉네임이 존재하지 않는 경우 새로 생성
     createNickname.mutate(nickname.trim(), {
       onSuccess: () => {
         router.push('/emotion');

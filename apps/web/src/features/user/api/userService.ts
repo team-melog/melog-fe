@@ -2,8 +2,8 @@ import { apiClient } from '../../../shared/api';
 import { API_ENDPOINTS } from '../../../shared/api/config';
 import type { NicknameRecord, NicknameRecordResponse } from './types';
 
+// 닉네임 조회
 export class UserService {
-  // 감정 통계 조회
   static async getNickname(nickname: string): Promise<NicknameRecordResponse> {
     return apiClient.get<NicknameRecord>(`${API_ENDPOINTS.USER}/${nickname}`);
   }

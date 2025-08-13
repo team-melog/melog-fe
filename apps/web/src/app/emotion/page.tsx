@@ -10,7 +10,6 @@ import { svgComponents } from '@/assets/svgs/EmotionSvg';
 export default function EmotionPage() {
   const router = useRouter();
   const { user } = useAppStore();
-  // const { data: nickname } = useGetNickname(user?.name || '');
   const { data: createRecord } = useEmotionList(user?.name || undefined, 0, 7);
 
   // 현재 날짜 정보

@@ -111,10 +111,10 @@ export default function CalendarPage() {
     <Layout showTabBar={true}>
       <div className=" min-h-screen bg-white flex flex-col pb-20">
         {/* AI 월별 요약 섹션 */}
-        <div className="bg-white border border-[#d0d2d7] rounded-[20px] p-4 my-6 mx-4">
+        <div className="bg-white border border-[#d0d2d7] rounded-[20px] p-4 my-6">
           <div className="space-y-2">
             <h2 className="font-meetme text-[18px] font-normal text-[#36393f] tracking-[-0.18px] leading-[21.6px]">
-              AI 월별 요약
+              AI 조언
             </h2>
             <p className="text-[15px] font-pretendard text-[#060607] tracking-[-0.15px] leading-6">
               {hasDataInCurrentMonth

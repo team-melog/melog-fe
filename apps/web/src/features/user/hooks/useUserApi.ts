@@ -16,7 +16,6 @@ export const useGetNickname = (nickname: string) => {
     queryKey: [QUERY_KEYS.NICKNAME],
     queryFn: () => UserService.getNickname(nickname),
     enabled: !!nickname, // nickname이 있을 때만 쿼리 실행
-    gcTime: 10 * 60 * 1000, // 10분간 캐시 유지
   });
 };
 

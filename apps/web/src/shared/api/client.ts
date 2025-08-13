@@ -15,6 +15,7 @@ class ApiClient {
       headers: {
         'Content-Type': 'application/json',
       },
+      withCredentials: true,
     });
 
     // 요청 인터셉터
@@ -46,7 +47,7 @@ class ApiClient {
           // 요청 설정 중 에러
           console.error('Request Error:', error.message);
         }
-        return Promise.reject(error);
+        return error;
       }
     );
   }
