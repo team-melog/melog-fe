@@ -11,6 +11,7 @@ import {
   emotionIconsByStep,
 } from '@/entities/emotion/types';
 import { svgComponents } from '@/assets/svgs/EmotionSvg';
+import { useEmotionList } from '@/features';
 
 const testData = {
   content: [
@@ -41,7 +42,9 @@ const testData = {
 
 export default function FeedPage() {
   const router = useRouter();
-  const user = useAppStore(state => state.user);
+  const { user } = useAppStore();
+  const { data: emotionList } = useEmotionList(user?.name || '', 0, 12);
+  console.log('emotionList', emotionList);
 
   // emotion 관련 페이지들 prefetch
   useEffect(() => {
