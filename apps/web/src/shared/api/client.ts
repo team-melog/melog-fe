@@ -15,7 +15,7 @@ class ApiClient {
       headers: {
         'Content-Type': 'application/json',
       },
-      withCredentials: true,
+      // withCredentials: false, // 쿠키 사용시 활성화
     });
 
     // 요청 인터셉터

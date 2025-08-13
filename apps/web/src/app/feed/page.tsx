@@ -11,6 +11,7 @@ import {
   emotionIconsByStep,
 } from '@/entities/emotion/types';
 import { svgComponents } from '@/assets/svgs/EmotionSvg';
+import { faceSvgComponents } from '@/assets/svgs/faces/FaceSvg';
 import { useEmotionList } from '@/features';
 
 const testData = {
@@ -177,9 +178,47 @@ export default function FeedPage() {
                   <button
                     key={card.id}
                     onClick={() => handleCardClick(card.id)}
-                    className="aspect-square border border-white relative group hover:opacity-80 transition-opacity"
-                    style={{ backgroundColor: getCardBackgroundColor(card) }}
-                  ></button>
+                    className="relative aspect-square border border-white group hover:opacity-80 transition-opacity"
+                  >
+                    {/* SVG 컴포넌트를 위에 렌더링 */}
+                    <div className="absolute z-10 flex items-center justify-center w-full h-full">
+                      {(() => {
+                        // emotionIconsByStep에서 해당 감정과 단계에 맞는 아이콘 ID 찾기
+                        const iconId =
+                          emotionIconsByStep[
+                            card.emotions[0]
+                              .type as keyof typeof emotionIconsByStep
+                          ]?.[card.emotions[0].step - 1];
+
+                        if (!iconId) return null;
+
+                        // 아이콘 ID를 파일명으로 변환 (예: Yellow1 -> Yellow, Pink2 -> Pink)
+                        const fileName = iconId.replace(/\d+$/, '');
+
+                        console.log('iconId:', iconId, 'fileName:', fileName);
+                        console.log(
+                          'faceSvgComponents keys:',
+                          Object.keys(faceSvgComponents)
+                        );
+                        console.log(
+                          'Available component:',
+                          faceSvgComponents[fileName]
+                        );
+
+                        // faceSvgComponents에서 해당 파일명의 컴포넌트 찾기
+                        const SvgComponent = faceSvgComponents[fileName];
+
+                        if (!SvgComponent) return null;
+
+                        return <SvgComponent width={32} height={32} />;
+                      })()}
+                    </div>
+
+                    {/* <div
+                      className="absolute inset-0"
+                      style={{ backgroundColor: getCardBackgroundColor(card) }}
+                    /> */}
+                  </button>
                 ))}
 
                 {/* Add New Button */}
@@ -203,9 +242,39 @@ export default function FeedPage() {
                   <button
                     key={card.id}
                     onClick={() => handleCardClick(card.id)}
-                    className="aspect-square border border-white relative group hover:opacity-80 transition-opacity"
-                    style={{ backgroundColor: getCardBackgroundColor(card) }}
-                  ></button>
+                    className="relative aspect-square border border-white group hover:opacity-80 transition-opacity"
+                  >
+                    {/* SVG 컴포넌트를 위에 렌더링 */}
+                    <div className="absolute top-0 left-0 z-10 flex items-center justify-center w-full h-full">
+                      {(() => {
+                        const iconId =
+                          emotionIconsByStep[
+                            card.emotions[0]
+                              .type as keyof typeof emotionIconsByStep
+                          ]?.[card.emotions[0].step - 1];
+
+                        if (!iconId) return null;
+
+                        // 아이콘 ID를 파일명으로 변환 (예: Yellow1 -> Yellow, Pink2 -> Pink)
+                        const fileName = iconId.replace(/\d+$/, '');
+
+                        // svgComponents에서 해당 파일명의 컴포넌트 찾기
+                        const SvgComponent = faceSvgComponents[fileName];
+
+                        console.log('fileName', fileName);
+
+                        if (!SvgComponent) return null;
+
+                        return (
+                          <SvgComponent width={50} height={50} color="black" />
+                        );
+                      })()}
+                    </div>
+                    <div
+                      className="absolute inset-0"
+                      style={{ backgroundColor: getCardBackgroundColor(card) }}
+                    />
+                  </button>
                 ))}
               </div>
             </div>
