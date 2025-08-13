@@ -4,8 +4,12 @@ import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Layout, LeftIcon, TrashIcon } from '@melog/ui';
 import { useAppStore } from '@melog/shared';
-import { emotionColorsByStep } from '@/entities/emotion/types';
+import {
+  emotionColorsByStep,
+  emotionIconsByStep,
+} from '@/entities/emotion/types';
 import { useEmotionDetail } from '@/features/emotion/hooks/useEmotionApi';
+import { svgComponents } from '@/assets/svgs/EmotionSvg';
 
 const testData = {
   id: 1,
@@ -117,11 +121,18 @@ export default function FeedDetailPage() {
 
             {/* Emotion Circle */}
             <div className="flex justify-center mb-6">
-              <div className="relative">
-                <div
-                  className="w-[220px] h-[220px] rounded-full flex items-center justify-center"
-                  style={{ backgroundColor: mainEmotionColor }}
-                ></div>
+              <div className="relative flex items-center justify-center">
+                {(() => {
+                  const iconId =
+                    emotionIconsByStep[
+                      entry.emotions[0].type as keyof typeof emotionIconsByStep
+                    ]?.[entry.emotions[0].step - 1];
+                  const SvgComponent = iconId ? svgComponents[iconId] : null;
+
+                  if (!SvgComponent) return null;
+
+                  return <SvgComponent width={220} height={220} />;
+                })()}
               </div>
             </div>
 
