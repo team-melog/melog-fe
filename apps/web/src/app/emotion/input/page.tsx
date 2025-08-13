@@ -21,7 +21,9 @@ function EmotionInputContent() {
   const selectedColor = searchParams.get('color');
 
   const selectedIconId =
-    emotionIconsByStep[selectedEmotion || ''][Number(selectedIntensity) - 1];
+    emotionIconsByStep[selectedEmotion as keyof typeof emotionIconsByStep]?.[
+      Number(selectedIntensity) - 1
+    ];
 
   const SvgComponent = selectedIconId ? svgComponents[selectedIconId] : null;
 
