@@ -57,9 +57,18 @@ export interface EmotionStats {
     averageIntensity: number;
   }>;
 }
+export interface EmotionMonthly {
+  date: string[];
+  emotions: {
+    type: string;
+    percentage: number;
+    step: number;
+  }[];
+}
 
 // API 응답 타입들
 export type EmotionRecordResponse = ApiResponse<EmotionRecord>;
 export type EmotionAnalysisResponse = ApiResponse<EmotionAnalysisResult>;
 export type EmotionRecordsResponse = PaginatedResponse<EmotionRecord>;
 export type EmotionStatsResponse = ApiResponse<EmotionStats>;
+export type EmotionMonthlyResponse = ApiResponse<EmotionMonthly>;

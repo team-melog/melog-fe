@@ -10,6 +10,7 @@ export const API_ENDPOINTS = {
     LIST: '/users/:nickname/emotions',
     ANALYZE: '/users/:nickname/emotions',
     HISTORY: '/users/:nickname/emotions',
+    MONTHLY: '/users/:nickname/emotions/calendar',
   },
   USER: '/users',
   FEED: {

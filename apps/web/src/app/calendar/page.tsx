@@ -1,15 +1,96 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
 import { Layout } from '@melog/ui';
-import { useEmotionStore } from '@melog/shared';
-import { EMOTIONS } from '@melog/shared';
+import { useAppStore } from '@melog/shared';
+import { useEmotionMonthly } from '@/features/emotion/hooks/useEmotionApi';
+import { svgComponents, emotionIcons } from '@/assets/svgs/EmotionSvg';
+import Link from 'next/link';
+
+// 날짜를 YYYY-MM-DD 형식으로 변환 (시간 제외)
+const formatDateOnly = (date: Date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+const testData = [
+  {
+    id: 1,
+    date: '2025-08-01',
+    emotions: [
+      { type: '지침', percentage: 70, step: 4 },
+      { type: '평온', percentage: 20, step: 1 },
+      { type: '분노', percentage: 10, step: 1 },
+    ],
+  },
+  {
+    id: 2,
+    date: '2025-08-02',
+    emotions: [
+      { type: '분노', percentage: 60, step: 3 },
+      { type: '설렘', percentage: 30, step: 2 },
+      { type: '기쁨', percentage: 10, step: 1 },
+    ],
+  },
+  {
+    id: 3,
+    date: '2025-08-11',
+    emotions: [
+      { type: '평온', percentage: 70, step: 4 },
+      { type: '기쁨', percentage: 10, step: 1 },
+      { type: '슬픔', percentage: 9, step: 1 },
+    ],
+  },
+];
 
 export default function CalendarPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const entries = useEmotionStore(state => state.entries);
-  const router = useRouter();
+  const { user } = useAppStore();
+  const { data: emotionMonthly } = useEmotionMonthly(
+    user?.name || '',
+    formatDateOnly(currentDate).slice(0, 7)
+  );
+
+  // 데이터 매핑
+  const testEmotionDataByDate = useMemo(() => {
+    const data: {
+      [key: string]: {
+        id: number;
+        emotion: string;
+        step: number;
+        svgComponent: React.ComponentType<{ width?: number; height?: number }>;
+      };
+    } = {};
+
+    testData.forEach(dayData => {
+      // 가장 높은 percentage를 가진 감정을 메인 감정으로 선택
+      const mainEmotion = dayData.emotions.reduce((prev, current) =>
+        prev.percentage > current.percentage ? prev : current
+      );
+
+      // emotionIcons에서 해당 감정과 단계에 맞는 SVG 컴포넌트 찾기
+      const iconKey =
+        emotionIcons[mainEmotion.type as keyof typeof emotionIcons]?.[
+          mainEmotion.step - 1
+        ];
+      const svgComponent = iconKey ? svgComponents[iconKey] : null;
+
+      if (svgComponent) {
+        data[dayData.date] = {
+          id: dayData.id,
+          emotion: mainEmotion.type,
+          step: mainEmotion.step,
+          svgComponent: svgComponent,
+        };
+      }
+    });
+
+    return data;
+  }, [testData]);
+
+  console.log('emotionMonthly', emotionMonthly);
 
   // 현재 월의 첫 번째 날과 마지막 날 계산
   const firstDayOfMonth = new Date(
@@ -26,32 +107,27 @@ export default function CalendarPage() {
   // 월의 첫 번째 날의 요일 (0: 일요일, 1: 월요일, ...)
   const firstDayWeekday = firstDayOfMonth.getDay();
 
-  // 날짜를 YYYY-MM-DD 형식으로 변환 (시간 제외)
-  const formatDateOnly = (date: Date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  };
-
   // 현재 월의 감정 데이터 매핑
   const emotionDataByDate = useMemo(() => {
-    const data: { [key: string]: { emotion: string; color: string } } = {};
+    const data: {
+      [key: string]: {
+        id: number;
+        emotion: string;
+        svgComponent?: React.ComponentType<{ width?: number; height?: number }>;
+      };
+    } = {};
 
-    entries.forEach(entry => {
-      const dateKey = formatDateOnly(entry.timestamp);
-      const emotionConfig = EMOTIONS[entry.emotion];
-
-      if (emotionConfig) {
-        data[dateKey] = {
-          emotion: entry.emotion,
-          color: emotionConfig.color,
-        };
-      }
+    Object.keys(testEmotionDataByDate).forEach(dateKey => {
+      const item = testEmotionDataByDate[dateKey];
+      data[dateKey] = {
+        id: item.id,
+        emotion: item.emotion,
+        svgComponent: item.svgComponent,
+      };
     });
 
     return data;
-  }, [entries]);
+  }, [testEmotionDataByDate]);
 
   // 현재 월에 데이터가 있는지 확인
   const hasDataInCurrentMonth = useMemo(() => {
@@ -196,40 +272,33 @@ export default function CalendarPage() {
                 const emotionData = emotionDataByDate[dateString];
                 const isToday = formatDateOnly(new Date()) === dateString;
 
-                // 해당 날짜의 감정 엔트리 찾기
-                const dayEntries = entries.filter(entry => {
-                  const entryDate = formatDateOnly(entry.timestamp);
-                  return entryDate === dateString;
-                });
-
                 return (
                   <div
                     key={index}
                     className={`h-fit flex flex-col items-center justify-center relative ${
-                      emotionData ? 'cursor-pointer hover:bg-gray-50' : ''
+                      emotionData ? 'cursor-pointer' : ''
                     }`}
-                    onClick={() => {
-                      if (dayEntries.length > 0) {
-                        // 첫 번째 엔트리로 이동 (여러 개가 있을 경우)
-                        router.push(`/feed/${dayEntries[0].id}`);
-                      }
-                    }}
                   >
-                    {/* 감정 색상 원 - 현재 달의 날짜에만 표시 */}
+                    {/* 감정 아이콘 - 현재 달의 날짜에만 표시 */}
                     {isCurrentMonth && (
                       <div className="w-10 h-10 mb-2 flex items-center justify-center">
                         {emotionData ? (
-                          // 감정 데이터가 있는 경우 - 감정 이미지 표시
-                          <div
-                            className="w-10 h-10"
-                            style={{ backgroundColor: emotionData.color }}
-                          />
+                          emotionData.svgComponent ? (
+                            <Link href={`/feed/${emotionData.id}`}>
+                              <emotionData.svgComponent
+                                width={40}
+                                height={40}
+                              />
+                            </Link>
+                          ) : null
                         ) : (
                           // 감정 데이터가 없는 경우 - 빈 원 표시
                           <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
                             <div
-                              className={`w-5 h-5 bg-opacity-50 rounded-sm ${
-                                isToday ? 'bg-[#D7E4FF]' : 'bg-[#ecedef]'
+                              className={`w-5 h-5 bg-opacity-50 rounded-[5px] ${
+                                isToday
+                                  ? 'bg-[#D7E4FF]'
+                                  : 'text-black bg-[#ECEDEF]'
                               }`}
                             ></div>
                           </div>

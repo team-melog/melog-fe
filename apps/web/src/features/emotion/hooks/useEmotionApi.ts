@@ -1,7 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { EmotionService } from '../api/emotionService';
 import type {
-  EmotionAnalysisRequest,
   CreateEmotionRecordRequest,
   UpdateEmotionRecordRequest,
 } from '../api/types';
@@ -15,6 +14,7 @@ export const emotionKeys = {
   details: () => [...emotionKeys.all, 'detail'] as const,
   detail: (id: string) => [...emotionKeys.details(), id] as const,
   stats: () => [...emotionKeys.all, 'stats'] as const,
+  monthly: ['monthly'] as const,
 };
 
 // 감정 기록 목록 조회 훅 (페이지네이션)
@@ -193,5 +193,13 @@ export const useEmotionStats = () => {
     queryFn: () => EmotionService.getEmotionStats(),
     staleTime: 5 * 60 * 1000, // 5분간 데이터를 fresh로 유지
     gcTime: 10 * 60 * 1000, // 10분간 캐시 유지
+  });
+};
+
+export const useEmotionMonthly = (nickname: string, month: string) => {
+  return useQuery({
+    queryKey: emotionKeys.monthly,
+    queryFn: () => EmotionService.getEmotionMonthly(nickname, month),
+    enabled: !!month,
   });
 };

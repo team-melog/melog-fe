@@ -11,6 +11,7 @@ import type {
   //   EmotionAnalysisResponse,
   EmotionRecordsResponse,
   EmotionStatsResponse,
+  EmotionMonthlyResponse,
 } from './types';
 
 export class EmotionService {
@@ -89,6 +90,16 @@ export class EmotionService {
   static async getEmotionStats(): Promise<EmotionStatsResponse> {
     return apiClient.get<EmotionStats>(
       `${API_ENDPOINTS.EMOTION.HISTORY}/stats`
+    );
+  }
+
+  // 캘린더 월별 조회
+  static async getEmotionMonthly(
+    nickname: string,
+    month: string
+  ): Promise<EmotionMonthlyResponse> {
+    return apiClient.get(
+      `${API_ENDPOINTS.EMOTION.MONTHLY.replace(':nickname', nickname)}?month=${month}`
     );
   }
 }
