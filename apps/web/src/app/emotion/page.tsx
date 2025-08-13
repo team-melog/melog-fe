@@ -11,7 +11,12 @@ import { emotionIconsByStep } from '@/entities/emotion/types';
 export default function EmotionPage() {
   const router = useRouter();
   const { user } = useAppStore();
-  const { data: createRecord } = useEmotionList(user?.name || undefined, 0, 7);
+  const { data: emotionWeekList } = useEmotionList(
+    user?.name || undefined,
+    0,
+    7
+  );
+  // console.log('emotionWeekList', emotionWeekList);
 
   // 현재 날짜 정보
   const today = new Date();
@@ -24,8 +29,8 @@ export default function EmotionPage() {
 
   // 날짜에 해당하는 감정 데이터 찾기
   const getEmotionForDate = (date: string) => {
-    if (createRecord && 'content' in createRecord) {
-      const record = createRecord as {
+    if (emotionWeekList && 'content' in emotionWeekList) {
+      const record = emotionWeekList as {
         content: Array<{
           date: string;
           emotions: Array<{ type: string; percentage: number; step: number }>;
