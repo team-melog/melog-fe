@@ -6,7 +6,11 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useEffect } from 'react';
 import ProfileIcon from '@/assets/icons/ProfileIcon.svg';
-import { emotionColorsByStep } from '@/entities/emotion/types';
+import {
+  emotionColorsByStep,
+  emotionIconsByStep,
+} from '@/entities/emotion/types';
+import { svgComponents } from '@/assets/svgs/EmotionSvg';
 
 const testData = {
   content: [
@@ -96,42 +100,50 @@ export default function FeedPage() {
           </div>
 
           {/* Summary Stats Card */}
-          <div className="bg-white border border-[#d0d2d7] rounded-2xl p-3 mb-6">
+          <div className="bg-[#F8F8F8] rounded-2xl p-3 mb-6">
             <div className="flex justify-between items-center">
               <div className="text-center flex-1">
-                <p className="text-lg font-normal text-[#36393f] tracking-[-0.18px] leading-[21.6px] mb-2">
+                <p className="text-lg font-normal text-[#36393f] tracking-[-0.18px] leading-[21.6px]">
                   감정기록
                 </p>
-                <p className="text-[15px] font-medium text-[#060607] tracking-[-0.15px] leading-6">
+                <p className="h-8 text-[15px] font-medium text-[#060607] tracking-[-0.15px] leading-6 flex items-center justify-center">
                   {testData.content.length}
                 </p>
               </div>
-              <div className="w-px h-10 bg-[#d0d2d7]"></div>
+              <div className="w-px h-10 bg-[#ECEDEF]"></div>
               <div className="text-center flex-1">
-                <p className="text-lg font-normal text-[#36393f] tracking-[-0.18px] leading-[21.6px] mb-2">
+                <p className="text-lg font-normal text-[#36393f] tracking-[-0.18px] leading-[21.6px]">
                   대표감정
                 </p>
                 {hasData && dominantEmotion ? (
                   <div className="flex items-center justify-center">
-                    <div
-                      className="w-8 h-8 rounded-full"
-                      style={{
-                        backgroundColor: '#ff8f8f',
-                      }}
-                    ></div>
+                    {(() => {
+                      const iconId =
+                        emotionIconsByStep[
+                          testData.content[0].emotions[0]
+                            .type as keyof typeof emotionIconsByStep
+                        ]?.[testData.content[0].emotions[0].step - 1];
+                      const SvgComponent = iconId
+                        ? svgComponents[iconId]
+                        : null;
+
+                      if (!SvgComponent) return null;
+
+                      return <SvgComponent width={32} height={32} />;
+                    })()}
                   </div>
                 ) : (
-                  <p className="text-[15px] font-medium text-[#060607] tracking-[-0.15px] leading-6">
+                  <p className="h-8 text-[15px] font-medium text-[#060607] tracking-[-0.15px] leading-6">
                     -
                   </p>
                 )}
               </div>
-              <div className="w-px h-10 bg-[#d0d2d7]"></div>
+              <div className="w-px h-10 bg-[#ECEDEF]"></div>
               <div className="text-center flex-1">
-                <p className="text-lg font-normal text-[#36393f] tracking-[-0.18px] leading-[21.6px] mb-2">
+                <p className="text-lg font-normal text-[#36393f] tracking-[-0.18px] leading-[21.6px]">
                   음성녹음
                 </p>
-                <p className="text-[15px] font-medium text-[#060607] tracking-[-0.15px] leading-6">
+                <p className="h-8 text-[15px] font-medium text-[#060607] tracking-[-0.15px] leading-6 flex items-center justify-center">
                   0
                 </p>
               </div>
