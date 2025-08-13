@@ -52,6 +52,15 @@ export const emotionIconsByStep = {
   지침: ['Grey1', 'Grey2', 'Grey3', 'Grey4', 'Grey5'],
 } as const;
 
+export const emotionColorsByStep = {
+  기쁨: ['#FFF5CA', '#FFF399', '#FFEC39', '#FFDC24', '#FFB800'],
+  설렘: ['#FFDEF1', '#FFC0CB', '#FFBBDD', '#FF9CD0', '#FF80C6'],
+  평온: ['#CCFFE4', '#A9FFD6', '#6BFCC1', '#2CFFA9', '#0FEF99'],
+  분노: ['#FFB8B8', '#FF8F8F', '#FF5A5A', '#FC3F3F', '#ED3A3A'],
+  슬픔: ['#B7DAF9', '#92C8F7', '#6BA1DB', '#4090CC', '#3683B2'],
+  지침: ['#DEE1E2', '#CDD1D3', '#C0C2C4', '#A3ACB2', '#838E96'],
+} as const;
+
 export interface EmotionSelection {
   emotion: EmotionType;
   intensity: IntensityLevel;

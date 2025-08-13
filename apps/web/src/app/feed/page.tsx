@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useEffect } from 'react';
 import ProfileIcon from '@/assets/icons/ProfileIcon.svg';
+import { emotionColorsByStep } from '@/entities/emotion/types';
 
 const testData = {
   content: [
@@ -14,9 +15,9 @@ const testData = {
       date: '2025-08-04',
       summary: '지침과 분노가 반복됨',
       emotions: [
-        { type: '지침', percentage: 40, step: 2 },
-        { type: '분노', percentage: 35, step: 2 },
-        { type: '불안', percentage: 25, step: 2 },
+        { type: '설렘', percentage: 90, step: 5 },
+        { type: '분노', percentage: 10, step: 1 },
+        { type: '슬픔', percentage: 10, step: 1 },
       ],
     },
     {
@@ -24,9 +25,9 @@ const testData = {
       date: '2025-08-03',
       summary: '매우 긍정적인 변화가 나타남',
       emotions: [
-        { type: '기쁨', percentage: 70, step: 4 },
-        { type: '설렘', percentage: 20, step: 1 },
-        { type: '여유', percentage: 10, step: 1 },
+        { type: '기쁨', percentage: 40, step: 4 },
+        { type: '설렘', percentage: 30, step: 3 },
+        { type: '여유', percentage: 30, step: 3 },
       ],
     },
   ],
@@ -57,6 +58,24 @@ export default function FeedPage() {
 
   // 감정 데이터를 카드 형태로 변환
   const emotionCards = testData.content;
+
+  // 각 카드의 배경색을 계산하는 함수
+  const getCardBackgroundColor = (card: (typeof testData.content)[0]) => {
+    // emotions에서 가장 높은 step을 가진 요소 찾기
+    const mainEmotion = card.emotions.reduce((prev, current) =>
+      prev.step > current.step ? prev : current
+    );
+
+    // emotionColorsByStep에서 해당 감정과 단계에 맞는 색상 가져오기
+    const colors =
+      emotionColorsByStep[mainEmotion.type as keyof typeof emotionColorsByStep];
+    if (colors && colors[mainEmotion.step - 1]) {
+      return colors[mainEmotion.step - 1];
+    }
+
+    // 기본 색상
+    return '#e5e7eb';
+  };
 
   return (
     <Layout showTabBar={true}>
@@ -107,7 +126,7 @@ export default function FeedPage() {
                   </p>
                 )}
               </div>
-              <div className="w-px h-10 bg-[#d0d7]"></div>
+              <div className="w-px h-10 bg-[#d0d2d7]"></div>
               <div className="text-center flex-1">
                 <p className="text-lg font-normal text-[#36393f] tracking-[-0.18px] leading-[21.6px] mb-2">
                   음성녹음
@@ -143,7 +162,8 @@ export default function FeedPage() {
                   <button
                     key={card.id}
                     onClick={() => handleCardClick(card.id)}
-                    className="aspect-square bg-gray-300 border border-white relative group hover:bg-gray-400 transition-colors"
+                    className="aspect-square border border-white relative group hover:opacity-80 transition-opacity"
+                    style={{ backgroundColor: getCardBackgroundColor(card) }}
                   ></button>
                 ))}
 
@@ -168,7 +188,8 @@ export default function FeedPage() {
                   <button
                     key={card.id}
                     onClick={() => handleCardClick(card.id)}
-                    className="aspect-square bg-gray-300 border border-white relative group hover:bg-gray-400 transition-colors"
+                    className="aspect-square border border-white relative group hover:opacity-80 transition-opacity"
+                    style={{ backgroundColor: getCardBackgroundColor(card) }}
                   ></button>
                 ))}
               </div>
