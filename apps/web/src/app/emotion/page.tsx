@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import LottieSelectCharacters from '@/components/lotties/LottieSelectCharacters';
 import { useEmotionList } from '@/features/emotion';
 import { svgComponents } from '@/assets/svgs/EmotionSvg';
+import { emotionIconsByStep } from '@/entities/emotion/types';
 
 export default function EmotionPage() {
   const router = useRouter();
@@ -20,15 +21,6 @@ export default function EmotionPage() {
     date.setDate(today.getDate() - today.getDay() + daysOfWeek.indexOf(day));
     return date.toISOString().split('T')[0]; // YYYY-MM-DD 형식으로 변환
   });
-
-  const emotionIcons = {
-    기쁨: ['Yellow1', 'Yellow2', 'Yellow3', 'Yellow4', 'Yellow5'],
-    설렘: ['Pink1', 'Pink2', 'Pink3', 'Pink4', 'Pink5'],
-    평온: ['Green1', 'Green2', 'Green3', 'Green4', 'Green5'],
-    분노: ['Red1', 'Red2', 'Red3', 'Red4', 'Red5'],
-    슬픔: ['Blue1', 'Blue2', 'Blue3', 'Blue4', 'Blue5'],
-    지침: ['Grey1', 'Grey2', 'Grey3', 'Grey4', 'Grey5'],
-  };
 
   // 날짜에 해당하는 감정 데이터 찾기
   const getEmotionForDate = (date: string) => {
@@ -70,8 +62,8 @@ export default function EmotionPage() {
                       {emotionData &&
                         (() => {
                           const iconId =
-                            emotionIcons[
-                              emotionData.type as keyof typeof emotionIcons
+                            emotionIconsByStep[
+                              emotionData.type as keyof typeof emotionIconsByStep
                             ]?.[emotionData.step - 1];
                           const SvgComponent = iconId
                             ? svgComponents[iconId]

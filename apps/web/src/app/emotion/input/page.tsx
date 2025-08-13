@@ -7,6 +7,7 @@ import { intensityLabels } from '@melog/shared';
 import { useAppStore } from '@melog/shared';
 import { svgComponents } from '@/assets/svgs/EmotionSvg';
 import { useEmotionStore } from '@/features/store';
+import { emotionIconsByStep } from '@/entities/emotion/types';
 
 function EmotionInputContent() {
   const router = useRouter();
@@ -19,17 +20,8 @@ function EmotionInputContent() {
   const selectedIntensity = searchParams.get('intensity');
   const selectedColor = searchParams.get('color');
 
-  // 감정과 강도에 따른 아이콘 ID 매핑
-  const emotionIcons: { [key: string]: string[] } = {
-    기쁨: ['Yellow1', 'Yellow2', 'Yellow3', 'Yellow4', 'Yellow5'],
-    설렘: ['Pink1', 'Pink2', 'Pink3', 'Pink4', 'Pink5'],
-    평온: ['Green1', 'Green2', 'Green3', 'Green4', 'Green5'],
-    분노: ['Red1', 'Red2', 'Red3', 'Red4', 'Red5'],
-    슬픔: ['Blue1', 'Blue2', 'Blue3', 'Blue4', 'Blue5'],
-    지침: ['Grey1', 'Grey2', 'Grey3', 'Grey4', 'Grey5'],
-  };
   const selectedIconId =
-    emotionIcons[selectedEmotion || ''][Number(selectedIntensity) - 1];
+    emotionIconsByStep[selectedEmotion || ''][Number(selectedIntensity) - 1];
 
   const SvgComponent = selectedIconId ? svgComponents[selectedIconId] : null;
 

@@ -4,7 +4,8 @@ import { useState, useMemo } from 'react';
 import { Layout } from '@melog/ui';
 import { useAppStore } from '@melog/shared';
 import { useEmotionMonthly } from '@/features/emotion/hooks/useEmotionApi';
-import { svgComponents, emotionIcons } from '@/assets/svgs/EmotionSvg';
+import { svgComponents } from '@/assets/svgs/EmotionSvg';
+import { emotionIconsByStep } from '@/entities/emotion/types';
 import Link from 'next/link';
 
 // 날짜를 YYYY-MM-DD 형식으로 변환 (시간 제외)
@@ -72,9 +73,9 @@ export default function CalendarPage() {
 
       // emotionIcons에서 해당 감정과 단계에 맞는 SVG 컴포넌트 찾기
       const iconKey =
-        emotionIcons[mainEmotion.type as keyof typeof emotionIcons]?.[
-          mainEmotion.step - 1
-        ];
+        emotionIconsByStep[
+          mainEmotion.type as keyof typeof emotionIconsByStep
+        ]?.[mainEmotion.step - 1];
       const svgComponent = iconKey ? svgComponents[iconKey] : null;
 
       if (svgComponent) {

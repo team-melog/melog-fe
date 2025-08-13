@@ -1,16 +1,42 @@
 'use client';
 
 import { Layout, Button } from '@melog/ui';
-import { useAppStore, useEmotionStore, EMOTIONS } from '@melog/shared';
+import { useAppStore } from '@melog/shared';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useEffect } from 'react';
 import ProfileIcon from '@/assets/icons/ProfileIcon.svg';
 
+const testData = {
+  content: [
+    {
+      id: 4,
+      date: '2025-08-04',
+      summary: '지침과 분노가 반복됨',
+      emotions: [
+        { type: '지침', percentage: 40, step: 2 },
+        { type: '분노', percentage: 35, step: 2 },
+        { type: '불안', percentage: 25, step: 2 },
+      ],
+    },
+    {
+      id: 20,
+      date: '2025-08-03',
+      summary: '매우 긍정적인 변화가 나타남',
+      emotions: [
+        { type: '기쁨', percentage: 70, step: 4 },
+        { type: '설렘', percentage: 20, step: 1 },
+        { type: '여유', percentage: 10, step: 1 },
+      ],
+    },
+  ],
+  page: 0,
+  size: 7,
+};
+
 export default function FeedPage() {
   const router = useRouter();
   const user = useAppStore(state => state.user);
-  const entries = useEmotionStore(state => state.entries);
 
   // emotion 관련 페이지들 prefetch
   useEffect(() => {
@@ -19,33 +45,18 @@ export default function FeedPage() {
     router.prefetch('/emotion/write');
   }, [router]);
 
-  // 실제 데이터 사용
-  const hasData = entries.length > 0;
-  const voiceEntries = entries.filter(e => e.voiceNote);
-  const dominantEmotion = hasData ? entries[0]?.emotion : null;
+  // testData 사용
+  const hasData = testData.content.length > 0;
+  const dominantEmotion = hasData
+    ? testData.content[0]?.emotions[0]?.type
+    : null;
 
-  const handleCardClick = (entryId: string) => {
+  const handleCardClick = (entryId: number) => {
     router.push(`/feed/${entryId}`);
   };
 
-  // 실제 감정 데이터를 카드 형태로 변환
-  const emotionCards = entries.map(entry => {
-    const date = new Date(entry.timestamp);
-    const formattedDate = new Intl.DateTimeFormat('ko-KR', {
-      month: '2-digit',
-      day: '2-digit',
-    }).format(date);
-
-    const emotionConfig = EMOTIONS[entry.emotion];
-
-    return {
-      id: entry.id,
-      date: formattedDate,
-      emotion: emotionConfig?.name || entry.emotion,
-      color: emotionConfig?.color || '#ff8f8f',
-      hasVoice: !!entry.voiceNote,
-    };
-  });
+  // 감정 데이터를 카드 형태로 변환
+  const emotionCards = testData.content;
 
   return (
     <Layout showTabBar={true}>
@@ -73,7 +84,7 @@ export default function FeedPage() {
                   감정기록
                 </p>
                 <p className="text-[15px] font-medium text-[#060607] tracking-[-0.15px] leading-6">
-                  {hasData ? entries.length : 0}
+                  {testData.content.length}
                 </p>
               </div>
               <div className="w-px h-10 bg-[#d0d2d7]"></div>
@@ -84,10 +95,9 @@ export default function FeedPage() {
                 {hasData && dominantEmotion ? (
                   <div className="flex items-center justify-center">
                     <div
-                      className="w-8 h-8"
+                      className="w-8 h-8 rounded-full"
                       style={{
-                        backgroundColor:
-                          EMOTIONS[dominantEmotion]?.color || '#ff8f8f',
+                        backgroundColor: '#ff8f8f',
                       }}
                     ></div>
                   </div>
@@ -97,13 +107,13 @@ export default function FeedPage() {
                   </p>
                 )}
               </div>
-              <div className="w-px h-10 bg-[#d0d2d7]"></div>
+              <div className="w-px h-10 bg-[#d0d7]"></div>
               <div className="text-center flex-1">
                 <p className="text-lg font-normal text-[#36393f] tracking-[-0.18px] leading-[21.6px] mb-2">
                   음성녹음
                 </p>
                 <p className="text-[15px] font-medium text-[#060607] tracking-[-0.15px] leading-6">
-                  {voiceEntries.length}
+                  0
                 </p>
               </div>
             </div>
@@ -124,7 +134,7 @@ export default function FeedPage() {
                 </Button>
               </Link>
             </div>
-          ) : entries.length === 1 ? (
+          ) : testData.content.length === 1 ? (
             /* 1개 있을 때 상태 */
             <div className="space-y-4">
               {/* Single Emotion Card */}
@@ -134,15 +144,7 @@ export default function FeedPage() {
                     key={card.id}
                     onClick={() => handleCardClick(card.id)}
                     className="aspect-square bg-gray-300 border border-white relative group hover:bg-gray-400 transition-colors"
-                    style={{ backgroundColor: card.color }}
-                  >
-                    {/* Voice Indicator */}
-                    {card.hasVoice && (
-                      <div className="absolute top-2 right-2 w-6 h-6 bg-black bg-opacity-70 rounded-full flex items-center justify-center">
-                        <span className="text-xs text-white">🎤</span>
-                      </div>
-                    )}
-                  </button>
+                  ></button>
                 ))}
 
                 {/* Add New Button */}
@@ -167,15 +169,7 @@ export default function FeedPage() {
                     key={card.id}
                     onClick={() => handleCardClick(card.id)}
                     className="aspect-square bg-gray-300 border border-white relative group hover:bg-gray-400 transition-colors"
-                    style={{ backgroundColor: card.color }}
-                  >
-                    {/* Voice Indicator */}
-                    {card.hasVoice && (
-                      <div className="absolute top-2 right-2 w-6 h-6 bg-black bg-opacity-70 rounded-full flex items-center justify-center">
-                        <span className="text-xs text-white">🎤</span>
-                      </div>
-                    )}
-                  </button>
+                  ></button>
                 ))}
               </div>
             </div>

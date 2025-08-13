@@ -43,6 +43,7 @@ import Grey2 from './Grey2.svg';
 import Grey3 from './Grey3.svg';
 import Grey4 from './Grey4.svg';
 import Grey5 from './Grey5.svg';
+import { emotionIconsByStep } from '@/entities';
 
 // SVG 컴포넌트들을 객체로 관리
 export const svgComponents: {
@@ -80,23 +81,14 @@ export const svgComponents: {
   Grey5,
 };
 
-// 감정과 강도에 따른 아이콘 ID 매핑
-const emotionIcons = {
-  기쁨: ['Yellow1', 'Yellow2', 'Yellow3', 'Yellow4', 'Yellow5'],
-  설렘: ['Pink1', 'Pink2', 'Pink3', 'Pink4', 'Pink5'],
-  평온: ['Green1', 'Green2', 'Green3', 'Green4', 'Green5'],
-  분노: ['Red1', 'Red2', 'Red3', 'Red4', 'Red5'],
-  슬픔: ['Blue1', 'Blue2', 'Blue3', 'Blue4', 'Blue5'],
-  지침: ['Grey1', 'Grey2', 'Grey3', 'Grey4', 'Grey5'],
-};
-
 export default function EmotionSprite({
   emotion,
   step,
   className = '',
   size,
 }: EmotionSpriteProps) {
-  const iconId = emotionIcons[emotion as keyof typeof emotionIcons]?.[step - 1];
+  const iconId =
+    emotionIconsByStep[emotion as keyof typeof emotionIconsByStep]?.[step - 1];
   const SvgComponent = iconId ? svgComponents[iconId] : null;
   if (!SvgComponent) {
     return null;

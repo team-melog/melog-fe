@@ -7,6 +7,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { svgComponents } from '@/assets/svgs/EmotionSvg';
 import SuspenseWrapper from '@/components/SuspenseWrapper';
+import { emotionIconsByStep } from '@/entities';
 
 function EmotionResultContent() {
   const router = useRouter();
@@ -30,15 +31,6 @@ function EmotionResultContent() {
   const mainEmotion = emotionResults[0]; // 정렬 후 0번째 인덱스가 가장 높은 percentage
   const mainEmotionColor = mainEmotion.textColor;
 
-  const emotionIcons = {
-    기쁨: ['Yellow1', 'Yellow2', 'Yellow3', 'Yellow4', 'Yellow5'],
-    설렘: ['Pink1', 'Pink2', 'Pink3', 'Pink4', 'Pink5'],
-    평온: ['Green1', 'Green2', 'Green3', 'Green4', 'Green5'],
-    분노: ['Red1', 'Red2', 'Red3', 'Red4', 'Red5'],
-    슬픔: ['Blue1', 'Blue2', 'Blue3', 'Blue4', 'Blue5'],
-    지침: ['Grey1', 'Grey2', 'Grey3', 'Grey4', 'Grey5'],
-  };
-
   // percentage를 5단계로 나누어 단계 계산 (0-20: 1단계, 21-40: 2단계, 41-60: 3단계, 61-80: 4단계, 81-100: 5단계)
   const getEmotionStep = (percentage: number) => {
     if (percentage <= 20) return 1;
@@ -51,7 +43,9 @@ function EmotionResultContent() {
   // 각 감정에 대해 해당하는 단계의 아이콘 키를 계산하는 함수
   const getEmotionIconKey = (emotion: string, percentage: number) => {
     const step = getEmotionStep(percentage);
-    return emotionIcons[emotion as keyof typeof emotionIcons]?.[step - 1];
+    return emotionIconsByStep[emotion as keyof typeof emotionIconsByStep]?.[
+      step - 1
+    ];
   };
 
   const mainEmotionIconKey = getEmotionIconKey(
@@ -59,7 +53,7 @@ function EmotionResultContent() {
     mainEmotion.percentage
   );
   const selectedEmotionIconKey =
-    emotionIcons[selectedEmotion as keyof typeof emotionIcons]?.[
+    emotionIconsByStep[selectedEmotion as keyof typeof emotionIconsByStep]?.[
       selectedIntensity - 1
     ];
 

@@ -5,6 +5,7 @@ import { useAppStore } from '@melog/shared';
 import { useRouter } from 'next/navigation';
 import { svgComponents } from '@/assets/svgs/EmotionSvg';
 import React from 'react';
+import { emotionIconsByStep } from '@/entities/emotion/types';
 
 export default function EmotionFinalPage() {
   const router = useRouter();
@@ -48,15 +49,6 @@ export default function EmotionFinalPage() {
 
   const aiSummary = `오늘 ${user?.name || '사용자'}님의 목소리에는 지침(50%), 분노(30%), 평온(20%)이 섞여 있었습니다. 업무량이 많아 몸과 마음이 무겁지만, 일 자체에는 여전히 흥미를 느끼고 있는 상태예요. 다만 주변 동료와의 관계나 환경에서 오는 스트레스가 피로감을 키우고 있어요.\n\n이런 상황에서는 잠깐의 휴식이나 가벼운 대화로 긴장을 풀어주는 것이 도움이 될 수 있습니다. 당신의 열정은 여전히 살아있으니, 에너지를 회복할 시간을 꼭 챙겨주세요.`;
 
-  const emotionIcons = {
-    기쁨: ['Yellow1', 'Yellow2', 'Yellow3', 'Yellow4', 'Yellow5'],
-    설렘: ['Pink1', 'Pink2', 'Pink3', 'Pink4', 'Pink5'],
-    평온: ['Green1', 'Green2', 'Green3', 'Green4', 'Green5'],
-    분노: ['Red1', 'Red2', 'Red3', 'Red4', 'Red5'],
-    슬픔: ['Blue1', 'Blue2', 'Blue3', 'Blue4', 'Blue5'],
-    지침: ['Grey1', 'Grey2', 'Grey3', 'Grey4', 'Grey5'],
-  };
-
   // percentage를 5단계로 나누어 단계 계산 (0-20: 1단계, 21-40: 2단계, 41-60: 3단계, 61-80: 4단계, 81-100: 5단계)
   const getEmotionStep = (percentage: number) => {
     if (percentage <= 20) return 1;
@@ -69,7 +61,9 @@ export default function EmotionFinalPage() {
   // 각 감정에 대해 해당하는 단계의 아이콘 키를 계산하는 함수
   const getEmotionIconKey = (emotion: string, percentage: number) => {
     const step = getEmotionStep(percentage);
-    return emotionIcons[emotion as keyof typeof emotionIcons]?.[step - 1];
+    return emotionIconsByStep[emotion as keyof typeof emotionIconsByStep]?.[
+      step - 1
+    ];
   };
 
   const mainEmotionIconKey = getEmotionIconKey(
