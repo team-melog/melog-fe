@@ -22,16 +22,12 @@ function EmotionAnalysisContent() {
   const selectedColor = searchParams.get('color');
 
   const [, setIsAnalyzing] = useState(false);
-  const [analysisResult, setAnalysisResult] = useState<{
-    success?: boolean;
-    data?: unknown;
-    error?: string;
-  } | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [timeLeft, setTimeLeft] = useState(5); // 테스트용 5초
 
   // 5초 카운트다운
 
+  const { setAnalysisResult } = useEmotionStore();
   const user = useAppStore(state => state.user);
   const { recordedAudio, textarea, clearRecording } = useEmotionStore();
   const { mutateAsync: createRecordSTT } = useCreateEmotionRecordSTT();
@@ -69,16 +65,12 @@ function EmotionAnalysisContent() {
     // router.push(`/emotion/result?${savedParams.toString()}`);
   }, [recordedAudio, router]);
 
-  // if (analysisResult && analysisResult.success) {
-  //   return router.push(`/emotion/result?${savedParams.toString()}`);
-  // }
-
   const performEmotionAnalysis = async () => {
     try {
       setIsAnalyzing(true);
       // Blob을 File 객체로 변환
       let result = null;
-      useEmotionStore.getState().setAnalysisResult(null);
+      setAnalysisResult(null);
       console.log('audioFile', recordedAudio, textarea);
       if (recordedAudio) {
         const audioFile = makeAudioFile(recordedAudio as Blob, user.name);
@@ -107,13 +99,8 @@ function EmotionAnalysisContent() {
       }
 
       console.log('감정 분석 결과:', result);
-      setAnalysisResult({ success: true, data: result });
 
-      // API 응답 결과를 전역 상태에 저장
-      if (result && result.data) {
-        useEmotionStore.getState().setAnalysisResult(result);
-      }
-
+      setAnalysisResult(result);
       // 분석 완료 후 녹음 데이터 정리
       clearRecording();
 
@@ -126,33 +113,33 @@ function EmotionAnalysisContent() {
         router.push(`/emotion/result?${params.toString()}`);
       }
     } catch (e) {
-      setAnalysisResult({ success: false, data: e });
+      console.error(e);
     } finally {
       setIsAnalyzing(false);
     }
   };
 
-  if (analysisResult?.error) {
-    return (
-      <Layout showTabBar={false}>
-        <div className="font-meetme min-h-svh bg-[#111416] flex flex-col">
-          {/* Main Content */}
-          <div className="flex-1 flex flex-col items-center justify-center px-4">
-            <div className="text-white text-xl font-meetme mb-4">
-              분석 중 오류가 발생했습니다
-            </div>
+  // if (analysisResult?.error) {
+  //   return (
+  //     <Layout showTabBar={false}>
+  //       <div className="font-meetme min-h-svh bg-[#111416] flex flex-col">
+  //         {/* Main Content */}
+  //         <div className="flex-1 flex flex-col items-center justify-center px-4">
+  //           <div className="text-white text-xl font-meetme mb-4">
+  //             분석 중 오류가 발생했습니다
+  //           </div>
 
-            <button
-              onClick={() => router.back()}
-              className="bg-[#ff9292] text-white px-6 py-3 rounded-lg font-meetme"
-            >
-              다시 녹음하기
-            </button>
-          </div>
-        </div>
-      </Layout>
-    );
-  }
+  //           <button
+  //             onClick={() => router.back()}
+  //             className="bg-[#ff9292] text-white px-6 py-3 rounded-lg font-meetme"
+  //           >
+  //             다시 녹음하기
+  //           </button>
+  //         </div>
+  //       </div>
+  //     </Layout>
+  //   );
+  // }
 
   return (
     <Layout showTabBar={false}>

@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { devtools } from 'zustand/middleware';
+import { devtools, persist } from 'zustand/middleware';
 
 export type EmotionType =
   | 'joy'
@@ -61,72 +61,87 @@ const initialState: EmotionState = {
 };
 
 export const useEmotionStore = create<EmotionStore>()(
-  devtools(
-    (set, get) => ({
-      ...initialState,
-      addEntry: entry =>
-        set(
-          state => ({
-            entries: [
-              ...state.entries,
-              {
-                ...entry,
-                id: `emotion_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
-                timestamp: new Date(),
-              },
-            ],
+  persist(
+    devtools(
+      (set, get) => ({
+        ...initialState,
+        addEntry: entry =>
+          set(
+            state => ({
+              entries: [
+                ...state.entries,
+                {
+                  ...entry,
+                  id: `emotion_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
+                  timestamp: new Date(),
+                },
+              ],
+            }),
+            false,
+            'addEntry'
+          ),
+        updateEntry: (id, updates) =>
+          set(
+            state => ({
+              entries: state.entries.map(entry =>
+                entry.id === id ? { ...entry, ...updates } : entry
+              ),
+            }),
+            false,
+            'updateEntry'
+          ),
+        deleteEntry: id =>
+          set(
+            state => ({
+              entries: state.entries.filter(entry => entry.id !== id),
+            }),
+            false,
+            'deleteEntry'
+          ),
+        setCurrentEntry: currentEntry =>
+          set({ currentEntry }, false, 'setCurrentEntry'),
+        setRecording: isRecording =>
+          set({ isRecording }, false, 'setRecording'),
+        getEntriesByDateRange: (startDate, endDate) => {
+          const { entries } = get();
+          return entries.filter(
+            entry => entry.timestamp >= startDate && entry.timestamp <= endDate
+          );
+        },
+        recordedAudio: null,
+        transcription: '',
+        selectedEmotion: null,
+        textarea: '', // 초기 사용자 텍스트 상태 추가
+        analysisResult: null, // 초기 분석 결과 상태
+        setRecordedAudio: audio => set({ recordedAudio: audio }),
+        setTranscription: text => set({ transcription: text }),
+        setSelectedEmotion: emotion => set({ selectedEmotion: emotion }),
+        setTextarea: text => set({ textarea: text }), // 사용자 텍스트 설정 액션 추가
+        setAnalysisResult: result => set({ analysisResult: result }), // 분석 결과 설정 액션 추가
+        clearRecording: () =>
+          set({
+            // recordedAudio: null,
+            transcription: '',
+            // selectedEmotion: null,
+            // textarea: '',
+            // analysisResult: null,
           }),
-          false,
-          'addEntry'
-        ),
-      updateEntry: (id, updates) =>
-        set(
-          state => ({
-            entries: state.entries.map(entry =>
-              entry.id === id ? { ...entry, ...updates } : entry
-            ),
-          }),
-          false,
-          'updateEntry'
-        ),
-      deleteEntry: id =>
-        set(
-          state => ({
-            entries: state.entries.filter(entry => entry.id !== id),
-          }),
-          false,
-          'deleteEntry'
-        ),
-      setCurrentEntry: currentEntry =>
-        set({ currentEntry }, false, 'setCurrentEntry'),
-      setRecording: isRecording => set({ isRecording }, false, 'setRecording'),
-      getEntriesByDateRange: (startDate, endDate) => {
-        const { entries } = get();
-        return entries.filter(
-          entry => entry.timestamp >= startDate && entry.timestamp <= endDate
-        );
-      },
-      recordedAudio: null,
-      transcription: '',
-      selectedEmotion: null,
-      textarea: '', // 초기 사용자 텍스트 상태 추가
-      analysisResult: null, // 초기 분석 결과 상태
-      setRecordedAudio: audio => set({ recordedAudio: audio }),
-      setTranscription: text => set({ transcription: text }),
-      setSelectedEmotion: emotion => set({ selectedEmotion: emotion }),
-      setTextarea: text => set({ textarea: text }), // 사용자 텍스트 설정 액션 추가
-      setAnalysisResult: result => set({ analysisResult: result }), // 분석 결과 설정 액션 추가
-      clearRecording: () =>
-        set({
-          recordedAudio: null,
-          transcription: '',
-          selectedEmotion: null,
-          textarea: '',
-          analysisResult: null, // 분석 결과도 초기화
-        }), // 사용자 텍스트 초기화 추가
-    }),
+      }),
+      {
+        name: 'emotion-store',
+      }
+    ),
     {
-      name: 'emotion-store',
+      name: 'emotion-storage', // 로컬 스토리지에 저장될 키 이름
+      partialize: state => ({
+        // Blob은 직렬화할 수 없으므로 제외
+        entries: state.entries,
+        currentEntry: state.currentEntry,
+        transcription: state.transcription,
+        selectedEmotion: state.selectedEmotion,
+        textarea: state.textarea,
+        analysisResult: state.analysisResult,
+      }),
     }
   )
 );

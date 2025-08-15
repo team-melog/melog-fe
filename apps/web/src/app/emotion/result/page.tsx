@@ -93,11 +93,11 @@ function EmotionResultContent() {
 
   // API 응답 결과가 있으면 사용하고, 없으면 기본 테스트 데이터 사용
   const currentData =
-    analysisResult &&
-    typeof analysisResult === 'object' &&
-    'emotions' in analysisResult
+    analysisResult && typeof analysisResult === 'object'
       ? (analysisResult as typeof testData)
       : testData;
+
+  console.log('스토어저장결과', analysisResult);
 
   // 더미 데이터
   const mainEmotion = currentData.emotions[0];
@@ -167,8 +167,10 @@ function EmotionResultContent() {
           <div className="flex flex-col items-center justify-center mb-8">
             {/* Main Emotion Circle */}
             <div
-              className={`w-full relative mb-4 px-auto ${
-                currentData.emotions.length === 1 ? 'flex justify-center' : ''
+              className={`relative mb-4 px-auto  ${
+                currentData.emotions.length === 1
+                  ? 'flex justify-center'
+                  : 'w-4/5'
               }`}
             >
               <div className="w-40 h-40 rounded-lg flex items-center justify-center">
@@ -258,7 +260,7 @@ function EmotionResultContent() {
           </div>
 
           {/* Tab Navigation */}
-          <div className="bg-white rounded-lg p-4 mb-8 bg-greyBgColor">
+          <div className="rounded-lg p-4 mb-8 bg-greyBgColor">
             {/* Tab Content */}
             {activeTab === 'ai' ? (
               <div>
@@ -276,7 +278,7 @@ function EmotionResultContent() {
                     return (
                       <div
                         key={index}
-                        className="px-3 py-2 rounded-xl border"
+                        className="w-[78px] h-[40px] rounded-xl border flex items-center justify-center"
                         style={{
                           backgroundColor: backgroundColor,
                           borderColor: borderColor,
@@ -310,10 +312,12 @@ function EmotionResultContent() {
             )}
           </div>
 
-          <div className="text-center text-sm font-pretendard text-[#B5B8C0] mb-8">
-            미로그가 알려준 오늘의 감정,
-            <br />그 의미를 정하는 건 나예요
-          </div>
+          {activeTab === 'ai' && (
+            <div className="text-center text-sm font-pretendard text-[#B5B8C0] mb-8">
+              미로그가 알려준 오늘의 감정,
+              <br />그 의미를 정하는 건 나예요
+            </div>
+          )}
 
           {/* Question */}
           <h2 className="text-2xl font-meetme text-center text-black mb-8">
