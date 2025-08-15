@@ -100,7 +100,7 @@ export default function FeedPage() {
   };
 
   return (
-    <Layout showTabBar={true} nickname={user?.name}>
+    <Layout showTabBar={true} nickname={user?.name} showFloatingButton={true}>
       <div className="font-meetme bg-white flex flex-col min-h-svh">
         {/* Header */}
         <div className="pt-6 px-4 border-b border-gray-200">

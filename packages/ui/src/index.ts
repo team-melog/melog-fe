@@ -5,5 +5,6 @@ export { default as EmotionSelector } from './EmotionSelector';
 export { default as AudioRecorder } from './AudioRecorder';
 export { default as AIAnalysisResult } from './AIAnalysisResult';
 export { default as BottomTabBar } from './BottomTabBar';
+export { default as FloatingButton } from './FloatingButton';
 export * from './assets/svgs';
 export { cn } from './utils';

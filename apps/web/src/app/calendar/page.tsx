@@ -185,7 +185,7 @@ export default function CalendarPage() {
   };
 
   return (
-    <Layout showTabBar={true} nickname={user?.name}>
+    <Layout showTabBar={true} nickname={user?.name} showFloatingButton={true}>
       <div className=" min-h-screen bg-white flex flex-col pb-20">
         {/* AI 월별 요약 섹션 */}
         <div className="bg-white border border-[#d0d2d7] rounded-[20px] p-4 my-6">

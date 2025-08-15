@@ -1,12 +1,15 @@
 import { ReactNode } from 'react';
 import BottomTabBar from './BottomTabBar';
 import { usePathname } from 'next/navigation';
+import FloatingButton from './FloatingButton';
 
 interface LayoutProps {
   children: ReactNode;
   className?: string;
   showTabBar?: boolean;
   nickname?: string | null;
+  showFloatingButton?: boolean;
+  showFloatingButtonBorder?: boolean;
 }
 
 export default function Layout({
@@ -14,6 +17,8 @@ export default function Layout({
   className = '',
   showTabBar = true,
   nickname,
+  showFloatingButton = false,
+  showFloatingButtonBorder = false,
 }: LayoutProps) {
   const pathname = usePathname();
   const isOnBoardingPage =
@@ -43,6 +48,11 @@ export default function Layout({
 
         {/* 하단 탭 바 */}
         {showTabBar && <BottomTabBar nickname={nickname} />}
+
+        {/* 플로팅 버튼 */}
+        {showFloatingButton && (
+          <FloatingButton showBorder={showFloatingButtonBorder} />
+        )}
 
         {/* 데스크탑에서 모바일 시뮬레이션을 위한 사이드 가이드 */}
         <div className="hidden lg:block absolute -left-4 top-0 w-1 h-full bg-gray-300 opacity-30"></div>

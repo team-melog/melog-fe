@@ -2,7 +2,6 @@
 
 import { Layout } from '@melog/ui';
 import { useAppStore } from '@/features/store';
-import { useRouter } from 'next/navigation';
 import { useEmotionList } from '@/features/emotion';
 import { svgComponents } from '@/assets/svgs/emotions/EmotionSvg';
 import { emotionIconsByStep } from '@/entities/emotion/types';
@@ -13,10 +12,8 @@ import HighlightsIcon from '@/assets/svgs/common/HighlightsIcon';
 import Link from 'next/link';
 
 export default function EmotionPage() {
-  const router = useRouter();
   const nickname = useAppStore(state => state.user.name);
   const { data: emotionWeekList } = useEmotionList(nickname, 0, 7);
-  console.log('emotionWeekList', nickname, emotionWeekList);
 
   // 현재 날짜 정보
   const today = new Date();
@@ -42,11 +39,6 @@ export default function EmotionPage() {
     return null;
   };
 
-  const handleEmotionRecord = () => {
-    // 감정 기록 화면으로 이동 (색 선택 화면)
-    router.push('/emotion/select');
-  };
-
   // emotionWeekList 유무에 따라 다른 UI 표시
   const hasEmotionData =
     emotionWeekList &&
@@ -56,7 +48,13 @@ export default function EmotionPage() {
   const isFirstTime = !hasEmotionData;
 
   return (
-    <Layout showTabBar={true} nickname={nickname} className="bg-greyBgColor">
+    <Layout
+      showTabBar={true}
+      nickname={nickname}
+      className="bg-greyBgColor"
+      showFloatingButton={true}
+      showFloatingButtonBorder={isFirstTime}
+    >
       <div className="min-h-svh font-meetme bg-greyBgColor flex flex-col px-4">
         {/* Main Content */}
         <div className="flex-1 flex flex-col py-6">
@@ -188,30 +186,6 @@ export default function EmotionPage() {
             </div>
           </div>
         </div>
-
-        {/* 플로팅 버튼 - emotionWeekList 유무에 따라 border 스타일 변경 */}
-        <button
-          onClick={handleEmotionRecord}
-          className={`fixed bottom-20 right-4 w-14 h-14 bg-[#060607] rounded-full flex items-center justify-center transition-all duration-200 ${
-            isFirstTime ? 'border-2 border-[#2cffa9]' : ''
-          }`}
-        >
-          <svg
-            width="32"
-            height="32"
-            viewBox="0 0 32 32"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M16 8V24M8 16H24"
-              stroke="white"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </button>
       </div>
     </Layout>
   );
