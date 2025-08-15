@@ -5,9 +5,13 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Layout } from '@melog/ui';
 import { useEmotionStore } from '@/features/store';
 import { useAppStore } from '@/features/store';
-import { useCreateEmotionRecord } from '@/features/emotion';
+import {
+  useCreateEmotionRecordSTT,
+  useCreateEmotionRecordTXT,
+} from '@/features/emotion';
 import { LottieSelectCharacters } from '@/components/lotties';
 import SuspenseWrapper from '@/components/SuspenseWrapper';
+import makeAudioFile from '@/shared/utils/makeAudioFile';
 
 function EmotionAnalysisContent() {
   const router = useRouter();
@@ -30,7 +34,8 @@ function EmotionAnalysisContent() {
 
   const user = useAppStore(state => state.user);
   const { recordedAudio, textarea, clearRecording } = useEmotionStore();
-  const { mutateAsync: createRecord } = useCreateEmotionRecord();
+  const { mutateAsync: createRecordSTT } = useCreateEmotionRecordSTT();
+  const { mutateAsync: createRecordTXT } = useCreateEmotionRecordTXT();
 
   useEffect(() => {
     // 녹음된 오디오 정보 확인
@@ -72,23 +77,42 @@ function EmotionAnalysisContent() {
     try {
       setIsAnalyzing(true);
       // Blob을 File 객체로 변환
-      const audioFile = new File([recordedAudio as Blob], 'recording.webm', {
-        type: recordedAudio?.type || 'audio/webm;codecs=opus',
-      });
-      const result = await createRecord({
-        nickname: user?.name || '',
-        request: {
-          audioFile: audioFile,
-          ...(textarea && { text: textarea }),
-          userSelectedEmotion: {
-            type: selectedEmotion,
-            percentage: 20 * Number(selectedIntensity),
+      let result = null;
+      useEmotionStore.getState().setAnalysisResult(null);
+      console.log('audioFile', recordedAudio, textarea);
+      if (recordedAudio) {
+        const audioFile = makeAudioFile(recordedAudio as Blob, user.name);
+        result = await createRecordSTT({
+          nickname: user.name,
+          request: {
+            audioFile: audioFile,
+            userSelectedEmotion: {
+              type: selectedEmotion,
+              percentage: 20 * Number(selectedIntensity),
+            },
           },
-        },
-      });
+        });
+      }
+      if (textarea) {
+        result = await createRecordTXT({
+          nickname: user.name,
+          request: {
+            text: textarea,
+            userSelectedEmotion: {
+              type: selectedEmotion,
+              percentage: 20 * Number(selectedIntensity),
+            },
+          },
+        });
+      }
 
       console.log('감정 분석 결과:', result);
       setAnalysisResult({ success: true, data: result });
+
+      // API 응답 결과를 전역 상태에 저장
+      if (result && result.data) {
+        useEmotionStore.getState().setAnalysisResult(result);
+      }
 
       // 분석 완료 후 녹음 데이터 정리
       clearRecording();
@@ -102,42 +126,11 @@ function EmotionAnalysisContent() {
         router.push(`/emotion/result?${params.toString()}`);
       }
     } catch (e) {
-      // setAnalysisResult({
-      //   success: false,
-      //   error: e,
-      // });
-      setAnalysisResult({ success: true, data: e }); // 테스트용
+      setAnalysisResult({ success: false, data: e });
     } finally {
       setIsAnalyzing(false);
     }
   };
-
-  // if (isAnalyzing) {
-  //   return (
-  //     <Layout showTabBar={false}>
-  //       <div className="font-meetme min-h-svh bg-[#111416] flex flex-col">
-  //         {/* Main Content */}
-  //         <div className="flex-1 flex flex-col items-center justify-center px-4">
-  //           {/* Title */}
-  //           <h1 className="text-3xl font-meetme text-center text-white mb-4">
-  //             AI가 감정을 분석중이에요
-  //           </h1>
-
-  //           <div className="text-2xl font-meetme text-center text-[#a5a5a5] mb-12">
-  //             조금만 기다려 주세요
-  //           </div>
-
-  //           {/* Loading Animation */}
-  //           <div className="flex flex-col items-center mb-12 mt-6">
-  //             <div className="w-[100px] h-[100px] flex items-center justify-center">
-  //               <LottieSelectCharacters />
-  //             </div>
-  //           </div>
-  //         </div>
-  //       </div>
-  //     </Layout>
-  //   );
-  // }
 
   if (analysisResult?.error) {
     return (

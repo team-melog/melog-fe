@@ -43,12 +43,14 @@ interface EmotionStore extends EmotionState, EmotionActions {
   transcription: string;
   selectedEmotion: { emotion: string; intensity: number } | null;
   textarea: string; // 사용자가 입력한 텍스트 추가
+  analysisResult: unknown | null; // API 분석 결과 저장 (실제 응답 구조가 다를 수 있음)
   setRecordedAudio: (audio: Blob | null) => void;
   setTranscription: (text: string) => void;
   setSelectedEmotion: (
     emotion: { emotion: string; intensity: number } | null
   ) => void;
   setTextarea: (text: string) => void; // 텍스트 설정 액션 추가
+  setAnalysisResult: (result: unknown) => void; // 분석 결과 설정 액션 추가
   clearRecording: () => void;
 }
 
@@ -108,16 +110,19 @@ export const useEmotionStore = create<EmotionStore>()(
       transcription: '',
       selectedEmotion: null,
       textarea: '', // 초기 사용자 텍스트 상태 추가
+      analysisResult: null, // 초기 분석 결과 상태
       setRecordedAudio: audio => set({ recordedAudio: audio }),
       setTranscription: text => set({ transcription: text }),
       setSelectedEmotion: emotion => set({ selectedEmotion: emotion }),
       setTextarea: text => set({ textarea: text }), // 사용자 텍스트 설정 액션 추가
+      setAnalysisResult: result => set({ analysisResult: result }), // 분석 결과 설정 액션 추가
       clearRecording: () =>
         set({
           recordedAudio: null,
           transcription: '',
           selectedEmotion: null,
           textarea: '',
+          analysisResult: null, // 분석 결과도 초기화
         }), // 사용자 텍스트 초기화 추가
     }),
     {

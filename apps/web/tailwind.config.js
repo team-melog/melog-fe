@@ -13,6 +13,7 @@ module.exports = {
       colors: {
         background: 'var(--background)',
         foreground: 'var(--foreground)',
+        greyBgColor: '#F8F8F7',
       },
       fontFamily: {
         pretendard: ['var(--font-pretendard)'],

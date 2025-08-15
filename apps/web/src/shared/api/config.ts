@@ -1,13 +1,15 @@
 export const API_CONFIG = {
   BASE_URL:
     process.env.NEXT_PUBLIC_API_URL + '/api' || 'http://localhost:3001/api',
-  TIMEOUT: 10000,
+  TIMEOUT: 15000,
   RETRY_ATTEMPTS: 3,
 } as const;
 
 export const API_ENDPOINTS = {
   EMOTION: {
     LIST: '/users/:nickname/emotions',
+    STT: '/users/:nickname/emotions/stt',
+    TXT: '/users/:nickname/emotions/text',
     ANALYZE: '/users/:nickname/emotions',
     HISTORY: '/users/:nickname/emotions',
     MONTHLY: '/users/:nickname/emotions/calendar',

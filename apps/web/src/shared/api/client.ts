@@ -19,15 +19,10 @@ class ApiClient {
     });
 
     // 요청 인터셉터
-    this.client.interceptors.request.use(
-      config => {
-        // 요청 전 처리 (예: 토큰 추가)
-        return config;
-      },
-      error => {
-        return Promise.reject(error);
-      }
-    );
+    this.client.interceptors.request.use(config => {
+      // 요청 전 처리 (예: 토큰 추가)
+      return config;
+    });
 
     // 응답 인터셉터
     this.client.interceptors.response.use(

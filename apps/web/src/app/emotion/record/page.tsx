@@ -4,11 +4,11 @@ import LottieRecordLoading from '@/components/lotties/LottieRecordLoading';
 import { Layout, LeftIcon, MicrophoneIcon } from '@melog/ui';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
-// import { useAudioRecorder } from '@melog/shared';
 import { useEmotionStore } from '@/features/store';
 import SuspenseWrapper from '@/components/SuspenseWrapper';
 import { useReactMediaRecorder } from 'react-media-recorder';
 import { useAppStore } from '@/features/store';
+import makeAudioFile from '@/shared/utils/makeAudioFile';
 
 function EmotionRecordContent() {
   const router = useRouter();
@@ -90,26 +90,13 @@ function EmotionRecordContent() {
     router.back();
   };
 
-  const makeAudioFile = async (audioBlob: Blob) => {
-    // 현재 날짜와 시간을 가져와서 파일명 생성
-    const now = new Date();
-    const year = now.getFullYear().toString(); // YY 형식
-    const month = String(now.getMonth() + 1).padStart(2, '0'); // MM 형식
-    const day = String(now.getDate()).padStart(2, '0'); // DD 형식
-    const timestamp = now.getTime(); // timestamp
-
-    const filename = `emotion_${nickname}_${year}${month}${day}_${timestamp}.wav`;
-    const audiofile = new File([audioBlob], filename, { type: 'audio/wav' });
-    return audiofile;
-  };
-
   const handleStopRecording = async () => {
     stopRecording();
     const audioBlob = await fetch(mediaBlobUrl as string).then(r => r.blob());
     setAudioBlob(audioBlob);
-    console.log(status, audioBlob);
 
-    const audiofile = await makeAudioFile(audioBlob);
+    const audiofile = makeAudioFile(audioBlob, nickname);
+    console.log(status, audioBlob);
     console.log('audiofile', audiofile);
   };
 

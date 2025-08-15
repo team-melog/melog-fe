@@ -261,17 +261,9 @@ export default function FeedPage() {
                         // svgComponents에서 해당 파일명의 컴포넌트 찾기
                         const FaceSvgComponent = faceSvgComponents[fileName];
 
-                        console.log('fileName', fileName);
-
                         if (!FaceSvgComponent) return null;
 
-                        return (
-                          <FaceSvgComponent
-                            width={50}
-                            height={50}
-                            color="black"
-                          />
-                        );
+                        return <FaceSvgComponent width={50} height={50} />;
                       })()}
                     </div>
                     <div

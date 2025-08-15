@@ -30,24 +30,8 @@ export const useEmotionList = (nickname: string, page = 0, size = 7) => {
   });
 };
 
-// 감정 분석 훅
-export const useEmotionAnalysis = () => {
-  // const queryClient = useQueryClient();
-  // return useMutation({
-  //   mutationFn: (request: EmotionAnalysisRequest) =>
-  //     EmotionService.analyzeEmotion(request),
-  //   onSuccess: () => {
-  //     // 감정 분석 성공 시 관련 캐시 무효화
-  //     queryClient.invalidateQueries({ queryKey: emotionKeys.chart() });
-  //   },
-  //   onError: error => {
-  //     console.error('감정 분석 실패:', error);
-  //   },
-  // });
-};
-
-// 감정 기록 생성 훅
-export const useCreateEmotionRecord = () => {
+// 감정 기록 생성 - 오디오파일
+export const useCreateEmotionRecordSTT = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -62,18 +46,18 @@ export const useCreateEmotionRecord = () => {
       const formData = new FormData();
 
       console.log('request', request);
+      console.log('audioFile', request.audioFile);
       // 오디오 파일이 있는 경우
       if (request.audioFile) {
         formData.append('audioFile', request.audioFile);
       }
 
-      // 텍스트가 있는 경우
-      if (request.text) {
-        formData.append('text', request.text);
-      }
-
       // 사용자 선택 감정 정보
-      if (request.userSelectedEmotion && request.userSelectedEmotion.type) {
+      if (
+        request.userSelectedEmotion &&
+        request.userSelectedEmotion.type &&
+        request.userSelectedEmotion.percentage
+      ) {
         // userSelectedEmotion을 개별 필드로 분리해서 추가
         formData.append(
           'userSelectedEmotion[type]',
@@ -85,7 +69,32 @@ export const useCreateEmotionRecord = () => {
         );
       }
 
-      return EmotionService.createEmotion(nickname, request, formData);
+      return EmotionService.createEmotionSTT(nickname, formData);
+    },
+    onSuccess: () => {
+      // 생성된 감정 기록을 캐시에 추가
+      queryClient.invalidateQueries({ queryKey: emotionKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: emotionKeys.chart });
+    },
+    onError: error => {
+      console.error('감정 기록 생성 실패:', error);
+    },
+  });
+};
+
+// 감정 기록 생성  - 텍스트
+export const useCreateEmotionRecordTXT = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      nickname,
+      request,
+    }: {
+      nickname: string;
+      request: CreateEmotionRecordRequest;
+    }) => {
+      return EmotionService.createEmotionTXT(nickname, request);
     },
     onSuccess: () => {
       // 생성된 감정 기록을 캐시에 추가

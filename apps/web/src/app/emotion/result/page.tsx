@@ -2,34 +2,105 @@
 
 import React from 'react';
 import { Layout, Button } from '@melog/ui';
-import { useAppStore } from '@/features/store';
+import { useAppStore, useEmotionStore } from '@/features/store';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { svgComponents } from '@/assets/svgs/EmotionSvg';
 import SuspenseWrapper from '@/components/SuspenseWrapper';
-import { emotionIconsByStep } from '@/entities';
+import { emotionIconsByStep, emotionColorsByStep } from '@/entities';
+
+const testData = {
+  id: 5,
+  text: '야근하고 일이 너무 많은 하루 였다. 힘들다',
+  summary: '야근과 많은 일로 인해 힘든 하루를 보냈습니다.',
+  date: '2025-08-15',
+  createdAt: '2025-08-15T02:40:39.398010137',
+  user: {
+    id: null,
+    nickname: '안녕',
+    createdAt: '2025-08-15T02:40:10.187918',
+  },
+  emotions: [
+    {
+      id: 4,
+      percentage: 60,
+      step: 4,
+      type: '지침',
+    },
+    {
+      id: 5,
+      percentage: 30,
+      step: 2,
+      type: '슬픔',
+    },
+    {
+      id: 6,
+      percentage: 10,
+      step: 1,
+      type: '분노',
+    },
+  ],
+  userSelectedEmotion: {
+    id: 5,
+    percentage: 100,
+    step: 2,
+    type: '설렘',
+  },
+  emotionKeywords: [
+    {
+      id: 6,
+      keyword: '야근',
+      weight: 5,
+    },
+    {
+      id: 7,
+      keyword: '힘들다',
+      weight: 4,
+    },
+    {
+      id: 8,
+      keyword: '일',
+      weight: 3,
+    },
+    {
+      id: 9,
+      keyword: '하루',
+      weight: 2,
+    },
+    {
+      id: 10,
+      keyword: '지침',
+      weight: 1,
+    },
+  ],
+};
 
 function EmotionResultContent() {
   const router = useRouter();
   const { user } = useAppStore();
+  const { analysisResult } = useEmotionStore();
   const [selectedOption, setSelectedOption] = useState<
     'keep' | 'change' | null
   >(null);
+  const [activeTab, setActiveTab] = useState<'ai' | 'record'>('ai');
 
   const searchParams = useSearchParams();
   const selectedEmotion = searchParams.get('emotion');
   const selectedIntensity = Number(searchParams.get('intensity'));
 
-  // 더미 감정 분석 결과 데이터
-  const emotionResults = [
-    { emotion: '지침', percentage: 50, color: '#dee1e2', textColor: '#838e96' },
-    { emotion: '분노', percentage: 30, color: '#ffb8b8', textColor: '#ed3a3a' },
-    { emotion: '평온', percentage: 20, color: '#ccffe4', textColor: '#0cda86' },
-  ].sort((a, b) => b.percentage - a.percentage); // percentage 기준 내림차순 정렬
+  // API 응답 결과가 있으면 사용하고, 없으면 기본 테스트 데이터 사용
+  const currentData =
+    analysisResult &&
+    typeof analysisResult === 'object' &&
+    'emotions' in analysisResult
+      ? (analysisResult as typeof testData)
+      : testData;
 
   // 더미 데이터
-  const mainEmotion = emotionResults[0]; // 정렬 후 0번째 인덱스가 가장 높은 percentage
-  const mainEmotionColor = mainEmotion.textColor;
+  const mainEmotion = currentData.emotions[0];
+  const mainColor =
+    emotionColorsByStep[mainEmotion.type as keyof typeof emotionColorsByStep];
+  const mainEmotionColor = mainColor[4];
 
   // percentage를 5단계로 나누어 단계 계산 (0-20: 1단계, 21-40: 2단계, 41-60: 3단계, 61-80: 4단계, 81-100: 5단계)
   const getEmotionStep = (percentage: number) => {
@@ -49,18 +120,9 @@ function EmotionResultContent() {
   };
 
   const mainEmotionIconKey = getEmotionIconKey(
-    mainEmotion.emotion,
+    mainEmotion.type,
     mainEmotion.percentage
   );
-  const selectedEmotionIconKey =
-    emotionIconsByStep[selectedEmotion as keyof typeof emotionIconsByStep]?.[
-      selectedIntensity - 1
-    ];
-
-  console.log('selectedEmotionIconKey', selectedEmotionIconKey);
-
-  const aiSummary =
-    '오늘 목소리에는 지침(50%), 분노(30%), 평온(20%)이 섞여 있었습니다. 업무량이 많아 몸과 마음이 무겁지만, 일 자체에는 여전히 흥미를 느끼고 있는 상태예요. 다만 주변 동료와의 관계나 환경에서 오는 스트레스가 피로감을 키우고 있어요.\n이런 상황에서는 잠깐의 휴식이나 가벼운 대화로 긴장을 풀어주는 것이 도움이 될 수 있습니다. 당신의 열정은 여전히 살아있으니, 에너지를 회복할 시간을 꼭 챙겨주세요.';
 
   const handleKeepColor = () => {
     setSelectedOption('keep');
@@ -78,122 +140,160 @@ function EmotionResultContent() {
     <Layout showTabBar={false}>
       <div className="min-h-screen bg-white flex flex-col py-10">
         {/* Main Content */}
-        <div className="flex-1 flex flex-col px-4">
+        <div className="flex-1 flex flex-col">
           {/* Title */}
           <h1 className="text-3xl font-meetme text-center text-black mb-8 leading-tight">
             AI가 정밀하게 분석한
             <br />
             오늘 {user?.name || '사용자'}님은&nbsp;
-            <span style={{ color: mainEmotionColor }}>
-              {mainEmotion.emotion}색
-            </span>
+            <span style={{ color: mainEmotionColor }}>{mainEmotion.type}</span>
             이에요
           </h1>
 
           {/* Emotion Visualization */}
-          <div className="flex flex-col mb-8">
+          <div className="flex flex-col items-center justify-center mb-8">
             {/* Main Emotion Circle */}
-            <div className="relative mb-4 px-6">
+            <div
+              className={`w-full relative mb-4 px-auto ${
+                currentData.emotions.length === 1 ? 'flex justify-center' : ''
+              }`}
+            >
               <div className="w-40 h-40 rounded-lg flex items-center justify-center">
                 {mainEmotionIconKey && svgComponents[mainEmotionIconKey] ? (
                   React.createElement(svgComponents[mainEmotionIconKey], {
-                    width: 160,
-                    height: 160,
+                    width: currentData.emotions.length === 3 ? 160 : 150,
+                    height: currentData.emotions.length === 3 ? 160 : 150,
                   })
                 ) : (
                   <span className="text-lg text-gray-500">
-                    {mainEmotion.emotion}
+                    {mainEmotion.type}
                   </span>
                 )}
               </div>
 
               {/* Secondary Emotion Circles */}
-              <div className="absolute bottom-0 right-3 w-20 h-20 rounded-lg flex items-center justify-center">
-                {(() => {
-                  const secondEmotion = emotionResults[1]; // 분노 30%
-                  const secondEmotionIconKey = getEmotionIconKey(
-                    secondEmotion.emotion,
-                    secondEmotion.percentage
-                  );
-                  return secondEmotionIconKey &&
-                    svgComponents[secondEmotionIconKey] ? (
-                    React.createElement(svgComponents[secondEmotionIconKey], {
-                      width: 80,
-                      height: 80,
-                    })
-                  ) : (
-                    <span className="text-sm text-gray-500">
-                      {secondEmotion.emotion}
-                    </span>
-                  );
-                })()}
-              </div>
-              <div className="absolute top-0 right-3 w-20 h-20 rounded-lg flex items-center justify-center">
-                {(() => {
-                  const thirdEmotion = emotionResults[2]; // 평온 20%
-                  const thirdEmotionIconKey = getEmotionIconKey(
-                    thirdEmotion.emotion,
-                    thirdEmotion.percentage
-                  );
-                  return thirdEmotionIconKey &&
-                    svgComponents[thirdEmotionIconKey] ? (
-                    React.createElement(svgComponents[thirdEmotionIconKey], {
-                      width: 80,
-                      height: 80,
-                    })
-                  ) : (
-                    <span className="text-sm text-gray-500">
-                      {thirdEmotion.emotion}
-                    </span>
-                  );
-                })()}
-              </div>
+              {currentData.emotions[1] && (
+                <div className="absolute top-0 right-3 rounded-lg flex items-center justify-center">
+                  {(() => {
+                    const secondEmotion = currentData.emotions[1]; // 분노 30%
+                    const secondEmotionIconKey = getEmotionIconKey(
+                      secondEmotion.type,
+                      secondEmotion.percentage
+                    );
+                    return secondEmotionIconKey &&
+                      svgComponents[secondEmotionIconKey] ? (
+                      React.createElement(svgComponents[secondEmotionIconKey], {
+                        width: currentData.emotions.length === 3 ? 80 : 150,
+                        height: currentData.emotions.length === 3 ? 80 : 150,
+                      })
+                    ) : (
+                      <span className="text-sm text-gray-500">
+                        {secondEmotion.type}
+                      </span>
+                    );
+                  })()}
+                </div>
+              )}
+              {currentData.emotions[2] && (
+                <div className="absolute bottom-0 right-3  rounded-lg flex items-center justify-center">
+                  {(() => {
+                    const thirdEmotion = currentData.emotions[2]; // 평온 20%
+                    const thirdEmotionIconKey = getEmotionIconKey(
+                      thirdEmotion.type,
+                      thirdEmotion.percentage
+                    );
+                    return thirdEmotionIconKey &&
+                      svgComponents[thirdEmotionIconKey] ? (
+                      React.createElement(svgComponents[thirdEmotionIconKey], {
+                        width: 80,
+                        height: 80,
+                      })
+                    ) : (
+                      <span className="text-sm text-gray-500">
+                        {thirdEmotion.type}
+                      </span>
+                    );
+                  })()}
+                </div>
+              )}
             </div>
           </div>
 
-          {/* AI Analysis Card */}
-          <div className="bg-white border border-[#ecedef] rounded-lg p-4 mb-8">
-            <h3 className="text-2xl font-meetme text-center text-black mb-4">
-              AI 감정진단서
-            </h3>
+          {/* Tab Buttons */}
+          <div className="flex space-x-2 mb-4">
+            <button
+              onClick={() => setActiveTab('ai')}
+              className={`flex-1 py-3 px-4 rounded-lg font-meetme text-lg transition-colors ${
+                activeTab === 'ai'
+                  ? 'bg-[#060607] text-white'
+                  : 'bg-white text-[#060607] border border-[#ecedef]'
+              }`}
+            >
+              AI 감정진단
+            </button>
+            <button
+              onClick={() => setActiveTab('record')}
+              className={`flex-1 py-3 px-4 rounded-lg font-meetme text-lg transition-colors ${
+                activeTab === 'record'
+                  ? 'bg-[#060607] text-white'
+                  : 'bg-white text-[#060607] border border-[#ecedef]'
+              }`}
+            >
+              나의 기록
+            </button>
+          </div>
 
-            {/* Emotion Tags */}
-            <div className="flex justify-center space-x-2 mb-4">
-              {emotionResults.map((result, index) => (
-                <div
-                  key={index}
-                  className="px-3 py-2 rounded-xl border"
-                  style={{
-                    backgroundColor: result.color,
-                    borderColor:
-                      index === 0
-                        ? '#c0c2c4'
-                        : index === 1
-                          ? '#ff5a5a'
-                          : '#6bfcc1',
-                  }}
-                >
-                  <span
-                    className="text-lg font-meetme"
-                    style={{
-                      color:
-                        index === 0
-                          ? '#838e96'
-                          : index === 1
-                            ? '#ed3a3a'
-                            : '#0cda86',
-                    }}
-                  >
-                    {result.emotion} {result.percentage}%
-                  </span>
+          {/* Tab Navigation */}
+          <div className="bg-white rounded-lg p-4 mb-8 bg-greyBgColor">
+            {/* Tab Content */}
+            {activeTab === 'ai' ? (
+              <div>
+                {/* Emotion Tags */}
+                <div className="flex justify-center space-x-2 mb-4">
+                  {currentData.emotions.map((result, index) => {
+                    const colors =
+                      emotionColorsByStep[
+                        result.type as keyof typeof emotionColorsByStep
+                      ];
+                    const backgroundColor = colors ? colors[0] : '#cccccc';
+                    const borderColor = colors ? colors[2] : '#cccccc';
+                    const textColor = colors ? colors[4] : '#1f2024';
+
+                    return (
+                      <div
+                        key={index}
+                        className="px-3 py-2 rounded-xl border"
+                        style={{
+                          backgroundColor: backgroundColor,
+                          borderColor: borderColor,
+                        }}
+                      >
+                        <span
+                          className="text-lg font-meetme"
+                          style={{
+                            color: textColor,
+                          }}
+                        >
+                          {result.type} {result.percentage}%
+                        </span>
+                      </div>
+                    );
+                  })}
                 </div>
-              ))}
-            </div>
 
-            {/* AI Summary */}
-            <p className="text-sm text-[#1f2024] leading-6 font-pretendard">
-              {aiSummary}
-            </p>
+                {/* AI Summary */}
+                <p className="text-sm text-[#1f2024] leading-6 font-pretendard">
+                  {currentData.summary}
+                </p>
+              </div>
+            ) : (
+              <div>
+                {/* User's Text Record */}
+                <p className="text-sm text-[#1f2024] leading-6 font-pretendard">
+                  {currentData.text}
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Question */}
@@ -256,7 +356,7 @@ function EmotionResultContent() {
                     })
                   ) : (
                     <span className="text-lg text-gray-500">
-                      {mainEmotion.emotion}
+                      {mainEmotion.type}
                     </span>
                   )}
                 </div>

@@ -56,9 +56,19 @@ export default function OnboardingPage() {
       if (existingNickname) {
         router.push('/emotion');
         return;
+      } else {
+        createNickname.mutate(nickname.trim(), {
+          onSuccess: () => {
+            router.push('/emotion');
+          },
+          onError: () => {
+            router.push('/emotion');
+          },
+        });
       }
     } catch (error: unknown) {
       // 닉네임이 존재하지 않는 경우 새로 생성
+      console.log('error', error);
       createNickname.mutate(nickname.trim(), {
         onSuccess: () => {
           router.push('/emotion');

@@ -36,21 +36,26 @@ export class EmotionService {
   //     );
   //   }
 
-  // 감정 기록 생성
-  static async createEmotion(
-    nickname: string,
-    request: CreateEmotionRecordRequest,
-    formData?: FormData
-  ) {
-    // FormData를 사용하여 파일과 함께 전송
+  // 감정 기록 생성 - 오디오파일
+  static async createEmotionSTT(nickname: string, formData: FormData) {
     return apiClient.post<EmotionRecord>(
-      API_ENDPOINTS.EMOTION.LIST.replace(':nickname', nickname),
+      API_ENDPOINTS.EMOTION.STT.replace(':nickname', nickname),
       formData,
       {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       }
+    );
+  }
+  // 감정 기록 생성 - 텍스트
+  static async createEmotionTXT(
+    nickname: string,
+    request: CreateEmotionRecordRequest
+  ) {
+    return apiClient.post<EmotionRecord>(
+      API_ENDPOINTS.EMOTION.TXT.replace(':nickname', nickname),
+      request
     );
   }
 
