@@ -5,9 +5,11 @@ import { Layout, Button } from '@melog/ui';
 import { useAppStore, useEmotionStore } from '@/features/store';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
-import { svgComponents } from '@/assets/svgs/EmotionSvg';
+import { svgComponents } from '@/assets/svgs/emotions/EmotionSvg';
 import SuspenseWrapper from '@/components/SuspenseWrapper';
 import { emotionIconsByStep, emotionColorsByStep } from '@/entities';
+import GradientIcon from '@/assets/svgs/common/GradientIcon';
+import RefreshIcon from '@/assets/svgs/common/RefreshIcon';
 
 const testData = {
   id: 5,
@@ -87,6 +89,7 @@ function EmotionResultContent() {
   const searchParams = useSearchParams();
   const selectedEmotion = searchParams.get('emotion');
   const selectedIntensity = Number(searchParams.get('intensity'));
+  const selectedColor = searchParams.get('color');
 
   // API 응답 결과가 있으면 사용하고, 없으면 기본 테스트 데이터 사용
   const currentData =
@@ -134,6 +137,16 @@ function EmotionResultContent() {
     setSelectedOption('change');
     // 추천 색으로 변경 후 다음 화면으로 이동
     router.push('/emotion/final');
+  };
+  const handleRetry = () => {
+    if (selectedEmotion) {
+      const params = new URLSearchParams({
+        emotion: selectedEmotion,
+        intensity: selectedIntensity.toString(),
+        color: selectedColor || '',
+      });
+      router.push(`/emotion/input?${params.toString()}`);
+    }
   };
 
   return (
@@ -223,12 +236,13 @@ function EmotionResultContent() {
           <div className="flex space-x-2 mb-4">
             <button
               onClick={() => setActiveTab('ai')}
-              className={`flex-1 py-3 px-4 rounded-lg font-meetme text-lg transition-colors ${
+              className={`flex items-center justify-center gap-2 flex-1 py-3 px-4 rounded-lg font-meetme text-lg transition-colors ${
                 activeTab === 'ai'
                   ? 'bg-[#060607] text-white'
                   : 'bg-white text-[#060607] border border-[#ecedef]'
               }`}
             >
+              <GradientIcon width={14} height={14} />
               AI 감정진단
             </button>
             <button
@@ -296,16 +310,21 @@ function EmotionResultContent() {
             )}
           </div>
 
+          <div className="text-center text-sm font-pretendard text-[#B5B8C0] mb-8">
+            미로그가 알려준 오늘의 감정,
+            <br />그 의미를 정하는 건 나예요
+          </div>
+
           {/* Question */}
           <h2 className="text-2xl font-meetme text-center text-black mb-8">
             어떤 감정으로 기록하시겠어요?
           </h2>
 
           {/* Color Selection Buttons */}
-          <div className="space-y-4">
+          <div className="space-y-4 w-full flex flex-col items-center">
             <Button
               onClick={handleKeepColor}
-              className={`w-full py-4 rounded-xl font-meetme text-xl transition-colors border-2 bg-white ${
+              className={`w-4/6 py-4 rounded-xl font-meetme text-xl border-2 bg-white ${
                 selectedOption === 'keep'
                   ? ' text-white border-gray-500'
                   : 'bg-white text-black border-[#36393f]'
@@ -335,13 +354,13 @@ function EmotionResultContent() {
                     );
                   })()}
                 </div>
-                <span>처음에 선택한 색상</span>
+                <span>처음 선택한 감정</span>
               </div>
             </Button>
 
             <Button
               onClick={handleChangeColor}
-              className={`w-full py-4 rounded-xl font-meetme text-xl transition-colors border-2 : ${
+              className={`w-4/6 py-4 rounded-xl font-meetme text-xl border-2 : ${
                 selectedOption === 'change'
                   ? 'text-white border-gray-500'
                   : 'bg-white text-black border-[#36393f]'
@@ -360,7 +379,16 @@ function EmotionResultContent() {
                     </span>
                   )}
                 </div>
-                <span>AI 감정진단 색</span>
+                <span>AI 감정진단 감정</span>
+              </div>
+            </Button>
+            <Button
+              onClick={handleRetry}
+              className={`w-4/6 py-4 rounded-xl font-meetme text-xl`}
+            >
+              <div className="flex items-center justify-center space-x-3">
+                <RefreshIcon width={20} height={20} />
+                <span>다시 기록하기</span>
               </div>
             </Button>
           </div>

@@ -6,7 +6,7 @@ import { useAppStore } from '@/features/store';
 import ProfileIcon from '@/assets/icons/ProfileIcon.svg';
 import Link from 'next/link';
 import { emotionIconsByStep } from '@/entities/emotion/types';
-import { svgComponents } from '@/assets/svgs/EmotionSvg';
+import { svgComponents } from '@/assets/svgs/emotions/EmotionSvg';
 import { useEmotionChart, useEmotionInsight } from '@/features/emotion';
 
 const testData = {

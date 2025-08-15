@@ -9,7 +9,7 @@ import {
   emotionIconsByStep,
 } from '@/entities/emotion/types';
 import { useEmotionDetail } from '@/features/emotion/hooks/useEmotionApi';
-import { svgComponents } from '@/assets/svgs/EmotionSvg';
+import { svgComponents } from '@/assets/svgs/emotions/EmotionSvg';
 
 const testData = {
   id: 1,

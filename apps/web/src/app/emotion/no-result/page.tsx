@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Layout } from '@melog/ui';
-import Blue3 from '@/assets/svgs/Blue3';
+import Blue3 from '@/assets/svgs/emotions/Blue3';
 import SuspenseWrapper from '@/components/SuspenseWrapper';
 
 function NoResultContent() {

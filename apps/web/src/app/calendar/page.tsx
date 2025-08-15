@@ -4,7 +4,7 @@ import { useState, useMemo } from 'react';
 import { Layout } from '@melog/ui';
 import { useAppStore } from '@/features/store';
 import { useEmotionMonthly } from '@/features/emotion/hooks/useEmotionApi';
-import { svgComponents } from '@/assets/svgs/EmotionSvg';
+import { svgComponents } from '@/assets/svgs/emotions/EmotionSvg';
 import { emotionIconsByStep } from '@/entities/emotion/types';
 import Link from 'next/link';
 

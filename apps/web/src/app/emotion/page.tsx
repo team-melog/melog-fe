@@ -5,7 +5,7 @@ import { useAppStore } from '@/features/store';
 import { useRouter } from 'next/navigation';
 import LottieSelectCharacters from '@/components/lotties/LottieSelectCharacters';
 import { useEmotionList } from '@/features/emotion';
-import { svgComponents } from '@/assets/svgs/EmotionSvg';
+import { svgComponents } from '@/assets/svgs/emotions/EmotionSvg';
 import { emotionIconsByStep } from '@/entities/emotion/types';
 
 export default function EmotionPage() {

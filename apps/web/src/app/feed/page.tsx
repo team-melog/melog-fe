@@ -10,7 +10,7 @@ import {
   emotionColorsByStep,
   emotionIconsByStep,
 } from '@/entities/emotion/types';
-import { svgComponents } from '@/assets/svgs/EmotionSvg';
+import { svgComponents } from '@/assets/svgs/emotions/EmotionSvg';
 import { faceSvgComponents } from '@/assets/svgs/faces/FaceSvg';
 import { useEmotionList } from '@/features';
 

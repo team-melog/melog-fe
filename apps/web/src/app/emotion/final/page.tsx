@@ -3,7 +3,7 @@
 import { Layout, Button, LeftIcon } from '@melog/ui';
 import { useAppStore } from '@/features/store';
 import { useRouter } from 'next/navigation';
-import { svgComponents } from '@/assets/svgs/EmotionSvg';
+import { svgComponents } from '@/assets/svgs/emotions/EmotionSvg';
 import React from 'react';
 import { emotionIconsByStep } from '@/entities/emotion/types';
 

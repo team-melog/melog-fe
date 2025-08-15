@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 import { intensityLabels } from '@melog/shared';
 import { useAppStore } from '@/features/store';
-import { svgComponents } from '@/assets/svgs/EmotionSvg';
+import { svgComponents } from '@/assets/svgs/emotions/EmotionSvg';
 import { useEmotionStore } from '@/features/store';
 import { emotionIconsByStep } from '@/entities/emotion/types';
 
