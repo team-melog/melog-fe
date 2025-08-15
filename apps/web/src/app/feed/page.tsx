@@ -236,12 +236,12 @@ export default function FeedPage() {
             /* 여러 개 있을 때 상태 */
             <div className="space-y-4">
               {/* Emotion Cards Grid */}
-              <div ref={gridRef} className="grid grid-cols-3 gap-0.5 w-full">
+              <div ref={gridRef} className="grid grid-cols-3 w-full">
                 {emotionCards?.map(card => (
                   <button
                     key={card.id}
                     onClick={() => handleCardClick(card.id)}
-                    className="relative aspect-square border group hover:opacity-80 transition-opacity"
+                    className="relative aspect-square group hover:opacity-80 transition-opacity"
                   >
                     {/* SVG 컴포넌트를 위에 렌더링 */}
                     <div className="absolute top-0 left-0 z-10 flex items-center justify-center w-full h-full">
