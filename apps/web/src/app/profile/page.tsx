@@ -130,7 +130,7 @@ export default function ProfilePage() {
           </div>
 
           {/* 이 달의 요약 섹션 - 아래쪽 */}
-          <div className="row-span-2 bg-greyBgColor">
+          <div className="row-span-3 bg-greyBgColor">
             {!hasEmotionData || !monthlyStats ? (
               /* 감정 기록이 없는 버전 - "마이_기록 전" */
               <div className="flex flex-col items-center justify-center px-4 py-6">
