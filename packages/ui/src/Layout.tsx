@@ -15,8 +15,6 @@ export default function Layout({
   showTabBar = true,
   nickname,
 }: LayoutProps) {
-  const theme = 'light'; // 기본값으로 설정
-
   const pathname = usePathname();
   const isOnBoardingPage =
     pathname === '/onboarding' ||
@@ -31,9 +29,7 @@ export default function Layout({
       {/* Mobile-first layout - 고정 너비 360px, 데스크탑에서도 모바일 크기 유지 */}
       <div className="mx-auto min-w-[360px] sm:w-[360px] bg-white min-h-svh shadow-xl relative">
         <div
-          className={`min-h-svh transition-colors duration-300 ${
-            theme === 'dark' ? 'dark bg-gray-900' : 'bg-white'
-          } ${className}`}
+          className={`min-h-svh transition-colors duration-300 bg-white ${className}`}
         >
           <main
             className={`w-full min-h-svh ${isOnBoardingPage ? '' : 'px-4'} `}

@@ -13,6 +13,9 @@
 # build outputs
 **/dist/
 
+# turbo
+**/.turbo/
+
 # testing
 /coverage
 
