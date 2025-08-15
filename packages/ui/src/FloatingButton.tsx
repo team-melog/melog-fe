@@ -21,7 +21,7 @@ export default function FloatingButton({
   return (
     <button
       onClick={handleEmotionRecord}
-      className={`absolute bottom-20 right-4 w-14 h-14 bg-[#060607] rounded-full flex items-center justify-center transition-all duration-200 hover:bg-[#2a2a2a] ${
+      className={`fixed bottom-[70px] right-4 w-14 h-14 bg-[#060607] rounded-full flex items-center justify-center transition-all duration-200 hover:bg-[#2a2a2a] ${
         showBorder ? 'border-2 border-[#2cffa9]' : ''
       } ${className}`}
     >

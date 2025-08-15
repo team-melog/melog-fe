@@ -7,6 +7,7 @@ import { useEmotionMonthly } from '@/features/emotion/hooks/useEmotionApi';
 import { svgComponents } from '@/assets/svgs/emotions/EmotionSvg';
 import { emotionIconsByStep } from '@/entities/emotion/types';
 import Link from 'next/link';
+import HighlightsIcon from '@/assets/svgs/common/HighlightsIcon';
 
 // 날짜를 YYYY-MM-DD 형식으로 변환 (시간 제외)
 const formatDateOnly = (date: Date) => {
@@ -16,82 +17,65 @@ const formatDateOnly = (date: Date) => {
   return `${year}-${month}-${day}`;
 };
 
-const testData = [
-  {
-    id: 1,
-    date: '2025-08-01',
-    emotions: [
-      { type: '지침', percentage: 70, step: 4 },
-      { type: '평온', percentage: 20, step: 1 },
-      { type: '분노', percentage: 10, step: 1 },
-    ],
-  },
-  {
-    id: 2,
-    date: '2025-08-02',
-    emotions: [
-      { type: '분노', percentage: 60, step: 3 },
-      { type: '설렘', percentage: 30, step: 2 },
-      { type: '기쁨', percentage: 10, step: 1 },
-    ],
-  },
-  {
-    id: 3,
-    date: '2025-08-11',
-    emotions: [
-      { type: '평온', percentage: 70, step: 4 },
-      { type: '기쁨', percentage: 10, step: 1 },
-      { type: '슬픔', percentage: 9, step: 1 },
-    ],
-  },
-];
-
 export default function CalendarPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const { user } = useAppStore();
   const { data: emotionMonthly } = useEmotionMonthly(
-    user?.name || '',
+    user.name,
     formatDateOnly(currentDate).slice(0, 7)
   );
+
+  type EmotionMonthlyType = Array<{
+    date: string;
+    emotions: Array<{
+      id: number;
+      percentage: number;
+      step: number;
+      type: string;
+    }>;
+  }>;
 
   // 데이터 매핑
   const testEmotionDataByDate = useMemo(() => {
     const data: {
       [key: string]: {
         id: number;
-        emotion: string;
+        type: string;
         step: number;
         svgComponent: React.ComponentType<{ width?: number; height?: number }>;
       };
     } = {};
 
-    testData.forEach(dayData => {
-      // 가장 높은 percentage를 가진 감정을 메인 감정으로 선택
-      const mainEmotion = dayData.emotions.reduce((prev, current) =>
-        prev.percentage > current.percentage ? prev : current
-      );
+    // emotionMonthly가 존재하고 배열일 때만 처리
+    if (emotionMonthly && Array.isArray(emotionMonthly)) {
+      (emotionMonthly as unknown as EmotionMonthlyType).forEach(dayData => {
+        // emotions 배열이 비어있지 않을 때만 처리
+        if (dayData.emotions && dayData.emotions.length > 0) {
+          // 가장 높은 percentage를 가진 감정을 메인 감정으로 선택
+          const mainEmotion = dayData.emotions.reduce((prev, current) =>
+            prev.percentage > current.percentage ? prev : current
+          );
 
-      // emotionIcons에서 해당 감정과 단계에 맞는 SVG 컴포넌트 찾기
-      const iconKey =
-        emotionIconsByStep[
-          mainEmotion.type as keyof typeof emotionIconsByStep
-        ]?.[mainEmotion.step - 1];
-      const svgComponent = iconKey ? svgComponents[iconKey] : null;
+          const iconKey =
+            emotionIconsByStep[
+              mainEmotion.type as keyof typeof emotionIconsByStep
+            ]?.[mainEmotion.step - 1];
+          const svgComponent = iconKey ? svgComponents[iconKey] : null;
 
-      if (svgComponent) {
-        data[dayData.date] = {
-          id: dayData.id,
-          emotion: mainEmotion.type,
-          step: mainEmotion.step,
-          svgComponent: svgComponent,
-        };
-      }
-    });
+          if (svgComponent) {
+            data[dayData.date] = {
+              id: mainEmotion.id || 0,
+              type: mainEmotion.type,
+              step: mainEmotion.step,
+              svgComponent: svgComponent,
+            };
+          }
+        }
+      });
+    }
 
     return data;
-  }, [testData]);
-
-  console.log('emotionMonthly', emotionMonthly);
+  }, [emotionMonthly]);
 
   // 현재 월의 첫 번째 날과 마지막 날 계산
   const firstDayOfMonth = new Date(
@@ -113,7 +97,7 @@ export default function CalendarPage() {
     const data: {
       [key: string]: {
         id: number;
-        emotion: string;
+        type: string;
         svgComponent?: React.ComponentType<{ width?: number; height?: number }>;
       };
     } = {};
@@ -122,7 +106,7 @@ export default function CalendarPage() {
       const item = testEmotionDataByDate[dateKey];
       data[dateKey] = {
         id: item.id,
-        emotion: item.emotion,
+        type: item.type,
         svgComponent: item.svgComponent,
       };
     });
@@ -188,11 +172,16 @@ export default function CalendarPage() {
     <Layout showTabBar={true} nickname={user?.name} showFloatingButton={true}>
       <div className=" min-h-screen bg-white flex flex-col pb-20">
         {/* AI 월별 요약 섹션 */}
-        <div className="bg-white border border-[#d0d2d7] rounded-[20px] p-4 my-6">
+        <div className="bg-greyBgColor rounded-[20px] p-4 my-6">
           <div className="space-y-2">
-            <h2 className="font-meetme text-[18px] font-normal text-[#36393f] tracking-[-0.18px] leading-[21.6px]">
-              AI 조언
-            </h2>
+            <div className="relative flex items-center gap-1">
+              <h2 className="z-10 font-meetme text-[18px] font-normal text-[#36393f] tracking-[-0.18px] leading-[21.6px]">
+                AI 한마디
+              </h2>
+              <div className="absolute top-[6px] left-0 z-0">
+                <HighlightsIcon width={56} height={15} />
+              </div>
+            </div>
             <p className="text-[15px] font-pretendard text-[#060607] tracking-[-0.15px] leading-6">
               {hasDataInCurrentMonth
                 ? '이번 달에는 기쁨이 늘고 분노가 줄었어요.'
