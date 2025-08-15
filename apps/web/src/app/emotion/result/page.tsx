@@ -142,8 +142,7 @@ function EmotionResultContent() {
         },
       });
     }
-    // 기존 색 유지 후 다음 화면으로 이동
-    router.push('/emotion/final');
+    router.push(`/feed/${currentData.id}`);
   };
 
   const onUpdateAIEmotion = () => {
@@ -160,8 +159,7 @@ function EmotionResultContent() {
         },
       });
     }
-    // 추천 색으로 변경 후 다음 화면으로 이동
-    router.push('/emotion/final');
+    router.push(`/feed/${currentData.id}`);
   };
   const handleRetry = () => {
     if (selectedEmotion) {
