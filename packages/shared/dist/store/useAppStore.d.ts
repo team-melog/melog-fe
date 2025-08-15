@@ -2,7 +2,6 @@ interface AppState {
     user: {
         id: string | null;
         name: string | null;
-        email: string | null;
     };
     isLoading: boolean;
     theme: 'light' | 'dark';
@@ -22,6 +21,10 @@ export declare const useAppStore: import("zustand").UseBoundStore<Omit<Omit<impo
     persist: {
         setOptions: (options: Partial<import("zustand/middleware").PersistOptions<AppStore, {
             theme: "light" | "dark";
+            user: {
+                id: string | null;
+                name: string | null;
+            };
         }>>) => void;
         clearStorage: () => void;
         rehydrate: () => Promise<void> | void;
@@ -30,6 +33,10 @@ export declare const useAppStore: import("zustand").UseBoundStore<Omit<Omit<impo
         onFinishHydration: (fn: (state: AppStore) => void) => () => void;
         getOptions: () => Partial<import("zustand/middleware").PersistOptions<AppStore, {
             theme: "light" | "dark";
+            user: {
+                id: string | null;
+                name: string | null;
+            };
         }>>;
     };
 }>;

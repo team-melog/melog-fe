@@ -1,61 +1,56 @@
-import { create } from 'zustand'
-import { devtools, persist } from 'zustand/middleware'
+import { create } from 'zustand';
+import { devtools, persist } from 'zustand/middleware';
 
 interface AppState {
   user: {
-    id: string | null
-    name: string | null
-    email: string | null
-  }
-  isLoading: boolean
-  theme: 'light' | 'dark'
+    id: string | null;
+    name: string | null;
+  };
+  isLoading: boolean;
+  theme: 'light' | 'dark';
 }
 
 interface AppActions {
-  setUser: (user: Partial<AppState['user']>) => void
-  setLoading: (loading: boolean) => void
-  setTheme: (theme: AppState['theme']) => void
-  reset: () => void
+  setUser: (user: Partial<AppState['user']>) => void;
+  setLoading: (loading: boolean) => void;
+  setTheme: (theme: AppState['theme']) => void;
+  reset: () => void;
 }
 
-type AppStore = AppState & AppActions
+type AppStore = AppState & AppActions;
 
 const initialState: AppState = {
   user: {
     id: null,
     name: null,
-    email: null,
   },
   isLoading: false,
   theme: 'light',
-}
+};
 
 export const useAppStore = create<AppStore>()(
   devtools(
     persist(
-      (set) => ({
+      set => ({
         ...initialState,
-        setUser: (user) =>
+        setUser: user =>
           set(
-            (state) => ({
+            state => ({
               user: { ...state.user, ...user },
             }),
             false,
             'setUser'
           ),
-        setLoading: (isLoading) =>
-          set({ isLoading }, false, 'setLoading'),
-        setTheme: (theme) =>
-          set({ theme }, false, 'setTheme'),
-        reset: () =>
-          set(initialState, false, 'reset'),
+        setLoading: isLoading => set({ isLoading }, false, 'setLoading'),
+        setTheme: theme => set({ theme: theme }, false, 'setTheme'),
+        reset: () => set(initialState, false, 'reset'),
       }),
       {
         name: 'melog-app-store',
-        // 민감한 정보는 저장하지 않음
-        partialize: (state) => ({
+        // localStorage에 저장할 상태들
+        partialize: state => ({
           theme: state.theme,
-          // user 정보는 보안상 localStorage에 저장하지 않음
+          user: state.user,
         }),
       }
     ),
@@ -63,4 +58,4 @@ export const useAppStore = create<AppStore>()(
       name: 'app-store',
     }
   )
-)
+);

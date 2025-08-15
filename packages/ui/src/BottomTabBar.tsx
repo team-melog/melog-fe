@@ -14,6 +14,7 @@ interface TabItem {
 
 interface BottomTabBarProps {
   className?: string;
+  nickname?: string | null;
 }
 
 const tabs: TabItem[] = [
@@ -44,7 +45,10 @@ const tabs: TabItem[] = [
   },
 ];
 
-export default function BottomTabBar({ className = '' }: BottomTabBarProps) {
+export default function BottomTabBar({
+  className = '',
+  nickname,
+}: BottomTabBarProps) {
   const pathname = usePathname();
 
   return (
@@ -55,6 +59,25 @@ export default function BottomTabBar({ className = '' }: BottomTabBarProps) {
         {tabs.map(tab => {
           const isActive = pathname === tab.path || pathname === tab.activePath;
           const IconComponent = tab.icon;
+
+          // 홈 탭일 때 조건부 라우팅
+          if (tab.id === 'home') {
+            const handleHomeClick = (e: React.MouseEvent) => {
+              e.preventDefault();
+              const targetPath = nickname ? '/emotion' : '/';
+              window.location.href = targetPath;
+            };
+
+            return (
+              <button
+                key={tab.id}
+                onClick={handleHomeClick}
+                className="flex flex-col items-center justify-center flex-1 h-full"
+              >
+                <IconComponent className="w-7 h-7 mb-1" isActive={isActive} />
+              </button>
+            );
+          }
 
           return (
             <Link

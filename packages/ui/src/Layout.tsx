@@ -1,5 +1,4 @@
 import { ReactNode } from 'react';
-import { useAppStore } from '@melog/shared';
 import BottomTabBar from './BottomTabBar';
 import { usePathname } from 'next/navigation';
 
@@ -7,14 +6,16 @@ interface LayoutProps {
   children: ReactNode;
   className?: string;
   showTabBar?: boolean;
+  nickname?: string | null;
 }
 
 export default function Layout({
   children,
   className = '',
   showTabBar = true,
+  nickname,
 }: LayoutProps) {
-  const theme = useAppStore(state => state.theme);
+  const theme = 'light'; // 기본값으로 설정
 
   const pathname = usePathname();
   const isOnBoardingPage =
@@ -42,7 +43,7 @@ export default function Layout({
         </div>
 
         {/* 하단 탭 바 */}
-        {showTabBar && <BottomTabBar />}
+        {showTabBar && <BottomTabBar nickname={nickname} />}
 
         {/* 데스크탑에서 모바일 시뮬레이션을 위한 사이드 가이드 */}
         <div className="hidden lg:block absolute -left-4 top-0 w-1 h-full bg-gray-300 opacity-30"></div>

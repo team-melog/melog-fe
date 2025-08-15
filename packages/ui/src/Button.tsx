@@ -9,7 +9,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const buttonVariants = {
-  primary: 'bg-blue-600 text-white',
+  primary: 'bg-white text-black',
   secondary: 'bg-gray-600 hover:bg-gray-700 text-white',
   outline: 'border border-gray-300 hover:bg-gray-50 text-gray-700',
   ghost: 'hover:bg-gray-100 text-gray-700',
@@ -33,7 +33,7 @@ export default function Button({
   return (
     <button
       className={cn(
-        'inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50',
+        'inline-flex items-center justify-center rounded-md font-medium focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50',
         buttonVariants[variant],
         buttonSizes[size],
         className

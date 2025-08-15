@@ -3,6 +3,7 @@ interface LayoutProps {
     children: ReactNode;
     className?: string;
     showTabBar?: boolean;
+    nickname?: string | null;
 }
-export default function Layout({ children, className, showTabBar, }: LayoutProps): import("react/jsx-runtime").JSX.Element;
+export default function Layout({ children, className, showTabBar, nickname, }: LayoutProps): import("react/jsx-runtime").JSX.Element;
 export {};
