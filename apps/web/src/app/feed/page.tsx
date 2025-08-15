@@ -83,6 +83,7 @@ export default function FeedPage() {
 
   // 각 카드의 배경색을 계산하는 함수
   const getCardBackgroundColor = (card: EmotionList['content'][0]) => {
+    if (!card.emotions || card.emotions.length === 0) return '#e5e7eb';
     // emotions에서 가장 높은 step을 가진 요소 찾기
     const mainEmotion = card.emotions.reduce((prev, current) =>
       prev.step > current.step ? prev : current
@@ -245,27 +246,31 @@ export default function FeedPage() {
                   >
                     {/* SVG 컴포넌트를 위에 렌더링 */}
                     <div className="absolute top-0 left-0 z-10 flex items-center justify-center w-full h-full">
-                      {(() => {
-                        const iconId =
-                          emotionIconsByStep[
-                            card.emotions[0]
-                              .type as keyof typeof emotionIconsByStep
-                          ]?.[card.emotions[0].step - 1];
+                      {card.emotions[0] &&
+                        (() => {
+                          const iconId =
+                            emotionIconsByStep[
+                              card.emotions[0]
+                                .type as keyof typeof emotionIconsByStep
+                            ]?.[card.emotions[0].step - 1];
 
-                        if (!iconId) return null;
+                          if (!iconId) return null;
 
-                        // 아이콘 ID를 파일명으로 변환 (예: Yellow1 -> Yellow, Pink2 -> Pink)
-                        const fileName = iconId.replace(/\d+$/, '');
+                          // 아이콘 ID를 파일명으로 변환 (예: Yellow1 -> Yellow, Pink2 -> Pink)
+                          const fileName = iconId.replace(/\d+$/, '');
 
-                        // svgComponents에서 해당 파일명의 컴포넌트 찾기
-                        const FaceSvgComponent = faceSvgComponents[fileName];
+                          // svgComponents에서 해당 파일명의 컴포넌트 찾기
+                          const FaceSvgComponent = faceSvgComponents[fileName];
 
-                        if (!FaceSvgComponent) return null;
+                          if (!FaceSvgComponent) return null;
 
-                        return (
-                          <FaceSvgComponent width={svgSize} height={svgSize} />
-                        );
-                      })()}
+                          return (
+                            <FaceSvgComponent
+                              width={svgSize}
+                              height={svgSize}
+                            />
+                          );
+                        })()}
                     </div>
                     <div
                       className="absolute inset-0"

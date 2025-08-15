@@ -5,13 +5,11 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Layout } from '@melog/ui';
 import { useEmotionStore } from '@/features/store';
 import { useAppStore } from '@/features/store';
-import {
-  useCreateEmotionRecordSTT,
-  useCreateEmotionRecordTXT,
-} from '@/features/emotion';
+import { useCreateEmotionRecordTXT } from '@/features/emotion';
 import { LottieSelectCharacters } from '@/components/lotties';
 import SuspenseWrapper from '@/components/SuspenseWrapper';
 import makeAudioFile from '@/shared/utils/makeAudioFile';
+import { API_ENDPOINTS, apiClient } from '@/shared';
 
 function EmotionAnalysisContent() {
   const router = useRouter();
@@ -30,7 +28,6 @@ function EmotionAnalysisContent() {
   const { setAnalysisResult } = useEmotionStore();
   const user = useAppStore(state => state.user);
   const { recordedAudio, textarea, clearRecording } = useEmotionStore();
-  const { mutateAsync: createRecordSTT } = useCreateEmotionRecordSTT();
   const { mutateAsync: createRecordTXT } = useCreateEmotionRecordTXT();
 
   useEffect(() => {
@@ -65,25 +62,57 @@ function EmotionAnalysisContent() {
     // router.push(`/emotion/result?${savedParams.toString()}`);
   }, [recordedAudio, router]);
 
+  const createEmotionSTT = async () => {
+    try {
+      const audioFile = makeAudioFile(recordedAudio as Blob, user.name);
+      const formData = new FormData();
+
+      formData.append('audioFile', audioFile);
+
+      // userSelectedEmotion을 개별 필드로 분리해서 추가
+      if (selectedEmotion && selectedIntensity) {
+        const userSelectedEmotion = {
+          type: selectedEmotion,
+          percentage: 20 * Number(selectedIntensity),
+        };
+        formData.append(
+          'userSelectedEmotion',
+          JSON.stringify(userSelectedEmotion)
+        );
+      }
+
+      const result = await apiClient.post(
+        API_ENDPOINTS.EMOTION.STT.replace(':nickname', user.name),
+        formData
+      );
+      console.log('===', result);
+      return result;
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   const performEmotionAnalysis = async () => {
     try {
       setIsAnalyzing(true);
       // Blob을 File 객체로 변환
       let result = null;
-      setAnalysisResult(null);
-      console.log('audioFile', recordedAudio, textarea);
+      // setAnalysisResult(null);
+      console.log('analysis', recordedAudio, textarea);
       if (recordedAudio) {
-        const audioFile = makeAudioFile(recordedAudio as Blob, user.name);
-        result = await createRecordSTT({
-          nickname: user.name,
-          request: {
-            audioFile: audioFile,
-            userSelectedEmotion: {
-              type: selectedEmotion,
-              percentage: 20 * Number(selectedIntensity),
-            },
-          },
-        });
+        // const audioFile = makeAudioFile(recordedAudio as Blob, user.name);
+        // result = await createRecordSTT({
+        //   nickname: user.name,
+        //   request: {
+        //     audioFile: audioFile,
+        //     userSelectedEmotion: {
+        //       type: selectedEmotion,
+        //       percentage: 20 * Number(selectedIntensity),
+        //     },
+        //   },
+        // });
+        result = await createEmotionSTT();
+        console.log('stt res', result);
       }
       if (textarea) {
         result = await createRecordTXT({

@@ -97,8 +97,6 @@ function EmotionResultContent() {
       ? (analysisResult as typeof testData)
       : testData;
 
-  console.log('스토어저장결과', analysisResult);
-
   // 더미 데이터
   const mainEmotion = currentData.emotions[0];
   const mainColor =

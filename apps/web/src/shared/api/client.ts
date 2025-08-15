@@ -12,10 +12,7 @@ class ApiClient {
     this.client = axios.create({
       baseURL: API_CONFIG.BASE_URL,
       timeout: this.timeout,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      // withCredentials: false, // 쿠키 사용시 활성화
+      // Content-Type을 기본값으로 설정하지 않음 (FormData 자동 감지)
     });
 
     // 요청 인터셉터

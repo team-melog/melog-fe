@@ -3,57 +3,31 @@
 import LottieRecordLoading from '@/components/lotties/LottieRecordLoading';
 import { Layout, LeftIcon, MicrophoneIcon } from '@melog/ui';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useEmotionStore } from '@/features/store';
 import { useReactMediaRecorder } from 'react-media-recorder';
-import { useAppStore } from '@/features/store';
-import makeAudioFile from '@/shared/utils/makeAudioFile';
 import SuspenseWrapper from '@/components/SuspenseWrapper';
 
 function EmotionRecordContentInner() {
   const router = useRouter();
   const [transcription] = useState<string>('');
-  const { status, startRecording, stopRecording, mediaBlobUrl } =
-    useReactMediaRecorder({
-      video: false,
-      audio: true,
-      blobPropertyBag: { type: 'audio/wav' },
-    });
+  const { status, startRecording, stopRecording } = useReactMediaRecorder({
+    video: false,
+    audio: true,
+    blobPropertyBag: { type: 'audio/wav' },
+    onStop: (blobUrl, blob) => {
+      // blob은 이미 Blob 객체입니다
+      setRecordedAudio(blob);
+    },
+  });
 
-  const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   // URL 파라미터에서 선택한 감정 정보 가져오기
   const searchParams = useSearchParams();
   const selectedEmotion = searchParams.get('emotion');
   const selectedIntensity = searchParams.get('intensity');
   const selectedColor = searchParams.get('color');
 
-  const nickname = useAppStore(state => state.user.name);
   const { setRecordedAudio } = useEmotionStore();
-  // const {
-  //   isRecording,
-  //   recordingTime,
-  //   startRecording,
-  //   stopRecording,
-  //   resetRecording,
-  //   audioBlob,
-  // } = useAudioRecorder();
-
-  // 시간을 MM:SS 형식으로 변환 (남은 시간 표시)
-  // const formatTime = (seconds: number) => {
-  //   const mins = Math.floor(seconds / 60);
-  //   const secs = seconds % 60;
-  //   return `${mins}:${secs.toString().padStart(2, '0')}`;
-  // };
-
-  // 남은 시간 계산 (60초 - 녹음 시간)
-  // const timeLeft = Math.max(0, 60 - recordingTime);
-
-  // 녹음 완료 시 오디오 파일 저장
-  useEffect(() => {
-    if (audioBlob) {
-      setRecordedAudio(audioBlob);
-    }
-  }, [audioBlob, setRecordedAudio]);
 
   const handleFinishRecording = async () => {
     await handleStopRecording();
@@ -92,12 +66,6 @@ function EmotionRecordContentInner() {
 
   const handleStopRecording = async () => {
     stopRecording();
-    const audioBlob = await fetch(mediaBlobUrl as string).then(r => r.blob());
-    setAudioBlob(audioBlob);
-
-    const audiofile = makeAudioFile(audioBlob, nickname);
-    console.log(status, audioBlob);
-    console.log('audiofile', audiofile);
   };
 
   return (
