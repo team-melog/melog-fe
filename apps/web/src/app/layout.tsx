@@ -35,6 +35,10 @@ export default function RootLayout({
   return (
     <html lang="ko" className={`${pretendard.className}`}>
       <head>
+        <meta
+          httpEquiv="Content-Security-Policy"
+          content="upgrade-insecure-requests"
+        />
         <link
           rel="preload"
           href="/static/fonts/PretendardGOVVariable.woff2"
