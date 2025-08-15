@@ -33,7 +33,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" className={`${pretendard.className}`}>
+    <html lang="ko" className={`${pretendard.variable} ${meetme.variable}`}>
       <head>
         {/* <meta
           httpEquiv="Content-Security-Policy"
@@ -54,7 +54,7 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
       </head>
-      <body className={`${meetme.variable} font-sans antialiased`}>
+      <body className="font-sans antialiased">
         <Providers>{children}</Providers>
       </body>
     </html>

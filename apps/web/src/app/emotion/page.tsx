@@ -1,12 +1,16 @@
 'use client';
 
-import { Layout, Button } from '@melog/ui';
+import { Layout } from '@melog/ui';
 import { useAppStore } from '@/features/store';
 import { useRouter } from 'next/navigation';
-import LottieSelectCharacters from '@/components/lotties/LottieSelectCharacters';
 import { useEmotionList } from '@/features/emotion';
 import { svgComponents } from '@/assets/svgs/emotions/EmotionSvg';
 import { emotionIconsByStep } from '@/entities/emotion/types';
+import Yellow5 from '@/assets/svgs/emotions/Yellow5';
+import Green5 from '@/assets/svgs/emotions/Green5';
+import Pink5 from '@/assets/svgs/emotions/Pink5';
+import HighlightsIcon from '@/assets/svgs/common/HighlightsIcon';
+import Link from 'next/link';
 
 export default function EmotionPage() {
   const router = useRouter();
@@ -43,13 +47,24 @@ export default function EmotionPage() {
     router.push('/emotion/select');
   };
 
+  // emotionWeekList 유무에 따라 다른 UI 표시
+  const hasEmotionData =
+    emotionWeekList &&
+    'content' in emotionWeekList &&
+    Array.isArray((emotionWeekList as { content: unknown[] }).content) &&
+    (emotionWeekList as { content: unknown[] }).content.length > 0;
+  const isFirstTime = !hasEmotionData;
+
   return (
-    <Layout showTabBar={true} nickname={nickname}>
-      <div className="min-h-svh font-meetme bg-white flex flex-col">
+    <Layout showTabBar={true} nickname={nickname} className="bg-greyBgColor">
+      <div className="min-h-svh font-meetme bg-greyBgColor flex flex-col px-4">
         {/* Main Content */}
         <div className="flex-1 flex flex-col py-6">
           {/* Calendar Bar */}
-          <div className="h-[125px] rounded-xl py-3 px-4 mb-6 border-2 border-[#D0D2D7] flex flex-col justify-between">
+          <Link
+            href="/calendar"
+            className="h-[125px] rounded-xl py-3 px-4 mb-3 bg-white flex flex-col justify-between"
+          >
             <span className="text-lg">지난 일주일</span>
             <div className="flex justify-between items-center">
               {daysOfWeek.map((day, index) => {
@@ -79,57 +94,124 @@ export default function EmotionPage() {
                           );
                         })()}
                       {/* 요일 원형 */}
-                      <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium mb-2 text-[#B5B8C0]">
+                      <div className="w-8 h-8 rounded-full flex items-center justify-center text-[18px] mb-2 text-[#B5B8C0] bg-[#ECEDEF] ">
                         {day}
                       </div>
                     </div>
-                    <div className="text-sm font-medium">
+                    <div className="text-[17px] text-[#7E8391]">
                       {new Date(date).getDate()}
                     </div>
                   </div>
                 );
               })}
             </div>
-          </div>
+          </Link>
 
-          <div className="h-[calc(90svh-225px)] flex flex-col justify-between">
-            {/* Main Title */}
-            <h1 className="text-3xl text-center text-black leading-tight">
-              오늘 &nbsp;
-              <span className="border-b-2 border-[black]">
-                {nickname || '사용자'}님의 감정
-              </span>
-              에 <br />
-              가장 가까운 색은?
-            </h1>
-
-            {/* Main Illustration */}
-            <div className="flex justify-center">
-              <div className="w-40 h-40">
-                <LottieSelectCharacters />
+          {/* AI의 한마디 카드 */}
+          <div className="min-h-[82px] max-h-[106px] bg-[#ecedef] rounded-[20px] p-4 mb-3 relative">
+            <div className="mb-4">
+              <div className="relative flex items-center gap-1">
+                <h3 className="z-10 text-lg font-meetme text-[#36393f]">
+                  AI의 한마디
+                </h3>
+                <div className="absolute top-[9px] left-0 z-0">
+                  <HighlightsIcon width={66} height={15} />
+                </div>
+              </div>
+              <div className="text-[15px] font-pretendard text-[#060607] leading-6 font-medium text-sm">
+                {isFirstTime
+                  ? '오늘의 복잡한 감정을 미로그에 기록해 볼까요?'
+                  : '이번 달은 다양한 감정을 경험했어요. 그만큼 나를 더 깊이 알게 됐네요.'}
               </div>
             </div>
+          </div>
 
-            {/* Record Button */}
-            <div className="flex justify-center">
-              <Button
-                onClick={handleEmotionRecord}
-                className="w-3/5 bg-[#060607] hover:bg-[#2a2a2a] text-white py-3 px-8 rounded-3xl transition-colors text-xl"
+          {/* 이번주 챌린지 섹션 */}
+          <div className="mb-6 mt-3 pb-6">
+            <h3 className="text-[15px] font-pretendard text-[#4e515b] mb-4">
+              이번주 챌린지
+            </h3>
+            <div className="space-y-2">
+              {/* 출석체크 챌린지 */}
+              <Link
+                href="/calendar"
+                className="h-[90px] bg-[#ffdef1] rounded-2xl p-4 flex items-center justify-between"
               >
-                색상 선택하기
-              </Button>
+                <div className="w-full flex justify-between items-center">
+                  <div>
+                    <h4 className="text-[17px] font-meetme text-black">
+                      출석체크
+                    </h4>
+                    <p className="text-[13px] font-medium text-[#656a76] leading-5 font-pretendard">
+                      3일 연속 감정 기록하기
+                    </p>
+                  </div>
+                  <Pink5 width={40} height={40} />
+                </div>
+              </Link>
+
+              {/* 감정 패턴 보기 챌린지 */}
+              <Link
+                href="/calendar"
+                className="h-[90px] bg-[#fff5ca] rounded-2xl p-4 flex items-center justify-between"
+              >
+                <div className="w-full flex justify-between items-center">
+                  <div>
+                    <h4 className="text-[17px] font-meetme text-black">
+                      감정 패턴 보기
+                    </h4>
+                    <p className="text-[13px] font-medium text-[#656a76] leading-5 font-pretendard">
+                      감정 변화 패턴 찾아보기
+                    </p>
+                  </div>
+                  <Yellow5 width={40} height={40} />
+                </div>
+              </Link>
+
+              {/* 이너피스 챌린지 */}
+              <Link
+                href="/calendar"
+                className="h-[90px] bg-[#ccffe4] rounded-2xl p-4 flex items-center justify-between"
+              >
+                <div className="w-full flex justify-between items-center">
+                  <div>
+                    <h4 className="text-[17px] font-meetme text-black">
+                      이너피스
+                    </h4>
+                    <p className="text-[13px] font-medium text-[#656a76] leading-5 font-pretendard">
+                      평온한 하루 2번 만들기
+                    </p>
+                  </div>
+                  <Green5 width={40} height={40} />
+                </div>
+              </Link>
             </div>
           </div>
         </div>
 
-        {/* Theme Toggle (Hidden by default) */}
-        {/* <button
-          onClick={toggleTheme}
-          className="fixed top-4 right-4 p-2 bg-gray-200 rounded-full opacity-50 hover:opacity-100 transition-opacity"
-          title="테마 변경"
+        {/* 플로팅 버튼 - emotionWeekList 유무에 따라 border 스타일 변경 */}
+        <button
+          onClick={handleEmotionRecord}
+          className={`fixed bottom-20 right-4 w-14 h-14 bg-[#060607] rounded-full flex items-center justify-center transition-all duration-200 ${
+            isFirstTime ? 'border-2 border-[#2cffa9]' : ''
+          }`}
         >
-          {theme === 'light' ? '🌙' : '☀️'}
-        </button> */}
+          <svg
+            width="32"
+            height="32"
+            viewBox="0 0 32 32"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M16 8V24M8 16H24"
+              stroke="white"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </button>
       </div>
     </Layout>
   );

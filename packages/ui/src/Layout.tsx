@@ -18,16 +18,19 @@ export default function Layout({
   const pathname = usePathname();
   const isOnBoardingPage =
     pathname === '/onboarding' ||
-    pathname.includes('/emotion/record') ||
-    pathname.includes('/emotion/analysis') ||
-    pathname.includes('/emotion/write') ||
+    pathname === '/emotion' ||
+    pathname === '/emotion/record' ||
+    pathname === '/emotion/analysis' ||
+    pathname === '/emotion/write' ||
     pathname.includes('/feed') ||
     pathname.includes('/profile');
 
   return (
-    <div className="min-h-svh bg-gray-100">
+    <div className={`min-h-svh bg-gray-100 ${className}`}>
       {/* Mobile-first layout - 고정 너비 360px, 데스크탑에서도 모바일 크기 유지 */}
-      <div className="mx-auto min-w-[360px] sm:w-[360px] bg-white min-h-svh shadow-xl relative">
+      <div
+        className={`mx-auto min-w-[360px] sm:w-[360px] bg-white min-h-svh shadow-xl relative ${className}`}
+      >
         <div
           className={`min-h-svh transition-colors duration-300 bg-white ${className}`}
         >
