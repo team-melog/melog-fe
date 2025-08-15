@@ -1,10 +1,9 @@
 'use client';
 
-import { Layout, Button } from '@melog/ui';
+import { Layout } from '@melog/ui';
 import { useAppStore } from '@/features/store';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ProfileIcon from '@/assets/icons/ProfileIcon.svg';
 import {
   emotionColorsByStep,
@@ -13,39 +12,37 @@ import {
 import { svgComponents } from '@/assets/svgs/emotions/EmotionSvg';
 import { faceSvgComponents } from '@/assets/svgs/faces/FaceSvg';
 import { useEmotionList } from '@/features';
+import { EmotionListResponse } from '@/features/emotion/api/types';
 
-const testData = {
-  content: [
-    {
-      id: 4,
-      date: '2025-08-04',
-      summary: '지침과 분노가 반복됨',
-      emotions: [
-        { type: '설렘', percentage: 90, step: 5 },
-        { type: '분노', percentage: 10, step: 1 },
-        { type: '슬픔', percentage: 10, step: 1 },
-      ],
-    },
-    {
-      id: 20,
-      date: '2025-08-03',
-      summary: '매우 긍정적인 변화가 나타남',
-      emotions: [
-        { type: '기쁨', percentage: 40, step: 4 },
-        { type: '설렘', percentage: 30, step: 3 },
-        { type: '여유', percentage: 30, step: 3 },
-      ],
-    },
-  ],
-  page: 0,
-  size: 7,
-};
+interface EmotionList {
+  content: {
+    id: number;
+    date: string;
+    summary: string;
+    emotions: {
+      id: number;
+      percentage: number;
+      step: number;
+      type: string;
+    }[];
+  }[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+  hasNext: boolean;
+  hasPrevious: boolean;
+}
 
 export default function FeedPage() {
   const router = useRouter();
   const { user } = useAppStore();
   const { data: emotionList } = useEmotionList(user?.name, 0, 12);
-  console.log('emotionList', emotionList);
+  const [svgSize, setSvgSize] = useState(50);
+  const gridRef = useRef<HTMLDivElement>(null);
+
+  // 타입 안전성을 위한 타입 가드
+  const emotionData = emotionList as unknown as EmotionListResponse;
 
   // emotion 관련 페이지들 prefetch
   useEffect(() => {
@@ -54,10 +51,27 @@ export default function FeedPage() {
     router.prefetch('/emotion/write');
   }, [router]);
 
-  // testData 사용
-  const hasData = testData.content.length > 0;
+  // 그리드 크기에 따라 SVG 크기 조정
+  useEffect(() => {
+    const updateSvgSize = () => {
+      if (gridRef.current) {
+        const gridWidth = gridRef.current.offsetWidth;
+        const cardSize = gridWidth / 3; // 3열 그리드이므로
+        const newSvgSize = cardSize; // 카드 크기의 80% 또는 최대 120px
+        setSvgSize(newSvgSize);
+      }
+    };
+
+    updateSvgSize();
+    window.addEventListener('resize', updateSvgSize);
+
+    return () => window.removeEventListener('resize', updateSvgSize);
+  }, [emotionData?.content?.length]);
+
+  // emotionList 사용 - 안전한 접근
+  const hasData = emotionData?.content && emotionData.content.length > 0;
   const dominantEmotion = hasData
-    ? testData.content[0]?.emotions[0]?.type
+    ? emotionData?.content[0]?.emotions[0]?.type
     : null;
 
   const handleCardClick = (entryId: number) => {
@@ -65,10 +79,10 @@ export default function FeedPage() {
   };
 
   // 감정 데이터를 카드 형태로 변환
-  const emotionCards = testData.content;
+  const emotionCards = emotionData?.content;
 
   // 각 카드의 배경색을 계산하는 함수
-  const getCardBackgroundColor = (card: (typeof testData.content)[0]) => {
+  const getCardBackgroundColor = (card: EmotionList['content'][0]) => {
     // emotions에서 가장 높은 step을 가진 요소 찾기
     const mainEmotion = card.emotions.reduce((prev, current) =>
       prev.step > current.step ? prev : current
@@ -92,8 +106,7 @@ export default function FeedPage() {
         <div className="pt-6 px-4 border-b border-gray-200">
           {/* Profile Section */}
           <div className="flex items-center mb-6">
-            <div className="w-12 h-12 bg-white rounded-full mr-4 border border-gray-200 flex items-center justify-center">
-              {/* Profile image placeholder */}
+            <div className="rounded-full mr-4 flex items-center justify-center">
               <ProfileIcon />
             </div>
             <div>
@@ -111,7 +124,7 @@ export default function FeedPage() {
                   감정기록
                 </p>
                 <p className="h-8 text-[15px] font-medium text-[#060607] tracking-[-0.15px] leading-6 flex items-center justify-center">
-                  {testData.content.length}
+                  {emotionData?.content?.length || 0}
                 </p>
               </div>
               <div className="w-px h-10 bg-[#ECEDEF]"></div>
@@ -124,9 +137,9 @@ export default function FeedPage() {
                     {(() => {
                       const iconId =
                         emotionIconsByStep[
-                          testData.content[0].emotions[0]
+                          emotionData.content[0].emotions[0]
                             .type as keyof typeof emotionIconsByStep
-                        ]?.[testData.content[0].emotions[0].step - 1];
+                        ]?.[emotionData.content[0].emotions[0].step - 1];
                       const SvgComponent = iconId
                         ? svgComponents[iconId]
                         : null;
@@ -137,7 +150,7 @@ export default function FeedPage() {
                     })()}
                   </div>
                 ) : (
-                  <p className="h-8 text-[15px] font-medium text-[#060607] tracking-[-0.15px] leading-6">
+                  <p className="h-8 text-[15px] font-medium text-[#060607] tracking-[-0.15px] leading-6 flex items-center justify-center">
                     -
                   </p>
                 )}
@@ -159,90 +172,76 @@ export default function FeedPage() {
         <div className="flex-1">
           {!hasData ? (
             /* 기록 전 상태 */
-            <div className="flex flex-col items-center justify-center py-12">
+            <div className="flex flex-col items-center justify-center py-12 mt-20">
               <p className="text-md text-black mb-5">
                 아직 기록된 감정이 없어요
               </p>
-              <Link href="/emotion/select" prefetch={true}>
-                <Button className="bg-[#060607] hover:bg-[#2a2a2a] text-white font-normal text-xl py-3 px-16 rounded-[30px] tracking-[-0.2px] transition-colors">
-                  감정 기록하러 가기
-                </Button>
-              </Link>
-            </div>
-          ) : testData.content.length === 1 ? (
-            /* 1개 있을 때 상태 */
-            <div className="space-y-4">
-              {/* Single Emotion Card */}
-              <div className="grid grid-cols-1 gap-1">
-                {emotionCards.map(card => (
-                  <button
-                    key={card.id}
-                    onClick={() => handleCardClick(card.id)}
-                    className="relative aspect-square border border-white group hover:opacity-80 transition-opacity"
-                  >
-                    {/* SVG 컴포넌트를 위에 렌더링 */}
-                    <div className="absolute z-10 flex items-center justify-center w-full h-full">
-                      {(() => {
-                        // emotionIconsByStep에서 해당 감정과 단계에 맞는 아이콘 ID 찾기
-                        const iconId =
-                          emotionIconsByStep[
-                            card.emotions[0]
-                              .type as keyof typeof emotionIconsByStep
-                          ]?.[card.emotions[0].step - 1];
-
-                        if (!iconId) return null;
-
-                        // 아이콘 ID를 파일명으로 변환 (예: Yellow1 -> Yellow, Pink2 -> Pink)
-                        const fileName = iconId.replace(/\d+$/, '');
-
-                        console.log('iconId:', iconId, 'fileName:', fileName);
-                        console.log(
-                          'faceSvgComponents keys:',
-                          Object.keys(faceSvgComponents)
-                        );
-                        console.log(
-                          'Available component:',
-                          faceSvgComponents[fileName]
-                        );
-
-                        // faceSvgComponents에서 해당 파일명의 컴포넌트 찾기
-                        const SvgComponent = faceSvgComponents[fileName];
-
-                        if (!SvgComponent) return null;
-
-                        return <SvgComponent width={32} height={32} />;
-                      })()}
-                    </div>
-
-                    {/* <div
-                      className="absolute inset-0"
-                      style={{ backgroundColor: getCardBackgroundColor(card) }}
-                    /> */}
-                  </button>
-                ))}
-
-                {/* Add New Button */}
-                <Link
-                  href="/emotion/select"
-                  className="aspect-square bg-gray-300 border border-white flex items-center justify-center hover:bg-gray-400 transition-colors"
-                  prefetch={true}
-                >
-                  <div className="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center">
-                    <span className="text-lg text-white">+</span>
-                  </div>
-                </Link>
-              </div>
             </div>
           ) : (
+            // ) : emotionData?.content?.length === 1 ? (
+            //   /* 1개 있을 때 상태 */
+            //   <div className="space-y-4">
+            //     {/* Single Emotion Card */}
+            //     <div className="grid grid-cols-1 gap-1">
+            //       {emotionCards?.map(card => (
+            //         <button
+            //           key={card.id}
+            //           onClick={() => handleCardClick(card.id)}
+            //           className="relative aspect-square border group hover:opacity-80 transition-opacity"
+            //         >
+            //           {/* SVG 컴포넌트를 위에 렌더링 */}
+            //           <div className="absolute z-10 flex items-center justify-center w-full h-full">
+            //             {(() => {
+            //               // emotionIconsByStep에서 해당 감정과 단계에 맞는 아이콘 ID 찾기
+            //               const iconId =
+            //                 emotionIconsByStep[
+            //                   card.emotions[0]
+            //                     .type as keyof typeof emotionIconsByStep
+            //                 ]?.[card.emotions[0].step - 1];
+
+            //               if (!iconId) return null;
+
+            //               // 아이콘 ID를 파일명으로 변환 (예: Yellow1 -> Yellow, Pink2 -> Pink)
+            //               const fileName = iconId.replace(/\d+$/, '');
+
+            //               // faceSvgComponents에서 해당 파일명의 컴포넌트 찾기
+            //               const SvgComponent = faceSvgComponents[fileName];
+
+            //               if (!SvgComponent) return null;
+
+            //               return <SvgComponent width={32} height={32} />;
+            //             })()}
+            //           </div>
+
+            //           {/* <div
+            //             className="absolute inset-0"
+            //             style={{ backgroundColor: getCardBackgroundColor(card) }}
+            //           /> */}
+            //         </button>
+            //       ))}
+
+            //       {/* Add New Button */}
+            //       <Link
+            //         href="/emotion/select"
+            //         className="aspect-square bg-gray-300 border flex items-center justify-center hover:bg-gray-400 transition-colors"
+            //         prefetch={true}
+            //       >
+            //         <div className="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center">
+            //           <span className="text-lg text-white">+</span>
+            //         </div>
+            //       </Link>
+            //     </div>
+            //   </div>
+            // ) : (
             /* 여러 개 있을 때 상태 */
             <div className="space-y-4">
               {/* Emotion Cards Grid */}
-              <div className="grid grid-cols-3 gap-0.5 w-full">
-                {emotionCards.map(card => (
+              <div ref={gridRef} className="grid grid-cols-3 gap-0.5 w-full">
+                {emotionCards?.map(card => (
                   <button
                     key={card.id}
                     onClick={() => handleCardClick(card.id)}
-                    className="relative aspect-square border border-white group hover:opacity-80 transition-opacity"
+                    className="relative aspect-square border group hover:opacity-80 transition-opacity"
                   >
                     {/* SVG 컴포넌트를 위에 렌더링 */}
                     <div className="absolute top-0 left-0 z-10 flex items-center justify-center w-full h-full">
@@ -263,7 +262,9 @@ export default function FeedPage() {
 
                         if (!FaceSvgComponent) return null;
 
-                        return <FaceSvgComponent width={50} height={50} />;
+                        return (
+                          <FaceSvgComponent width={svgSize} height={svgSize} />
+                        );
                       })()}
                     </div>
                     <div

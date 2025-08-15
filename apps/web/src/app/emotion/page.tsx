@@ -109,7 +109,7 @@ export default function EmotionPage() {
 
           {/* AI의 한마디 카드 */}
           <div className="min-h-[82px] max-h-[106px] bg-[#ecedef] rounded-[20px] p-4 mb-3 relative">
-            <div className="mb-4">
+            <div>
               <div className="relative flex items-center gap-1">
                 <h3 className="z-10 text-lg font-meetme text-[#36393f]">
                   AI의 한마디

@@ -12,6 +12,7 @@ import type {
   EmotionRecordsResponse,
   EmotionStatsResponse,
   EmotionMonthlyResponse,
+  EmotionListResponse,
 } from './types';
 
 export class EmotionService {
@@ -62,7 +63,7 @@ export class EmotionService {
   // 감정 기록 목록 조회 (페이지네이션)
   static async getEmotionList(nickname: string, page: number, size: number) {
     const url = API_ENDPOINTS.EMOTION.LIST.replace(':nickname', nickname);
-    return apiClient.get<EmotionRecordsResponse>(
+    return apiClient.get<EmotionListResponse>(
       `${url}?page=${page}&size=${size}`
     );
   }

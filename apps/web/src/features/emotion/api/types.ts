@@ -66,6 +66,26 @@ export interface EmotionMonthly {
   }[];
 }
 
+export interface EmotionListResponse {
+  content: {
+    id: number;
+    date: string;
+    summary: string;
+    emotions: {
+      id: number;
+      percentage: number;
+      step: number;
+      type: string;
+    }[];
+  }[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+  hasNext: boolean;
+  hasPrevious: boolean;
+}
+
 // API 응답 타입들
 export type EmotionRecordResponse = ApiResponse<EmotionRecord>;
 export type EmotionAnalysisResponse = ApiResponse<EmotionAnalysisResult>;
