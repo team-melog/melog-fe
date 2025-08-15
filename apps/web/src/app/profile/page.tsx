@@ -29,6 +29,10 @@ export default function ProfilePage() {
   );
   console.log('Chart', emotionChart);
   console.log('Insight', emotionInsight);
+  console.log('Insight data structure:', emotionInsight);
+  if (emotionInsight) {
+    console.log('Insight keys:', Object.keys(emotionInsight));
+  }
 
   // 감정 기록이 있는지 확인 (testData 사용)
   const hasEmotionData = true; // testData가 있으므로 항상 true
@@ -87,13 +91,18 @@ export default function ProfilePage() {
 
   // 감정 키워드 분석
   const emotionKeywords = useMemo(() => {
-    if (!emotionInsight) return [];
+    const insight = emotionInsight as unknown as {
+      topKeywords: Array<{ keyword: string; weight: number }>;
+    };
+    if (!insight?.topKeywords) return [];
 
-    return emotionInsight.topKeywords.map(item => ({
-      keyword: item.keyword,
-      weight: item.weight,
-    }));
-  }, [hasEmotionData]);
+    return insight.topKeywords.map(
+      (item: { keyword: string; weight: number }) => ({
+        keyword: item.keyword,
+        weight: item.weight,
+      })
+    );
+  }, [emotionInsight]);
 
   return (
     <Layout showTabBar={true} nickname={user?.name}>

@@ -86,6 +86,15 @@ export interface EmotionListResponse {
   hasPrevious: boolean;
 }
 
+export interface EmotionInsightResponse {
+  monthlySummary: string;
+  topKeywords: {
+    id: number;
+    keyword: string;
+    weight: number;
+  }[];
+}
+
 // API 응답 타입들
 export type EmotionRecordResponse = ApiResponse<EmotionRecord>;
 export type EmotionAnalysisResponse = ApiResponse<EmotionAnalysisResult>;

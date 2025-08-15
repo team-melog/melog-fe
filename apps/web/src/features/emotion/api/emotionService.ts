@@ -9,10 +9,10 @@ import type {
   EmotionStats,
   EmotionRecordResponse,
   //   EmotionAnalysisResponse,
-  EmotionRecordsResponse,
   EmotionStatsResponse,
   EmotionMonthlyResponse,
   EmotionListResponse,
+  EmotionInsightResponse,
 } from './types';
 
 export class EmotionService {
@@ -110,9 +110,9 @@ export class EmotionService {
   static async getEmotionInsight(
     nickname: string,
     month: string // YYYY-MM
-  ): Promise<EmotionStatsResponse> {
+  ) {
     const url = API_ENDPOINTS.INSIGHT.replace(':nickname', nickname);
-    return apiClient.get<EmotionStats>(`${url}?month=${month}`);
+    return apiClient.get<EmotionInsightResponse>(`${url}?month=${month}`);
   }
 
   // 캘린더 월별 조회
