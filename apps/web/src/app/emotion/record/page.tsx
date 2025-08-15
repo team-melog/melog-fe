@@ -4,40 +4,49 @@ import LottieRecordLoading from '@/components/lotties/LottieRecordLoading';
 import { Layout, LeftIcon, MicrophoneIcon } from '@melog/ui';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { useAudioRecorder } from '@melog/shared';
+// import { useAudioRecorder } from '@melog/shared';
 import { useEmotionStore } from '@/features/store';
 import SuspenseWrapper from '@/components/SuspenseWrapper';
+import { useReactMediaRecorder } from 'react-media-recorder';
+import { useAppStore } from '@/features/store';
 
 function EmotionRecordContent() {
   const router = useRouter();
   const [transcription] = useState<string>('');
+  const { status, startRecording, stopRecording, mediaBlobUrl } =
+    useReactMediaRecorder({
+      video: false,
+      audio: true,
+      blobPropertyBag: { type: 'audio/wav' },
+    });
 
+  const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   // URL 파라미터에서 선택한 감정 정보 가져오기
   const searchParams = useSearchParams();
   const selectedEmotion = searchParams.get('emotion');
   const selectedIntensity = searchParams.get('intensity');
   const selectedColor = searchParams.get('color');
 
-  const {
-    isRecording,
-    recordingTime,
-    startRecording,
-    stopRecording,
-    resetRecording,
-    audioBlob,
-  } = useAudioRecorder();
-
+  const nickname = useAppStore(state => state.user.name);
   const { setRecordedAudio } = useEmotionStore();
+  // const {
+  //   isRecording,
+  //   recordingTime,
+  //   startRecording,
+  //   stopRecording,
+  //   resetRecording,
+  //   audioBlob,
+  // } = useAudioRecorder();
 
   // 시간을 MM:SS 형식으로 변환 (남은 시간 표시)
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
+  // const formatTime = (seconds: number) => {
+  //   const mins = Math.floor(seconds / 60);
+  //   const secs = seconds % 60;
+  //   return `${mins}:${secs.toString().padStart(2, '0')}`;
+  // };
 
   // 남은 시간 계산 (60초 - 녹음 시간)
-  const timeLeft = Math.max(0, 60 - recordingTime);
+  // const timeLeft = Math.max(0, 60 - recordingTime);
 
   // 녹음 완료 시 오디오 파일 저장
   useEffect(() => {
@@ -77,12 +86,31 @@ function EmotionRecordContent() {
 
   const handleBack = () => {
     stopRecording();
-    resetRecording();
+    // resetRecording();
     router.back();
+  };
+
+  const makeAudioFile = async (audioBlob: Blob) => {
+    // 현재 날짜와 시간을 가져와서 파일명 생성
+    const now = new Date();
+    const year = now.getFullYear().toString(); // YY 형식
+    const month = String(now.getMonth() + 1).padStart(2, '0'); // MM 형식
+    const day = String(now.getDate()).padStart(2, '0'); // DD 형식
+    const timestamp = now.getTime(); // timestamp
+
+    const filename = `emotion_${nickname}_${year}${month}${day}_${timestamp}.wav`;
+    const audiofile = new File([audioBlob], filename, { type: 'audio/wav' });
+    return audiofile;
   };
 
   const handleStopRecording = async () => {
     stopRecording();
+    const audioBlob = await fetch(mediaBlobUrl as string).then(r => r.blob());
+    setAudioBlob(audioBlob);
+    console.log(status, audioBlob);
+
+    const audiofile = await makeAudioFile(audioBlob);
+    console.log('audiofile', audiofile);
   };
 
   return (
@@ -113,7 +141,7 @@ function EmotionRecordContent() {
 
             {/* Timer */}
             <div className="text-2xl font-meetme text-[#dddddd] mb-12">
-              {isRecording ? formatTime(timeLeft) : '일시정지됨'}
+              {/* {status?.recording ? formatTime(timeLeft) : '일시정지됨'} */}
             </div>
           </div>
 
@@ -126,10 +154,12 @@ function EmotionRecordContent() {
           <div className="flex items-center space-x-8 mb-8">
             {/* Main Record/Pause Button */}
             <button
-              onClick={isRecording ? handleStopRecording : startRecording}
+              onClick={
+                status === 'recording' ? handleStopRecording : startRecording
+              }
               className="w-20 h-20 bg-white rounded-full flex items-center justify-center"
             >
-              {isRecording ? (
+              {status === 'recording' ? (
                 <div className="flex space-x-1">
                   <div className="w-3 h-7 bg-black"></div>
                   <div className="w-3 h-7 bg-black"></div>

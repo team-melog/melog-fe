@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { Layout } from '@melog/ui';
-import { useAppStore } from '@melog/shared';
+import { useAppStore } from '@/features/store';
 import { useEmotionMonthly } from '@/features/emotion/hooks/useEmotionApi';
 import { svgComponents } from '@/assets/svgs/EmotionSvg';
 import { emotionIconsByStep } from '@/entities/emotion/types';
@@ -185,7 +185,7 @@ export default function CalendarPage() {
   };
 
   return (
-    <Layout showTabBar={true}>
+    <Layout showTabBar={true} nickname={user?.name}>
       <div className=" min-h-screen bg-white flex flex-col pb-20">
         {/* AI 월별 요약 섹션 */}
         <div className="bg-white border border-[#d0d2d7] rounded-[20px] p-4 my-6">

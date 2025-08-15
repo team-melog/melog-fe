@@ -13,6 +13,7 @@ export const faceSvgComponents: {
   [key: string]: React.ComponentType<{
     width?: number;
     height?: number;
+    color?: string;
   }>;
 } = {
   Gray,

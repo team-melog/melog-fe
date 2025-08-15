@@ -4,12 +4,19 @@ import { Layout, Button, MelogLogoIcon } from '@melog/ui';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import LottieOnboardCharacters from '@/components/lotties/LottieOnboardCharacters';
+import { useAppStore } from '@/features/store';
 
 export default function Home() {
   const router = useRouter();
+  const nickname = useAppStore(state => state.user.name);
 
   // 1뎁스 페이지들 prefetch
   useEffect(() => {
+    if (nickname) {
+      router.push('/emotion');
+      return;
+    }
+
     router.prefetch('/onboarding');
     router.prefetch('/feed');
     router.prefetch('/calendar');

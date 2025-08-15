@@ -3,9 +3,8 @@ import { devtools, persist } from 'zustand/middleware';
 
 interface AppState {
   user: {
-    id: string | null;
-    name: string | null;
-    email: string | null;
+    id: string;
+    name: string;
   };
   isLoading: boolean;
   theme: 'light' | 'dark';
@@ -22,9 +21,8 @@ type AppStore = AppState & AppActions;
 
 const initialState: AppState = {
   user: {
-    id: null,
-    name: null,
-    email: null,
+    id: '',
+    name: '',
   },
   isLoading: false,
   theme: 'light',

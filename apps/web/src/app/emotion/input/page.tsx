@@ -4,7 +4,7 @@ import { Layout, LeftIcon } from '@melog/ui';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 import { intensityLabels } from '@melog/shared';
-import { useAppStore } from '@melog/shared';
+import { useAppStore } from '@/features/store';
 import { svgComponents } from '@/assets/svgs/EmotionSvg';
 import { useEmotionStore } from '@/features/store';
 import { emotionIconsByStep } from '@/entities/emotion/types';

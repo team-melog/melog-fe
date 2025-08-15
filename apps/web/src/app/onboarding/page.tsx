@@ -1,7 +1,7 @@
 'use client';
 
 import { Layout, Button, Input } from '@melog/ui';
-import { useAppStore } from '@melog/shared';
+import { useAppStore } from '@/features/store';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { useCreateNickname } from '@/features/user/hooks/useUserApi';
@@ -52,36 +52,25 @@ export default function OnboardingPage() {
       // 닉네임이 이미 존재하는지 확인
       const existingNickname = await UserService.getNickname(nickname.trim());
 
-      console.log('existingNickname', existingNickname);
-
       // 이미 존재하는 경우 바로 emotion 페이지로 이동
-      // if (existingNickname) {
-      router.push('/emotion');
-      //   return;
-      // }
+      if (existingNickname) {
+        router.push('/emotion');
+        return;
+      }
     } catch (error: unknown) {
       // 닉네임이 존재하지 않는 경우 새로 생성
-      // createNickname.mutate(nickname.trim(), {
-      //   onSuccess: () => {
-      //     router.push('/emotion');
-      //   },
-      //   onError: () => {
-      //     router.push('/emotion');
-      //   },
-      // });
+      createNickname.mutate(nickname.trim(), {
+        onSuccess: () => {
+          router.push('/emotion');
+        },
+        onError: () => {
+          router.push('/emotion');
+        },
+      });
 
       console.error(error);
       return;
     }
-    // 닉네임이 존재하지 않는 경우 새로 생성
-    createNickname.mutate(nickname.trim(), {
-      onSuccess: () => {
-        router.push('/emotion');
-      },
-      onError: () => {
-        router.push('/emotion');
-      },
-    });
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {

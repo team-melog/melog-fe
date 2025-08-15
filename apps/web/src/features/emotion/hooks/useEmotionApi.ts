@@ -19,49 +19,13 @@ export const emotionKeys = {
 };
 
 // 감정 기록 목록 조회 훅 (페이지네이션)
-export const useEmotionList = (
-  nickname: string | undefined,
-  page = 0,
-  size = 7
-) => {
+export const useEmotionList = (nickname: string, page = 0, size = 7) => {
   return useQuery({
     queryKey: emotionKeys.list(nickname || '', page, size),
     queryFn: async () => {
-      try {
-        return await EmotionService.getEmotionList(nickname || '', page, size);
-      } catch (error) {
-        console.error(error);
-        // 테스트용
-        const testData = {
-          content: [
-            {
-              id: 21,
-              date: '2025-08-06',
-              summary: '지침과 분노가 반복됨',
-              emotions: [
-                { type: '지침', percentage: 40, step: 2 },
-                { type: '분노', percentage: 35, step: 2 },
-                { type: '불안', percentage: 25, step: 2 },
-              ],
-            },
-            {
-              id: 20,
-              date: '2025-08-05',
-              summary: '매우 긍정적인 변화가 나타남',
-              emotions: [
-                { type: '기쁨', percentage: 70, step: 4 },
-                { type: '설렘', percentage: 20, step: 1 },
-                { type: '여유', percentage: 10, step: 1 },
-              ],
-            },
-          ],
-          page: 0,
-          size: 7,
-        };
-        return testData;
-      }
+      return await EmotionService.getEmotionList(nickname, page, size);
     },
-    // enabled: !!nickname && nickname !== '',
+    enabled: !!nickname && nickname !== '',
     retry: false, // 재시도 비활성화
   });
 };

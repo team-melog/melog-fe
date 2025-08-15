@@ -1,7 +1,7 @@
 'use client';
 
 import { Layout, Button, LeftIcon, CheckIcon } from '@melog/ui';
-import { useAppStore } from '@melog/shared';
+import { useAppStore } from '@/features/store';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { emotions, intensityLabels } from '@melog/shared';

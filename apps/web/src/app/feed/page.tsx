@@ -1,7 +1,7 @@
 'use client';
 
 import { Layout, Button } from '@melog/ui';
-import { useAppStore } from '@melog/shared';
+import { useAppStore } from '@/features/store';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useEffect } from 'react';
@@ -44,7 +44,7 @@ const testData = {
 export default function FeedPage() {
   const router = useRouter();
   const { user } = useAppStore();
-  const { data: emotionList } = useEmotionList(user?.name || '', 0, 12);
+  const { data: emotionList } = useEmotionList(user?.name, 0, 12);
   console.log('emotionList', emotionList);
 
   // emotion 관련 페이지들 prefetch
@@ -86,7 +86,7 @@ export default function FeedPage() {
   };
 
   return (
-    <Layout showTabBar={true}>
+    <Layout showTabBar={true} nickname={user?.name}>
       <div className="font-meetme bg-white flex flex-col min-h-svh">
         {/* Header */}
         <div className="pt-6 px-4 border-b border-gray-200">
@@ -259,14 +259,18 @@ export default function FeedPage() {
                         const fileName = iconId.replace(/\d+$/, '');
 
                         // svgComponents에서 해당 파일명의 컴포넌트 찾기
-                        const SvgComponent = faceSvgComponents[fileName];
+                        const FaceSvgComponent = faceSvgComponents[fileName];
 
                         console.log('fileName', fileName);
 
-                        if (!SvgComponent) return null;
+                        if (!FaceSvgComponent) return null;
 
                         return (
-                          <SvgComponent width={50} height={50} color="black" />
+                          <FaceSvgComponent
+                            width={50}
+                            height={50}
+                            color="black"
+                          />
                         );
                       })()}
                     </div>

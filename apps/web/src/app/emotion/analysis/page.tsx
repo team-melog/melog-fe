@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Layout } from '@melog/ui';
 import { useEmotionStore } from '@/features/store';
-import { useAppStore } from '@melog/shared';
+import { useAppStore } from '@/features/store';
 import { useCreateEmotionRecord } from '@/features/emotion';
 import { LottieSelectCharacters } from '@/components/lotties';
 import SuspenseWrapper from '@/components/SuspenseWrapper';

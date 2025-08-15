@@ -1,7 +1,7 @@
 'use client';
 
 import { Layout, LeftIcon } from '@melog/ui';
-import { useAppStore } from '@melog/shared';
+import { useAppStore } from '@/features/store';
 import { useRouter } from 'next/navigation';
 
 export default function EmotionSkipPage() {

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Layout, LeftIcon, TrashIcon } from '@melog/ui';
-import { useAppStore } from '@melog/shared';
+import { useAppStore } from '@/features/store';
 import {
   emotionColorsByStep,
   emotionIconsByStep,
@@ -44,12 +44,6 @@ export default function FeedDetailPage() {
     prev.percentage > current.percentage ? prev : current
   );
 
-  // emotionColorsByStep에서 해당 감정과 단계에 맞는 색상 가져오기
-  const mainEmotionColor =
-    emotionColorsByStep[mainEmotion.type as keyof typeof emotionColorsByStep]?.[
-      mainEmotion.step - 1
-    ] || '#b1b6ba';
-
   const date = new Date('2025-08-01'); // testData에 date가 없으므로 임시로 설정
   const formattedDate = new Intl.DateTimeFormat('ko-KR', {
     year: 'numeric',
@@ -86,7 +80,7 @@ export default function FeedDetailPage() {
   };
 
   return (
-    <Layout showTabBar={true}>
+    <Layout showTabBar={true} nickname={user?.name}>
       <div className="font-meetme min-h-screen bg-white">
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-4">

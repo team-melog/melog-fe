@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Layout, Button } from '@melog/ui';
-import { useAppStore } from '@melog/shared';
+import { useAppStore } from '@/features/store';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { svgComponents } from '@/assets/svgs/EmotionSvg';

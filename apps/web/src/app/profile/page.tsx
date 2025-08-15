@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 import { Button, Layout } from '@melog/ui';
-import { useAppStore } from '@melog/shared';
+import { useAppStore } from '@/features/store';
 import ProfileIcon from '@/assets/icons/ProfileIcon.svg';
 import Link from 'next/link';
 import { emotionIconsByStep } from '@/entities/emotion/types';
@@ -108,7 +108,7 @@ export default function ProfilePage() {
   }, [hasEmotionData]);
 
   return (
-    <Layout showTabBar={true}>
+    <Layout showTabBar={true} nickname={user?.name}>
       <div className="font-meetme min-h-svh bg-white pb-20">
         {/* 프로필 섹션 */}
         <div className="px-4 pt-6 mb-6 border-b border-[#d0d2d7]">

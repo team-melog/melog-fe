@@ -1,7 +1,7 @@
 'use client';
 
 import { Layout, Button } from '@melog/ui';
-import { useAppStore } from '@melog/shared';
+import { useAppStore } from '@/features/store';
 import { useRouter } from 'next/navigation';
 import LottieSelectCharacters from '@/components/lotties/LottieSelectCharacters';
 import { useEmotionList } from '@/features/emotion';
@@ -10,13 +10,9 @@ import { emotionIconsByStep } from '@/entities/emotion/types';
 
 export default function EmotionPage() {
   const router = useRouter();
-  const { user } = useAppStore();
-  const { data: emotionWeekList } = useEmotionList(
-    user?.name || undefined,
-    0,
-    7
-  );
-  // console.log('emotionWeekList', emotionWeekList);
+  const nickname = useAppStore(state => state.user.name);
+  const { data: emotionWeekList } = useEmotionList(nickname, 0, 7);
+  console.log('emotionWeekList', nickname, emotionWeekList);
 
   // 현재 날짜 정보
   const today = new Date();
@@ -48,7 +44,7 @@ export default function EmotionPage() {
   };
 
   return (
-    <Layout showTabBar={true}>
+    <Layout showTabBar={true} nickname={nickname}>
       <div className="min-h-svh font-meetme bg-white flex flex-col">
         {/* Main Content */}
         <div className="flex-1 flex flex-col py-6">
@@ -101,7 +97,7 @@ export default function EmotionPage() {
             <h1 className="text-3xl text-center text-black leading-tight">
               오늘 &nbsp;
               <span className="border-b-2 border-[black]">
-                {user?.name || '사용자'}님의 감정
+                {nickname || '사용자'}님의 감정
               </span>
               에 <br />
               가장 가까운 색은?
