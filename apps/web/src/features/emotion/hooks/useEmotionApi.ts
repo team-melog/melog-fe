@@ -117,7 +117,7 @@ export const useEmotionDetail = (nickname: string, id: string) => {
 };
 
 // 감정 기록 수정 훅
-export const useUpdateEmotionRecord = () => {
+export const useUpdateEmotion = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -129,7 +129,7 @@ export const useUpdateEmotionRecord = () => {
       nickname: string;
       id: string;
       request: UpdateEmotionRecordRequest;
-    }) => EmotionService.updateEmotion(nickname, id, request),
+    }) => EmotionService.updateEmotionDetail(nickname, id, request),
     onSuccess: (data, { id }) => {
       // 수정된 감정 기록 캐시 업데이트
       queryClient.setQueryData(emotionKeys.detail(id), data);

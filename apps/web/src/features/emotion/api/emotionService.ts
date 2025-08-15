@@ -13,6 +13,7 @@ import type {
   EmotionMonthlyResponse,
   EmotionListResponse,
   EmotionInsightResponse,
+  EmotionUpdateResponse,
 } from './types';
 
 export class EmotionService {
@@ -78,12 +79,12 @@ export class EmotionService {
   }
 
   // 감정 기록 수정
-  static async updateEmotion(
+  static async updateEmotionDetail(
     nickname: string,
-    id: string,
+    id: string, // emotionId
     request: UpdateEmotionRecordRequest
-  ): Promise<EmotionRecordResponse> {
-    return apiClient.put<EmotionRecord>(
+  ) {
+    return apiClient.put<EmotionUpdateResponse>(
       `${API_ENDPOINTS.EMOTION.UPDATE.replace(':nickname', nickname).replace(':id', id)}`,
       request
     );

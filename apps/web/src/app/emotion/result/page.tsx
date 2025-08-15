@@ -10,6 +10,7 @@ import SuspenseWrapper from '@/components/SuspenseWrapper';
 import { emotionIconsByStep, emotionColorsByStep } from '@/entities';
 import GradientIcon from '@/assets/svgs/common/GradientIcon';
 import RefreshIcon from '@/assets/svgs/common/RefreshIcon';
+import { useUpdateEmotion } from '@/features';
 
 const testData = {
   id: 5,
@@ -85,7 +86,7 @@ function EmotionResultContent() {
     'keep' | 'change' | null
   >(null);
   const [activeTab, setActiveTab] = useState<'ai' | 'record'>('ai');
-
+  const { mutate: updateEmotion } = useUpdateEmotion();
   const searchParams = useSearchParams();
   const selectedEmotion = searchParams.get('emotion');
   const selectedIntensity = Number(searchParams.get('intensity'));
@@ -125,14 +126,40 @@ function EmotionResultContent() {
     mainEmotion.percentage
   );
 
-  const handleKeepColor = () => {
+  const onUpdateSelectedEmotion = async () => {
     setSelectedOption('keep');
+    if (currentData) {
+      updateEmotion({
+        nickname: currentData.user.nickname,
+        id: String(currentData.id),
+        request: {
+          emotions: [
+            {
+              type: currentData.userSelectedEmotion.type,
+              percentage: currentData.userSelectedEmotion.percentage,
+            },
+          ],
+        },
+      });
+    }
     // 기존 색 유지 후 다음 화면으로 이동
     router.push('/emotion/final');
   };
 
-  const handleChangeColor = () => {
+  const onUpdateAIEmotion = () => {
     setSelectedOption('change');
+    if (currentData) {
+      updateEmotion({
+        nickname: currentData.user.nickname,
+        id: String(currentData.id),
+        request: {
+          emotions: currentData.emotions.map(emotion => ({
+            type: emotion.type,
+            percentage: emotion.percentage,
+          })),
+        },
+      });
+    }
     // 추천 색으로 변경 후 다음 화면으로 이동
     router.push('/emotion/final');
   };
@@ -325,7 +352,7 @@ function EmotionResultContent() {
           {/* Color Selection Buttons */}
           <div className="space-y-4 w-full flex flex-col items-center">
             <Button
-              onClick={handleKeepColor}
+              onClick={onUpdateSelectedEmotion}
               className={`w-4/6 py-4 rounded-xl font-meetme text-xl border-2 bg-white ${
                 selectedOption === 'keep'
                   ? ' text-white border-gray-500'
@@ -361,7 +388,7 @@ function EmotionResultContent() {
             </Button>
 
             <Button
-              onClick={handleChangeColor}
+              onClick={onUpdateAIEmotion}
               className={`w-4/6 py-4 rounded-xl font-meetme text-xl border-2 : ${
                 selectedOption === 'change'
                   ? 'text-white border-gray-500'

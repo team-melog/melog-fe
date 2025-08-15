@@ -41,9 +41,10 @@ export interface CreateEmotionRecordRequest {
 
 // 감정 기록 수정 요청 타입
 export interface UpdateEmotionRecordRequest {
-  emotion?: string;
-  text?: number;
-  userSelectedEmotion?: { type: string[]; percentage: number };
+  emotions: {
+    type: string;
+    percentage: number;
+  }[];
 }
 
 // 감정 통계 타입
@@ -93,6 +94,23 @@ export interface EmotionInsightResponse {
     keyword: string;
     weight: number;
   }[];
+}
+
+export interface EmotionUpdateResponse {
+  id: number;
+  text: string;
+  summary: string;
+  comment: string;
+  emotions: {
+    type: string;
+    percentage: number;
+    step: number;
+  }[];
+  userSelectedEmotion: {
+    type: string;
+    percentage: number;
+    step: number;
+  };
 }
 
 // API 응답 타입들
