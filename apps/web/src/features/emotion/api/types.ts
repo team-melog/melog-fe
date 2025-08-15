@@ -113,6 +113,37 @@ export interface EmotionUpdateResponse {
   };
 }
 
+// 감정 기록 상세 조회 응답 타입
+export interface EmotionDetailResponse {
+  id: number;
+  text: string;
+  summary: string;
+  comment?: string;
+  emotions: {
+    type: string;
+    percentage: number;
+    step: number;
+  }[];
+  userSelectedEmotion: {
+    id: number;
+    type: string;
+    percentage: number;
+    step?: number;
+  };
+  emotionKeywords: {
+    id: number;
+    keyword: string;
+    weight: number;
+  }[];
+  createdAt: string;
+  date: string;
+  user: {
+    id?: number | null;
+    nickname: string;
+    createdAt?: string;
+  };
+}
+
 // API 응답 타입들
 export type EmotionRecordResponse = ApiResponse<EmotionRecord>;
 export type EmotionAnalysisResponse = ApiResponse<EmotionAnalysisResult>;

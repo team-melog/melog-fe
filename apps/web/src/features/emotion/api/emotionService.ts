@@ -7,13 +7,12 @@ import type {
   CreateEmotionRecordRequest,
   UpdateEmotionRecordRequest,
   EmotionStats,
-  EmotionRecordResponse,
-  //   EmotionAnalysisResponse,
   EmotionStatsResponse,
   EmotionMonthlyResponse,
   EmotionListResponse,
   EmotionInsightResponse,
   EmotionUpdateResponse,
+  EmotionDetailResponse,
 } from './types';
 
 export class EmotionService {
@@ -70,12 +69,10 @@ export class EmotionService {
   }
 
   // 감정 기록 상세 조회
-  static async getEmotionDetail(
-    nickname: string,
-    id: string
-  ): Promise<EmotionRecordResponse> {
+  static async getEmotionDetail(nickname: string, id: string) {
     const url = API_ENDPOINTS.EMOTION.LIST.replace(':nickname', nickname);
-    return apiClient.get<EmotionRecord>(`${url}/${id}`);
+    const res = apiClient.get<EmotionDetailResponse>(`${url}/${id}`);
+    return res;
   }
 
   // 감정 기록 수정
@@ -91,12 +88,9 @@ export class EmotionService {
   }
 
   // 감정 기록 삭제
-  static async deleteEmotion(
-    nickname: string,
-    id: string
-  ): Promise<EmotionRecordResponse> {
+  static async deleteEmotion(nickname: string, id: string) {
     const url = API_ENDPOINTS.EMOTION.LIST.replace(':nickname', nickname);
-    return apiClient.delete<EmotionRecord>(`${url}/${id}`);
+    return apiClient.delete(`${url}/${id}`);
   }
 
   // 감정 통계 조회
@@ -108,10 +102,7 @@ export class EmotionService {
     return apiClient.get<EmotionStats>(`${url}?month=${month}`);
   }
   // 월별 키워드 및 한줄 요약 조회
-  static async getEmotionInsight(
-    nickname: string,
-    month: string // YYYY-MM
-  ) {
+  static async getEmotionInsight(nickname: string, month: string) {
     const url = API_ENDPOINTS.INSIGHT.replace(':nickname', nickname);
     return apiClient.get<EmotionInsightResponse>(`${url}?month=${month}`);
   }

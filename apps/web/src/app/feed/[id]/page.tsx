@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Layout, LeftIcon, TrashIcon } from '@melog/ui';
 import { useAppStore } from '@/features/store';
@@ -8,23 +8,12 @@ import {
   emotionColorsByStep,
   emotionIconsByStep,
 } from '@/entities/emotion/types';
-import { useEmotionDetail } from '@/features/emotion/hooks/useEmotionApi';
+import {
+  useDeleteEmotionDetail,
+  useEmotionDetail,
+} from '@/features/emotion/hooks/useEmotionApi';
 import { svgComponents } from '@/assets/svgs/emotions/EmotionSvg';
-
-const testData = {
-  id: 1,
-  text: '요즘 너무 지쳐서 술마시고 싶어...',
-  summary: '최근 불안과 지침이 반복되는 상태입니다.',
-  emotions: [
-    { type: '지침', percentage: 40, step: 2 },
-    { type: '슬픔', percentage: 30, step: 2 },
-    { type: '분노', percentage: 30, step: 2 },
-  ],
-  userSelectedEmotion: {
-    type: '설렘',
-    percentage: 30,
-  },
-};
+import { EmotionDetailResponse } from '@/features/emotion/api/types';
 
 export default function FeedDetailPage() {
   const router = useRouter();
@@ -32,46 +21,62 @@ export default function FeedDetailPage() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const params = useParams();
   const emotionId = params.id as string;
-  const { data: emotionDetail } = useEmotionDetail(user?.name || '', emotionId);
-  console.log('emotionDetail', emotionId, emotionDetail);
 
-  // testData를 사용하여 감정 데이터 표시
-  // 실제로는 params.id에 따라 다른 데이터를 가져와야 함
-  const entry = testData;
-
-  // 가장 높은 percentage를 가진 감정을 메인 감정으로 선택
-  const mainEmotion = entry.emotions.reduce((prev, current) =>
-    prev.percentage > current.percentage ? prev : current
+  // user.name이 있을 때만 API 호출
+  const { data: emotionDetail, isLoading } = useEmotionDetail(
+    user.name,
+    emotionId
   );
 
-  const date = new Date('2025-08-01'); // testData에 date가 없으므로 임시로 설정
-  const formattedDate = new Intl.DateTimeFormat('ko-KR', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    weekday: 'long',
-  }).format(date);
+  const { mutate: deleteEmotion } = useDeleteEmotionDetail();
 
-  // AI 감정 분석 결과 (testData의 emotions 사용)
-  const emotionResults = entry.emotions.map(emotion => {
-    const colors =
-      emotionColorsByStep[emotion.type as keyof typeof emotionColorsByStep];
-    const color = colors ? colors[emotion.step - 1] : '#cccccc';
+  // 상태 변화 추적
+  useEffect(() => {
+    if (isLoading) return;
+    console.log('emotionDetail', emotionDetail);
+  }, [isLoading, emotionDetail]);
 
-    return {
-      name: emotion.type,
-      percentage: emotion.percentage,
-      color: color,
-      borderColor: color,
-      textColor: '#1f2024',
-    };
-  });
+  // 가장 높은 percentage를 가진 감정을 메인 감정으로 선택
+  const mainEmotion =
+    (emotionDetail as unknown as EmotionDetailResponse) &&
+    (emotionDetail as unknown as EmotionDetailResponse)?.emotions &&
+    (emotionDetail as unknown as EmotionDetailResponse)?.emotions.reduce(
+      (prev, current) => (prev.percentage > current.percentage ? prev : current)
+    );
 
-  const aiSummary = `${user?.name || '사용자'}님의 감정 분석 결과입니다. ${entry.emotions.map(e => `${e.type}(${e.percentage}%)`).join(', ')}가 감지되었습니다.\n\n${entry.summary}`;
+  const date = (emotionDetail as unknown as EmotionDetailResponse)?.date;
+  const formattedDate =
+    date &&
+    new Intl.DateTimeFormat('ko-KR', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      weekday: 'long',
+    }).format(new Date(date));
+
+  // AI 감정 분석 결과 (emotionDetail의 emotions 사용)
+  const emotionResults =
+    (emotionDetail as unknown as EmotionDetailResponse) &&
+    (emotionDetail as unknown as EmotionDetailResponse)?.emotions.map(
+      emotion => {
+        const colors =
+          emotionColorsByStep[emotion.type as keyof typeof emotionColorsByStep];
+        const color = colors ? colors[emotion.step - 1] : '#cccccc';
+
+        return {
+          name: emotion.type,
+          percentage: emotion.percentage,
+          color: color,
+          borderColor: color,
+          textColor: '#1f2024',
+        };
+      }
+    );
+
+  const aiSummary = `${user?.name || '사용자'}님의 감정 분석 결과입니다. ${(emotionDetail as unknown as EmotionDetailResponse) && (emotionDetail as unknown as EmotionDetailResponse)?.emotions.map(e => `${e.type}(${e.percentage}%)`).join(', ')}가 감지되었습니다.\n\n${(emotionDetail as unknown as EmotionDetailResponse) && (emotionDetail as unknown as EmotionDetailResponse)?.summary}`;
 
   const handleDelete = () => {
-    // testData는 정적 데이터이므로 실제 삭제는 불가능
-    // 대신 피드 목록으로 이동
+    deleteEmotion({ nickname: user.name, id: emotionId });
     router.push('/feed');
   };
 
@@ -116,41 +121,48 @@ export default function FeedDetailPage() {
             {/* Emotion Circle */}
             <div className="flex justify-center mb-6">
               <div className="relative flex items-center justify-center">
-                {(() => {
-                  const iconId =
-                    emotionIconsByStep[
-                      entry.emotions[0].type as keyof typeof emotionIconsByStep
-                    ]?.[entry.emotions[0].step - 1];
-                  const SvgComponent = iconId ? svgComponents[iconId] : null;
+                {(emotionDetail as unknown as EmotionDetailResponse)
+                  ?.emotions[0] &&
+                  (() => {
+                    const iconId =
+                      emotionIconsByStep[
+                        (emotionDetail as unknown as EmotionDetailResponse)
+                          ?.emotions[0].type as keyof typeof emotionIconsByStep
+                      ]?.[
+                        (emotionDetail as unknown as EmotionDetailResponse)
+                          ?.emotions[0].step - 1
+                      ];
+                    const SvgComponent = iconId ? svgComponents[iconId] : null;
 
-                  if (!SvgComponent) return null;
+                    if (!SvgComponent) return null;
 
-                  return <SvgComponent width={220} height={220} />;
-                })()}
+                    return <SvgComponent width={220} height={220} />;
+                  })()}
               </div>
             </div>
 
             {/* AI Emotion Diagnosis Card */}
             <div className="space-y-4">
               <h3 className="text-[26px] font-normal text-[#060607] tracking-[-0.26px] leading-[31.2px]">
-                {mainEmotion.type}색 (AI 감정진단)
+                {mainEmotion && mainEmotion.type}색 (AI 감정진단)
               </h3>
 
               {/* Emotion Tags */}
               <div className="flex flex-wrap gap-2">
-                {emotionResults.map((emotion, index) => (
-                  <span
-                    key={index}
-                    className="px-4 py-2 rounded-xl border text-lg font-normal tracking-[-0.18px] leading-[21.6px]"
-                    style={{
-                      backgroundColor: emotion.color,
-                      borderColor: emotion.borderColor,
-                      color: emotion.textColor,
-                    }}
-                  >
-                    {emotion.name} {emotion.percentage}%
-                  </span>
-                ))}
+                {emotionResults &&
+                  emotionResults.map((emotion, index) => (
+                    <span
+                      key={index}
+                      className="px-4 py-2 rounded-xl border text-lg font-normal tracking-[-0.18px] leading-[21.6px]"
+                      style={{
+                        backgroundColor: emotion.color,
+                        borderColor: emotion.borderColor,
+                        color: emotion.textColor,
+                      }}
+                    >
+                      {emotion.name} {emotion.percentage}%
+                    </span>
+                  ))}
               </div>
 
               {/* AI Summary */}

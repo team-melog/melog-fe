@@ -112,7 +112,7 @@ export const useEmotionDetail = (nickname: string, id: string) => {
   return useQuery({
     queryKey: emotionKeys.detail(id),
     queryFn: () => EmotionService.getEmotionDetail(nickname, id),
-    enabled: !!id,
+    enabled: !!nickname && !!id,
   });
 };
 
@@ -143,7 +143,7 @@ export const useUpdateEmotion = () => {
 };
 
 // 감정 기록 삭제 훅
-export const useDeleteEmotionRecord = () => {
+export const useDeleteEmotionDetail = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
