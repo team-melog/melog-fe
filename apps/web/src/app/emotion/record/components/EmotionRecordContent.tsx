@@ -8,8 +8,9 @@ import { useEmotionStore } from '@/features/store';
 import { useReactMediaRecorder } from 'react-media-recorder';
 import { useAppStore } from '@/features/store';
 import makeAudioFile from '@/shared/utils/makeAudioFile';
+import SuspenseWrapper from '@/components/SuspenseWrapper';
 
-export default function EmotionRecordContent() {
+function EmotionRecordContentInner() {
   const router = useRouter();
   const [transcription] = useState<string>('');
   const { status, startRecording, stopRecording, mediaBlobUrl } =
@@ -168,5 +169,13 @@ export default function EmotionRecordContent() {
         </div>
       </div>
     </Layout>
+  );
+}
+
+export default function EmotionRecordContent() {
+  return (
+    <SuspenseWrapper>
+      <EmotionRecordContentInner />
+    </SuspenseWrapper>
   );
 }

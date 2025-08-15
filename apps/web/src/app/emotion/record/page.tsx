@@ -1,7 +1,6 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import SuspenseWrapper from '@/components/SuspenseWrapper';
 import { Layout } from '@melog/ui';
 
 // SSR을 비활성화한 동적 컴포넌트 로드
@@ -20,9 +19,5 @@ const DynamicEmotionRecordContent = dynamic(
 );
 
 export default function EmotionRecordPage() {
-  return (
-    <SuspenseWrapper>
-      <DynamicEmotionRecordContent />
-    </SuspenseWrapper>
-  );
+  return <DynamicEmotionRecordContent />;
 }
