@@ -119,6 +119,8 @@ export interface EmotionDetailResponse {
   text: string;
   summary: string;
   comment?: string;
+  date: string;
+  createdAt: string;
   emotions: {
     type: string;
     percentage: number;
@@ -130,18 +132,18 @@ export interface EmotionDetailResponse {
     percentage: number;
     step?: number;
   };
-  emotionKeywords: {
-    id: number;
-    keyword: string;
-    weight: number;
-  }[];
-  createdAt: string;
-  date: string;
-  user: {
-    id?: number | null;
-    nickname: string;
-    createdAt?: string;
-  };
+  // emotionKeywords: {
+  //   id: number;
+  //   keyword: string;
+  //   weight: number;
+  // }[];
+  // user: {
+  //   id?: number | null;
+  //   nickname: string;
+  //   createdAt?: string;
+  // };
+  audioFilePath?: string | null;
+  hasAudioFile?: boolean | null;
 }
 
 // API 응답 타입들
