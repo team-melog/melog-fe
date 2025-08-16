@@ -17,6 +17,7 @@ import ArrowDownIcon from '@/assets/svgs/common/ArrowDownIcon';
 import PlayIcon from '@/assets/svgs/common/PlayIcon';
 import PlayingIcon from '@/assets/svgs/common/PlayingIcon';
 import { CheckIcon } from '@melog/ui';
+import { intensityLabels } from '@melog/shared';
 
 export default function FeedDetailPage() {
   const router = useRouter();
@@ -208,7 +209,10 @@ export default function FeedDetailPage() {
                   <div className="flex items-center justify-center mb-4">
                     <div className="flex items-center space-x-2">
                       <h3 className="text-[26px] font-normal text-[#060607] tracking-[-0.26px] leading-[31.2px]">
-                        {mainEmotion && mainEmotion.type}
+                        {mainEmotion?.step &&
+                          intensityLabels[mainEmotion?.step - 1]}
+                        &nbsp;
+                        {mainEmotion?.type}
                       </h3>
                       <div className="flex space-x-2">
                         <span className="px-2 py-1 bg-[#fff399] text-black text-xs font-semibold rounded">
