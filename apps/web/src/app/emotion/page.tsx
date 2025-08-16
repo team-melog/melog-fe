@@ -57,7 +57,7 @@ export default function EmotionPage() {
     >
       <div className="min-h-svh font-meetme bg-greyBgColor flex flex-col px-4">
         {/* Main Content */}
-        <div className="flex-1 flex flex-col py-6">
+        <div className="flex-1 flex flex-col pb-6 pt-2 sm:pt-6">
           {/* Calendar Bar */}
           <Link
             href="/calendar"
@@ -125,8 +125,8 @@ export default function EmotionPage() {
           </div>
 
           {/* 이번주 챌린지 섹션 */}
-          <div className="mb-6 mt-3 pb-6">
-            <h3 className="text-[15px] font-pretendard text-[#4e515b] mb-4">
+          <div className="mb-6 pb-6">
+            <h3 className="text-[15px] font-pretendard text-[#4e515b] mb-3">
               이번주 챌린지
             </h3>
             <div className="space-y-2">
