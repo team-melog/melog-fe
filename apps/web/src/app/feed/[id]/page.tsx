@@ -79,7 +79,7 @@ export default function FeedDetailPage() {
       weekday: 'long',
     }).format(new Date(date));
 
-  const aiSummary = `${user?.name || '사용자'}님의 감정 분석 결과입니다. ${(emotionDetail as unknown as EmotionDetailResponse) && (emotionDetail as unknown as EmotionDetailResponse)?.emotions.map(e => `${e.type}(${e.percentage}%)`).join(', ')}가 감지되었습니다.\n\n${(emotionDetail as unknown as EmotionDetailResponse) && (emotionDetail as unknown as EmotionDetailResponse)?.summary}`;
+  const aiSummary = `오늘 ${user?.name || '사용자'}님의 목소리에는 ${(emotionDetail as unknown as EmotionDetailResponse) && (emotionDetail as unknown as EmotionDetailResponse)?.emotions.map(e => `${e.type}(${e.percentage}%)`).join(', ')}가 섞여 있었습니다.\n${(emotionDetail as unknown as EmotionDetailResponse) && (emotionDetail as unknown as EmotionDetailResponse)?.summary}`;
 
   const handleDelete = () => {
     if (deletedId) {
@@ -301,7 +301,7 @@ export default function FeedDetailPage() {
                         </button>
                       </div>
 
-                      <div className="mb-4">
+                      <div>
                         <div className="w-full bg-white bg-opacity-80 rounded-sm h-1">
                           <div className="w-[46.6%] bg-[#1f2024] h-1 rounded-sm"></div>
                         </div>
@@ -372,7 +372,7 @@ export default function FeedDetailPage() {
                         </button>
                       </div>
 
-                      <div className="mb-4">
+                      <div>
                         <div className="w-full bg-white bg-opacity-80 rounded-sm h-1">
                           <div className="w-[46.6%] bg-[#1f2024] h-1 rounded-sm"></div>
                         </div>

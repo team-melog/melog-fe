@@ -26,6 +26,7 @@ export default function CalendarPage() {
   );
 
   type EmotionMonthlyType = Array<{
+    id: number | null;
     date: string;
     emotions: Array<{
       id: number;
@@ -39,6 +40,7 @@ export default function CalendarPage() {
   const testEmotionDataByDate = useMemo(() => {
     const data: {
       [key: string]: {
+        emotionId: number | null;
         id: number;
         type: string;
         step: number;
@@ -64,6 +66,7 @@ export default function CalendarPage() {
 
           if (svgComponent) {
             data[dayData.date] = {
+              emotionId: (dayData.id as unknown as number) || null,
               id: mainEmotion.id || 0,
               type: mainEmotion.type,
               step: mainEmotion.step,
@@ -96,6 +99,7 @@ export default function CalendarPage() {
   const emotionDataByDate = useMemo(() => {
     const data: {
       [key: string]: {
+        emotionId: number;
         id: number;
         type: string;
         svgComponent?: React.ComponentType<{ width?: number; height?: number }>;
@@ -105,6 +109,7 @@ export default function CalendarPage() {
     Object.keys(testEmotionDataByDate).forEach(dateKey => {
       const item = testEmotionDataByDate[dateKey];
       data[dateKey] = {
+        emotionId: item.emotionId || 0,
         id: item.id,
         type: item.type,
         svgComponent: item.svgComponent,
@@ -274,7 +279,7 @@ export default function CalendarPage() {
                       <div className="w-10 h-10 mb-2 flex items-center justify-center">
                         {emotionData ? (
                           emotionData.svgComponent ? (
-                            <Link href={`/feed/${emotionData.id}`}>
+                            <Link href={`/feed/${emotionData.emotionId}`}>
                               <emotionData.svgComponent
                                 width={40}
                                 height={40}
