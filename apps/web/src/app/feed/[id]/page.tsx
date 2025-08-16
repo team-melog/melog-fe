@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Layout, LeftIcon, MicrophoneIcon } from '@melog/ui';
 import { useAppStore } from '@/features/store';
@@ -26,6 +26,15 @@ export default function FeedDetailPage() {
   const [activeTab, setActiveTab] = useState<'ai' | 'record'>('ai');
   const [isPlaying, setIsPlaying] = useState(false);
   const [isPlayingRecord, setIsPlayingRecord] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [currentTimeRecord, setCurrentTimeRecord] = useState(0);
+  const [durationRecord, setDurationRecord] = useState(0);
+
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioRecordRef = useRef<HTMLAudioElement | null>(null);
+  const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const progressRecordIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const [showVoiceSelector, setShowVoiceSelector] = useState(false);
   const [selectedVoice, setSelectedVoice] = useState<
     'my-voice' | 'teacher' | 'ai1' | 'ai2' | 'ai3'
@@ -96,11 +105,81 @@ export default function FeedDetailPage() {
 
   // 재생 토글 핸들러
   const togglePlay = () => {
-    setIsPlaying(!isPlaying);
+    if (!audioRef.current) {
+      // 오디오 객체가 없으면 생성
+      audioRef.current = new Audio('/static/audio/test.wav');
+
+      audioRef.current.addEventListener('loadedmetadata', () => {
+        setDuration(audioRef.current?.duration || 0);
+      });
+
+      audioRef.current.addEventListener('ended', () => {
+        setIsPlaying(false);
+        setCurrentTime(0);
+        if (progressIntervalRef.current) {
+          clearInterval(progressIntervalRef.current);
+        }
+      });
+    }
+
+    if (isPlaying) {
+      // 일시정지
+      audioRef.current.pause();
+      setIsPlaying(false);
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current);
+      }
+    } else {
+      // 재생
+      audioRef.current.play();
+      setIsPlaying(true);
+
+      // 프로그레스 업데이트 시작
+      progressIntervalRef.current = setInterval(() => {
+        if (audioRef.current) {
+          setCurrentTime(audioRef.current.currentTime);
+        }
+      }, 100);
+    }
   };
 
   const togglePlayRecord = () => {
-    setIsPlayingRecord(!isPlayingRecord);
+    if (!audioRecordRef.current) {
+      // 오디오 객체가 없으면 생성
+      audioRecordRef.current = new Audio('/static/audio/test.wav');
+
+      audioRecordRef.current.addEventListener('loadedmetadata', () => {
+        setDurationRecord(audioRecordRef.current?.duration || 0);
+      });
+
+      audioRecordRef.current.addEventListener('ended', () => {
+        setIsPlayingRecord(false);
+        setCurrentTimeRecord(0);
+        if (progressRecordIntervalRef.current) {
+          clearInterval(progressRecordIntervalRef.current);
+        }
+      });
+    }
+
+    if (isPlayingRecord) {
+      // 일시정지
+      audioRecordRef.current.pause();
+      setIsPlayingRecord(false);
+      if (progressRecordIntervalRef.current) {
+        clearInterval(progressRecordIntervalRef.current);
+      }
+    } else {
+      // 재생
+      audioRecordRef.current.play();
+      setIsPlayingRecord(true);
+
+      // 프로그레스 업데이트 시작
+      progressRecordIntervalRef.current = setInterval(() => {
+        if (audioRecordRef.current) {
+          setCurrentTimeRecord(audioRecordRef.current.currentTime);
+        }
+      }, 100);
+    }
   };
 
   // 보이스 선택 바텀시트 토글
@@ -131,6 +210,33 @@ export default function FeedDetailPage() {
       default:
         return '나의 목소리';
     }
+  };
+
+  // 컴포넌트 언마운트 시 정리
+  useEffect(() => {
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+      if (audioRecordRef.current) {
+        audioRecordRef.current.pause();
+        audioRecordRef.current = null;
+      }
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current);
+      }
+      if (progressRecordIntervalRef.current) {
+        clearInterval(progressRecordIntervalRef.current);
+      }
+    };
+  }, []);
+
+  // 시간 포맷팅 함수 추가
+  const formatTime = (time: number): string => {
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   };
 
   return (
@@ -298,7 +404,7 @@ export default function FeedDetailPage() {
                           onClick={togglePlay}
                         >
                           {isPlaying ? (
-                            <PlayingIcon color="white" width={20} height={20} />
+                            <PlayingIcon color="white" width={20} height={15} />
                           ) : (
                             <PlayIcon color="white" width={20} height={20} />
                           )}
@@ -306,12 +412,40 @@ export default function FeedDetailPage() {
                       </div>
 
                       <div>
-                        <div className="w-full bg-white bg-opacity-80 rounded-sm h-1">
-                          <div className="w-[46.6%] bg-[#1f2024] h-1 rounded-sm"></div>
+                        <div className="w-full bg-white bg-opacity-80 rounded-sm h-1 relative cursor-pointer">
+                          <div
+                            className="bg-[#1f2024] h-1 rounded-sm transition-all duration-100"
+                            style={{
+                              width: `${duration > 0 ? (currentTime / duration) * 100 : 0}%`,
+                            }}
+                          ></div>
+                          {/* 재생 지점 표시 동그라미 */}
+                          <div
+                            className="absolute top-1/2 w-2 h-2 bg-[#1f2024] rounded-full shadow-sm"
+                            style={{
+                              left: `${duration > 0 ? (currentTime / duration) * 100 : 0}%`,
+                              transform: 'translate(-50%, -50%)',
+                            }}
+                          ></div>
+                          <div
+                            className="absolute inset-0 cursor-pointer"
+                            onClick={e => {
+                              if (audioRef.current && duration > 0) {
+                                const rect =
+                                  e.currentTarget.getBoundingClientRect();
+                                const clickX = e.clientX - rect.left;
+                                const clickPercent = clickX / rect.width;
+                                const newTime = clickPercent * duration;
+
+                                audioRef.current.currentTime = newTime;
+                                setCurrentTime(newTime);
+                              }
+                            }}
+                          ></div>
                         </div>
                         <div className="flex justify-end items-center mt-2">
                           <span className="text-white text-xs font-medium opacity-90">
-                            00:36
+                            {formatTime(currentTime)}
                           </span>
                         </div>
                       </div>
@@ -369,7 +503,7 @@ export default function FeedDetailPage() {
                           onClick={togglePlayRecord}
                         >
                           {isPlayingRecord ? (
-                            <PlayingIcon color="white" width={20} height={20} />
+                            <PlayingIcon color="white" width={17} height={15} />
                           ) : (
                             <PlayIcon color="white" width={20} height={20} />
                           )}
@@ -377,12 +511,43 @@ export default function FeedDetailPage() {
                       </div>
 
                       <div>
-                        <div className="w-full bg-white bg-opacity-80 rounded-sm h-1">
-                          <div className="w-[46.6%] bg-[#1f2024] h-1 rounded-sm"></div>
+                        <div className="w-full bg-white bg-opacity-80 rounded-sm h-1 relative cursor-pointer">
+                          <div
+                            className="bg-[#1f2024] h-1 rounded-sm transition-all duration-100"
+                            style={{
+                              width: `${durationRecord > 0 ? (currentTimeRecord / durationRecord) * 100 : 0}%`,
+                            }}
+                          ></div>
+                          {/* 재생 지점 표시 동그라미 */}
+                          <div
+                            className="absolute top-1/2 w-2 h-2 bg-[#1f2024] rounded-full shadow-sm"
+                            style={{
+                              left: `${durationRecord > 0 ? (currentTimeRecord / durationRecord) * 100 : 0}%`,
+                              transform: 'translate(-50%, -50%)',
+                            }}
+                          ></div>
+                          <div
+                            className="absolute inset-0 cursor-pointer"
+                            onClick={e => {
+                              if (
+                                audioRecordRef.current &&
+                                durationRecord > 0
+                              ) {
+                                const rect =
+                                  e.currentTarget.getBoundingClientRect();
+                                const clickX = e.clientX - rect.left;
+                                const clickPercent = clickX / rect.width;
+                                const newTime = clickPercent * durationRecord;
+
+                                audioRecordRef.current.currentTime = newTime;
+                                setCurrentTimeRecord(newTime);
+                              }
+                            }}
+                          ></div>
                         </div>
                         <div className="flex justify-end items-center mt-2">
                           <span className="text-white text-xs font-medium opacity-90">
-                            00:36
+                            {formatTime(currentTimeRecord)}
                           </span>
                         </div>
                       </div>
