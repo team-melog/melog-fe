@@ -91,9 +91,8 @@ export interface EmotionListResponse {
 }
 
 export interface EmotionInsightResponse {
-  monthlySummary: string;
+  monthlyComment: string;
   topKeywords: {
-    id: number;
     keyword: string;
     weight: number;
   }[];

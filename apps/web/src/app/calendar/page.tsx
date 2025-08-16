@@ -3,8 +3,12 @@
 import { useState, useMemo } from 'react';
 import { Layout } from '@melog/ui';
 import { useAppStore } from '@/features/store';
-import { useEmotionMonthly } from '@/features/emotion/hooks/useEmotionApi';
+import {
+  useEmotionInsight,
+  useEmotionMonthly,
+} from '@/features/emotion/hooks/useEmotionApi';
 import { svgComponents } from '@/assets/svgs/emotions/EmotionSvg';
+import { EmotionInsightResponse } from '@/features/emotion/api/types';
 import { emotionIconsByStep } from '@/entities/emotion/types';
 import Link from 'next/link';
 import HighlightsIcon from '@/assets/svgs/common/HighlightsIcon';
@@ -17,6 +21,12 @@ const formatDateOnly = (date: Date) => {
   return `${year}-${month}-${day}`;
 };
 
+// 현재 날짜를 기반으로 YYYY-MM 형식 생성
+const currentMonth =
+  new Date().getFullYear() +
+  '-' +
+  String(new Date().getMonth() + 1).padStart(2, '0');
+
 export default function CalendarPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const { user } = useAppStore();
@@ -24,6 +34,7 @@ export default function CalendarPage() {
     user.name,
     formatDateOnly(currentDate).slice(0, 7)
   );
+  const { data: emotionInsight } = useEmotionInsight(user.name, currentMonth);
 
   type EmotionMonthlyType = Array<{
     id: number | null;
@@ -189,7 +200,12 @@ export default function CalendarPage() {
             </div>
             <p className="text-[15px] font-pretendard text-[#060607] tracking-[-0.15px] leading-6">
               {hasDataInCurrentMonth
-                ? '이번 달에는 기쁨이 늘고 분노가 줄었어요.'
+                ? emotionInsight &&
+                  (emotionInsight as unknown as EmotionInsightResponse)
+                    .monthlyComment
+                  ? (emotionInsight as unknown as EmotionInsightResponse)
+                      .monthlyComment
+                  : '이번 달은 다양한 감정을 경험했어요. 그만큼 나를 더 깊이 알게 됐네요.'
                 : '감정을 기록하고 월별 기록을 확인해 보세요'}
             </p>
           </div>

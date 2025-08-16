@@ -181,6 +181,6 @@ export const useEmotionInsight = (nickname: string, month: string) => {
   return useQuery({
     queryKey: emotionKeys.insight,
     queryFn: () => EmotionService.getEmotionInsight(nickname, month),
-    enabled: !!month,
+    enabled: !!nickname && !!month,
   });
 };

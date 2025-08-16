@@ -2,7 +2,7 @@
 
 import { Layout } from '@melog/ui';
 import { useAppStore } from '@/features/store';
-import { useEmotionList } from '@/features/emotion';
+import { useEmotionInsight, useEmotionList } from '@/features/emotion';
 import { svgComponents } from '@/assets/svgs/emotions/EmotionSvg';
 import { emotionIconsByStep } from '@/entities/emotion/types';
 import Yellow5 from '@/assets/svgs/emotions/Yellow5';
@@ -10,10 +10,18 @@ import Green5 from '@/assets/svgs/emotions/Green5';
 import Pink5 from '@/assets/svgs/emotions/Pink5';
 import HighlightsIcon from '@/assets/svgs/common/HighlightsIcon';
 import Link from 'next/link';
+import { EmotionInsightResponse } from '@/features/emotion/api/types';
+
+// 현재 날짜를 기반으로 YYYY-MM 형식 생성
+const currentMonth =
+  new Date().getFullYear() +
+  '-' +
+  String(new Date().getMonth() + 1).padStart(2, '0');
 
 export default function EmotionPage() {
   const nickname = useAppStore(state => state.user.name);
   const { data: emotionWeekList } = useEmotionList(nickname, 0, 7);
+  const { data: emotionInsight } = useEmotionInsight(nickname, currentMonth);
 
   // 현재 날짜 정보
   const today = new Date();
@@ -106,7 +114,7 @@ export default function EmotionPage() {
           </Link>
 
           {/* AI의 한마디 카드 */}
-          <div className="min-h-[82px] max-h-[106px] bg-[#ecedef] rounded-[20px] p-4 mb-3 relative">
+          <div className="min-h-[82px] bg-[#ecedef] rounded-[20px] p-4 mb-3 relative">
             <div>
               <div className="relative flex items-center gap-1">
                 <h3 className="z-10 text-lg font-meetme text-[#36393f]">
@@ -119,7 +127,12 @@ export default function EmotionPage() {
               <div className="text-[15px] font-pretendard text-[#060607] leading-6 font-medium text-sm">
                 {isFirstTime
                   ? '오늘의 복잡한 감정을 미로그에 기록해 볼까요?'
-                  : '이번 달은 다양한 감정을 경험했어요. 그만큼 나를 더 깊이 알게 됐네요.'}
+                  : emotionInsight &&
+                      (emotionInsight as unknown as EmotionInsightResponse)
+                        .monthlyComment
+                    ? (emotionInsight as unknown as EmotionInsightResponse)
+                        .monthlyComment
+                    : '이번 달은 다양한 감정을 경험했어요. 그만큼 나를 더 깊이 알게 됐네요.'}
               </div>
             </div>
           </div>
