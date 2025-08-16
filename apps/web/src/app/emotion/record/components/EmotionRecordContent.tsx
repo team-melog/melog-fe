@@ -1,9 +1,14 @@
 'use client';
 
 import LottieRecordLoading from '@/components/lotties/LottieRecordLoading';
-import { Layout, LeftIcon, MicrophoneIcon } from '@melog/ui';
+import {
+  Layout,
+  MicrophoneIcon,
+  CloseXIcon,
+  CheckDefaultIcon,
+} from '@melog/ui';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useEmotionStore } from '@/features/store';
 import { useReactMediaRecorder } from 'react-media-recorder';
 import SuspenseWrapper from '@/components/SuspenseWrapper';
@@ -11,6 +16,8 @@ import SuspenseWrapper from '@/components/SuspenseWrapper';
 function EmotionRecordContentInner() {
   const router = useRouter();
   const [transcription] = useState<string>('');
+  const [timeLeft, setTimeLeft] = useState(60); // 1분(60초)에서 시작
+
   const { status, startRecording, stopRecording } = useReactMediaRecorder({
     video: false,
     audio: true,
@@ -20,6 +27,44 @@ function EmotionRecordContentInner() {
       setRecordedAudio(blob);
     },
   });
+
+  // 타이머 효과
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+
+    if (status === 'recording' && timeLeft > 0) {
+      interval = setInterval(() => {
+        setTimeLeft(prev => {
+          if (prev <= 1) {
+            // 시간이 다 되면 자동으로 녹음 중지
+            stopRecording();
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [status, timeLeft, stopRecording]);
+
+  // 녹음 시작 시 타이머 리셋
+  useEffect(() => {
+    if (status === 'recording') {
+      setTimeLeft(60);
+    }
+  }, [status]);
+
+  // 시간 포맷팅 함수
+  const formatTime = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
 
   // URL 파라미터에서 선택한 감정 정보 가져오기
   const searchParams = useSearchParams();
@@ -71,22 +116,6 @@ function EmotionRecordContentInner() {
   return (
     <Layout showTabBar={false}>
       <div className="min-h-svh bg-[#111416] flex flex-col">
-        {/* Header */}
-        <div className="flex items-center justify-between py-3 px-4">
-          <button
-            onClick={handleBack}
-            className="w-6 h-6 flex items-center justify-center"
-          >
-            <LeftIcon color="white" />
-          </button>
-          <button
-            onClick={handleFinishRecording}
-            className="text-[#ff9292] font-meetme text-xl"
-          >
-            종료하기
-          </button>
-        </div>
-
         {/* Main Content */}
         <div className="flex-1 flex flex-col items-center justify-around px-4">
           <div className="flex flex-col items-center justify-center">
@@ -96,7 +125,7 @@ function EmotionRecordContentInner() {
 
             {/* Timer */}
             <div className="text-2xl font-meetme text-[#dddddd] mb-12">
-              {/* {status?.recording ? formatTime(timeLeft) : '일시정지됨'} */}
+              {status === 'recording' ? formatTime(timeLeft) : '일시정지됨'}
             </div>
           </div>
 
@@ -107,6 +136,13 @@ function EmotionRecordContentInner() {
 
           {/* Recording Controls */}
           <div className="flex items-center space-x-8 mb-8">
+            <button
+              onClick={handleBack}
+              className="w-[42px] h-[42px] flex items-center justify-center bg-[#ECEDEF] rounded-full"
+            >
+              <CloseXIcon color="#171719" />
+            </button>
+
             {/* Main Record/Pause Button */}
             <button
               onClick={
@@ -122,6 +158,13 @@ function EmotionRecordContentInner() {
               ) : (
                 <MicrophoneIcon color="black" />
               )}
+            </button>
+
+            <button
+              onClick={handleFinishRecording}
+              className="w-[42px] h-[42px] flex items-center justify-center bg-[#2CFFA9] rounded-full"
+            >
+              <CheckDefaultIcon width={24} height={24} color="black" />
             </button>
           </div>
 
