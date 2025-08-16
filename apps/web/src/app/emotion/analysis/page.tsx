@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Layout } from '@melog/ui';
 import { useEmotionStore } from '@/features/store';
@@ -22,6 +22,10 @@ function EmotionAnalysisContent() {
   const [, setIsAnalyzing] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [timeLeft, setTimeLeft] = useState(5); // 테스트용 5초
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Strict Mode에서 중복 실행 방지를 위한 ref
+  const hasAnalyzed = useRef(false);
 
   // 5초 카운트다운
 
@@ -31,36 +35,42 @@ function EmotionAnalysisContent() {
   const { mutateAsync: createRecordTXT } = useCreateEmotionRecordTXT();
 
   useEffect(() => {
-    // 녹음된 오디오 정보 확인
-    // if (!recordedAudio) {
-    //   // 녹음 정보가 없으면 record 페이지로 리다이렉트
-    //   router.push(`/emotion/record?${savedParams.toString()}`);
-    //   return;
-    // }
+    if (isLoading) return;
+
+    // 이미 분석이 실행되었으면 중단
+    if (hasAnalyzed.current) {
+      return;
+    }
+
+    // 녹음된 오디오나 텍스트가 있을 때만 분석 실행
+    if (!recordedAudio && !textarea) return;
+
+    // 분석 실행 표시
+    hasAnalyzed.current = true;
 
     // 감정 분석 실행
     performEmotionAnalysis();
 
-    const interval = setInterval(() => {
-      setTimeLeft(prev => {
-        if (prev <= 1) {
-          // 5초 후 감정 분석 결과 화면으로 이동
-          if (selectedEmotion) {
-            const params = new URLSearchParams({
-              emotion: selectedEmotion,
-              intensity: selectedIntensity || '',
-              color: selectedColor || '',
-            });
-            router.push(`/emotion/result?${params.toString()}`);
-          }
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-    return () => clearInterval(interval); // 테스트용 5초 후 감정 분석 결과 화면으로 이동
+    // const interval = setInterval(() => {
+    //   setTimeLeft(prev => {
+    //     if (prev <= 1) {
+    //       // 5초 후 감정 분석 결과 화면으로 이동
+    //       if (selectedEmotion) {
+    //         const params = new URLSearchParams({
+    //           emotion: selectedEmotion,
+    //           intensity: selectedIntensity || '',
+    //           color: selectedColor || '',
+    //         });
+    //         router.push(`/emotion/result?${params.toString()}`);
+    //       }
+    //       return 0;
+    //     }
+    //     return prev - 1;
+    //   });
+    // }, 1000);
+    // return () => clearInterval(interval); // 테스트용 5초 후 감정 분석 결과 화면으로 이동
     // router.push(`/emotion/result?${savedParams.toString()}`);
-  }, [recordedAudio, router]);
+  }, []); // 빈 의존성 배열로 변경하여 컴포넌트 마운트 시에만 실행
 
   const createEmotionSTT = async () => {
     try {
@@ -93,12 +103,14 @@ function EmotionAnalysisContent() {
   };
 
   const performEmotionAnalysis = async () => {
+    if (isLoading) return; // 이미 분석 중이면 중단
+    if (hasAnalyzed.current === false) return; // useEffect에서 실행되지 않았으면 중단
+
+    setIsLoading(true);
     try {
       setIsAnalyzing(true);
-      // Blob을 File 객체로 변환
       let result = null;
-      // setAnalysisResult(null);
-      console.log('analysis', recordedAudio, textarea);
+      // console.log('payload', recordedAudio, textarea);
       if (recordedAudio) {
         // const audioFile = makeAudioFile(recordedAudio as Blob, user.name);
         // result = await createRecordSTT({
@@ -112,7 +124,6 @@ function EmotionAnalysisContent() {
         //   },
         // });
         result = await createEmotionSTT();
-        console.log('stt res', result);
       }
       if (textarea) {
         result = await createRecordTXT({
@@ -145,6 +156,7 @@ function EmotionAnalysisContent() {
       console.error(e);
     } finally {
       setIsAnalyzing(false);
+      setIsLoading(false);
     }
   };
 

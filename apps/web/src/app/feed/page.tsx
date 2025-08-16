@@ -84,9 +84,9 @@ export default function FeedPage() {
   // 각 카드의 배경색을 계산하는 함수
   const getCardBackgroundColor = (card: EmotionList['content'][0]) => {
     if (!card.emotions || card.emotions.length === 0) return '#e5e7eb';
-    // emotions에서 가장 높은 step을 가진 요소 찾기
+    // emotions에서 가장 높은 percentage을 가진 요소 찾기
     const mainEmotion = card.emotions.reduce((prev, current) =>
-      prev.step > current.step ? prev : current
+      prev.percentage > current.percentage ? prev : current
     );
 
     // emotionColorsByStep에서 해당 감정과 단계에 맞는 색상 가져오기
