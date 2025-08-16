@@ -163,7 +163,8 @@ export default function FeedPage() {
                   음성녹음
                 </p>
                 <p className="h-8 text-[15px] font-medium text-[#060607] tracking-[-0.15px] leading-6 flex items-center justify-center">
-                  0
+                  {emotionData?.content?.filter(item => item.hasAudioFile)
+                    .length || 0}
                 </p>
               </div>
             </div>
