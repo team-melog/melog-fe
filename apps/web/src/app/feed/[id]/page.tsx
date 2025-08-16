@@ -317,6 +317,10 @@ export default function FeedDetailPage() {
                     <div className="bg-white rounded-[10px] p-4">
                       <p className="text-[15px] font-medium text-[#1f2024] leading-6 tracking-[-0.15px] whitespace-pre-line">
                         {aiSummary}
+                        <br />
+                        {(emotionDetail as unknown as EmotionDetailResponse) &&
+                          (emotionDetail as unknown as EmotionDetailResponse)
+                            ?.comment}
                       </p>
                     </div>
                   </div>
