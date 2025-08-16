@@ -34,25 +34,25 @@ export default function Layout({
     <div className={`min-h-svh bg-gray-100 ${className}`}>
       {/* Mobile-first layout - 고정 너비 360px, 데스크탑에서도 모바일 크기 유지 */}
       <div
-        className={`mx-auto min-w-[360px] sm:w-[360px] bg-white min-h-svh shadow-xl relative ${className}`}
+        className={`mx-auto min-w-[360px] sm:w-[360px] bg-white min-h-svh shadow-xl relative overflow-hidden ${className}`}
       >
         <div
-          className={`min-h-svh transition-colors duration-300 bg-white ${className}`}
+          className={`min-h-svh transition-colors duration-300 bg-white relative ${className}`}
         >
           <main
             className={`w-full min-h-svh ${isOnBoardingPage ? '' : 'px-4'} `}
           >
             {children}
           </main>
+
+          {/* 플로팅 버튼 */}
+          {showFloatingButton && (
+            <FloatingButton showBorder={showFloatingButtonBorder} />
+          )}
         </div>
 
         {/* 하단 탭 바 */}
         {showTabBar && <BottomTabBar nickname={nickname} />}
-
-        {/* 플로팅 버튼 */}
-        {showFloatingButton && (
-          <FloatingButton showBorder={showFloatingButtonBorder} />
-        )}
 
         {/* 데스크탑에서 모바일 시뮬레이션을 위한 사이드 가이드 */}
         <div className="hidden lg:block absolute -left-4 top-0 w-1 h-full bg-gray-300 opacity-30"></div>

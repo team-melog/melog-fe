@@ -103,7 +103,9 @@ export default function FeedDetailPage() {
   };
 
   // 보이스 선택 바텀시트 토글
-  const toggleVoiceSelector = () => {
+  const toggleVoiceSelector = (e: React.MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
     setShowVoiceSelector(!showVoiceSelector);
   };
 
@@ -396,13 +398,14 @@ export default function FeedDetailPage() {
         {/* 보이스 선택 바텀시트 */}
         {showVoiceSelector && (
           <div
-            className="fixed inset-0 bg-black bg-opacity-30 flex items-end justify-center z-[51] transition-opacity duration-300 ease-out"
+            className="min-w-[360px] sm:w-[360px] left-1/2 transform -translate-x-1/2 fixed inset-0 bg-black bg-opacity-30 flex items-end justify-center z-[51] transition-opacity duration-300 ease-out"
             onClick={toggleVoiceSelector}
           >
             <div
               className={`bg-white rounded-t-[20px] w-full max-w-md transform transition-transform duration-300 ease-out ${
                 isBottomSheetVisible ? 'translate-y-0' : 'translate-y-full'
               }`}
+              onClick={e => e.stopPropagation()}
             >
               {/* Header */}
               <div className="px-6 py-4">
