@@ -13,6 +13,7 @@ import { svgComponents } from '@/assets/svgs/emotions/EmotionSvg';
 import { faceSvgComponents } from '@/assets/svgs/faces/FaceSvg';
 import { useEmotionList } from '@/features';
 import { EmotionListResponse } from '@/features/emotion/api/types';
+import PlayingIcon from '@/assets/svgs/common/PlayingIcon';
 
 interface EmotionList {
   content: {
@@ -276,6 +277,17 @@ export default function FeedPage() {
                       className="absolute inset-0"
                       style={{ backgroundColor: getCardBackgroundColor(card) }}
                     />
+
+                    {card.hasAudioFile && (
+                      <div className="absolute bottom-0 right-0 w-[24px] h-[17px]">
+                        <div className="relative flex items-center justify-center">
+                          <div className="absolute top-0 right-0 w-[24px] h-[17px] bg-[#000000] opacity-20 flex items-center justify-center"></div>
+                          <div className="absolute top-0 right-0 w-[24px] h-[17px] opacity-100 flex items-center justify-center">
+                            <PlayingIcon width={14} height={9} color="white" />
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </button>
                 ))}
               </div>

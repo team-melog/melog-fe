@@ -72,6 +72,9 @@ export interface EmotionListResponse {
     id: number;
     date: string;
     summary: string;
+    comment: string | null;
+    audioFilePath: string | null;
+    hasAudioFile: boolean;
     emotions: {
       id: number;
       percentage: number;
