@@ -44,12 +44,12 @@ export default function Layout({
           >
             {children}
           </main>
-
-          {/* 플로팅 버튼 */}
-          {showFloatingButton && (
-            <FloatingButton showBorder={showFloatingButtonBorder} />
-          )}
         </div>
+
+        {/* 플로팅 버튼 */}
+        {showFloatingButton && (
+          <FloatingButton showBorder={showFloatingButtonBorder} />
+        )}
 
         {/* 하단 탭 바 */}
         {showTabBar && <BottomTabBar nickname={nickname} />}

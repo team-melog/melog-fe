@@ -19,27 +19,30 @@ export default function FloatingButton({
   };
 
   return (
-    <button
-      onClick={handleEmotionRecord}
-      className={`absolute bottom-[80px] right-4 w-14 h-14 bg-[#060607] rounded-full flex items-center justify-center transition-all duration-200 hover:bg-[#2a2a2a] z-10 ${
-        showBorder ? 'border-2 border-[#2cffa9]' : ''
-      } ${className}`}
-    >
-      <svg
-        width="32"
-        height="32"
-        viewBox="0 0 32 32"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
+    <div className="min-w-full sm:min-w-[360px] left-1/2 transform -translate-x-1/2 fixed bottom-[70px] flex justify-end pointer-events-none">
+      <button
+        onClick={handleEmotionRecord}
+        className={`w-14 h-14 mr-4 bg-[#060607] rounded-full flex items-center justify-center transition-all duration-200 hover:bg-[#2a2a2a] pointer-events-auto ${
+          showBorder ? 'border-2 border-[#2cffa9]' : ''
+        } ${className}`}
       >
-        <path
-          d="M16 8V24M8 16H24"
-          stroke="white"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    </button>
+        {/* //m:left-1/2 sm:transform sm:-translate-x-1/2 */}
+        <svg
+          width="32"
+          height="32"
+          viewBox="0 0 32 32"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M16 8V24M8 16H24"
+            stroke="white"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </button>
+    </div>
   );
 }
