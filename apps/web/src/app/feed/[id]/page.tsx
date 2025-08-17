@@ -107,7 +107,10 @@ export default function FeedDetailPage() {
   const togglePlay = () => {
     if (!audioRef.current) {
       // 오디오 객체가 없으면 생성
-      audioRef.current = new Audio('/static/audio/test.wav');
+      const audioPath =
+        (emotionDetail as unknown as EmotionDetailResponse)?.audioFilePath ||
+        '/static/audio/test.wav';
+      audioRef.current = new Audio(audioPath);
 
       audioRef.current.addEventListener('loadedmetadata', () => {
         setDuration(audioRef.current?.duration || 0);
@@ -146,7 +149,10 @@ export default function FeedDetailPage() {
   const togglePlayRecord = () => {
     if (!audioRecordRef.current) {
       // 오디오 객체가 없으면 생성
-      audioRecordRef.current = new Audio('/static/audio/test.wav');
+      const audioPath =
+        (emotionDetail as unknown as EmotionDetailResponse)?.audioFilePath ||
+        '/static/audio/test.wav';
+      audioRecordRef.current = new Audio(audioPath);
 
       audioRecordRef.current.addEventListener('loadedmetadata', () => {
         setDurationRecord(audioRecordRef.current?.duration || 0);
