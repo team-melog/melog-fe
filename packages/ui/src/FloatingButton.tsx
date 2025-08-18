@@ -20,12 +20,10 @@ export default function FloatingButton({
   };
 
   return (
-    <div className="min-w-full sm:min-w-[360px] left-1/2 transform -translate-x-1/2 fixed bottom-[70px] flex justify-end pointer-events-none">
+    <div className="min-w-full sm:min-w-[360px] left-1/2 transform -translate-x-1/2 fixed bottom-[75px] flex justify-end pointer-events-none">
       <button
         onClick={handleEmotionRecord}
-        className={`relative w-14 h-14 mr-4 bg-[#060607] rounded-full flex items-center justify-center transition-all duration-200 hover:bg-[#2a2a2a] pointer-events-auto ${
-          showBorder ? 'border-2 border-[#2cffa9]' : ''
-        } ${className}`}
+        className={`relative w-14 h-14 mr-4 bg-[#060607] rounded-full flex items-center justify-center transition-all duration-200 hover:bg-[#2a2a2a] pointer-events-auto ${className}`}
       >
         <svg
           className="absolute top-0 left-0 z-10"
@@ -41,12 +39,13 @@ export default function FloatingButton({
             fill="white"
           />
         </svg>
-
-        <LottieFloatingBtn
-          width={70}
-          height={70}
-          className="absolute -top-[7px] -left-[7px]"
-        />
+        {showBorder ? (
+          <LottieFloatingBtn
+            width={70}
+            height={70}
+            className={`absolute -top-[7px] -left-[7px] `}
+          />
+        ) : null}
       </button>
     </div>
   );

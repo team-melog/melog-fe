@@ -61,7 +61,7 @@ export default function EmotionPage() {
       nickname={nickname}
       className="bg-greyBgColor"
       showFloatingButton={true}
-      showFloatingButtonBorder={isFirstTime}
+      showFloatingButtonBorder={true}
     >
       <div className="min-h-svh font-meetme bg-greyBgColor flex flex-col px-4">
         {/* Main Content */}
