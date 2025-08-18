@@ -412,7 +412,7 @@ export default function FeedDetailPage() {
                           {isPlaying ? (
                             <PlayingIcon color="white" width={20} height={15} />
                           ) : (
-                            <PlayIcon color="white" width={20} height={20} />
+                            <PlayIcon color="white" width={14} height={14} />
                           )}
                         </button>
                       </div>
@@ -511,7 +511,7 @@ export default function FeedDetailPage() {
                           {isPlayingRecord ? (
                             <PlayingIcon color="white" width={17} height={15} />
                           ) : (
-                            <PlayIcon color="white" width={20} height={20} />
+                            <PlayIcon color="white" width={14} height={14} />
                           )}
                         </button>
                       </div>
