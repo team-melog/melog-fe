@@ -106,7 +106,10 @@ export default function FeedDetailPage() {
       month: '2-digit',
       day: '2-digit',
       weekday: 'long',
-    }).format(new Date(date));
+    })
+      .format(new Date(date))
+      .replaceAll(' ', '')
+      .replace(/\.([월화수목금토일]요일)/, ' $1');
 
   const aiSummary = `오늘 ${user?.name || '사용자'}님의 목소리에는 ${(emotionDetail as unknown as EmotionDetailResponse) && (emotionDetail as unknown as EmotionDetailResponse)?.emotions.map(e => `${e.type}(${e.percentage}%)`).join(', ')}가 섞여 있었습니다.\n${(emotionDetail as unknown as EmotionDetailResponse) && (emotionDetail as unknown as EmotionDetailResponse)?.summary}`;
 
@@ -345,14 +348,21 @@ export default function FeedDetailPage() {
                         &nbsp;
                         {mainEmotion?.type}
                       </h3>
-                      <div className="flex space-x-2">
-                        <span className="px-2 py-1 bg-[#fff399] text-black text-xs font-semibold rounded">
-                          Me
-                        </span>
+                      <div className="flex space-x-2 font-pretendard">
+                        {(emotionDetail as unknown as EmotionDetailResponse)
+                          ?.emotions?.length > 1 ? (
+                          <span className="px-1 py-1 bg-[#6BFCC1] text-black text-xs font-semibold rounded">
+                            AI
+                          </span>
+                        ) : (
+                          <span className="px-1 py-1 bg-[#fff399] text-black text-xs font-semibold rounded">
+                            Me
+                          </span>
+                        )}
 
                         {(emotionDetail as unknown as EmotionDetailResponse)
                           ?.hasAudioFile && (
-                          <span className="px-2 py-1 bg-[#b7daf9] text-black text-xs font-semibold rounded">
+                          <span className="px-1 py-1 bg-[#b7daf9] text-black text-xs font-semibold rounded">
                             음성녹음
                           </span>
                         )}
