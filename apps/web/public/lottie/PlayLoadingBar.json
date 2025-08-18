@@ -12,8 +12,8 @@
       "id": "image_0",
       "w": 300,
       "h": 300,
-      "u": "images/",
-      "p": "img_0.png",
+      "u": "/lottie/images/",
+      "p": "playLoadingBar.png",
       "e": 0
     }
   ],
