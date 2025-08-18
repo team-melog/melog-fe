@@ -18,6 +18,7 @@ import PlayIcon from '@/assets/svgs/common/PlayIcon';
 import PlayingIcon from '@/assets/svgs/common/PlayingIcon';
 import { CheckIcon } from '@melog/ui';
 import { intensityLabels } from '@melog/shared';
+import LottiePlayLoadingBar from '@/components/lotties/LottiePlayLoadingBar';
 
 export default function FeedDetailPage() {
   const router = useRouter();
@@ -40,6 +41,24 @@ export default function FeedDetailPage() {
     'my-voice' | 'teacher' | 'ai1' | 'ai2' | 'ai3'
   >('my-voice');
   const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
+  const [isLoadTSS, setIsLoadTSS] = useState(false);
+
+  // 더블클릭 감지 함수
+  const toggleAudioPlayBtn = () => {
+    if (isPlaying) {
+      return togglePlay();
+    }
+
+    setIsLoadTSS(true);
+
+    // 테스트용
+    setTimeout(() => {
+      togglePlay();
+      setIsLoadTSS(false);
+    }, 2000);
+
+    // togglePlay();
+  };
 
   const params = useParams();
   const emotionId = params.id as string;
@@ -406,13 +425,17 @@ export default function FeedDetailPage() {
                           </button>
                         </div>
                         <button
-                          className="w-9 h-9 bg-white bg-opacity-20 rounded-full flex items-center justify-center"
-                          onClick={togglePlay}
+                          className={`w-9 h-9 rounded-full flex items-center justify-center ${
+                            isLoadTSS ? '' : 'bg-white bg-opacity-20 '
+                          }`}
+                          onClick={toggleAudioPlayBtn}
                         >
                           {isPlaying ? (
                             <PlayingIcon color="white" width={20} height={15} />
+                          ) : isLoadTSS ? (
+                            <LottiePlayLoadingBar />
                           ) : (
-                            <PlayIcon color="white" width={20} height={20} />
+                            <PlayIcon color="white" width={14} height={14} />
                           )}
                         </button>
                       </div>
@@ -511,7 +534,10 @@ export default function FeedDetailPage() {
                           {isPlayingRecord ? (
                             <PlayingIcon color="white" width={17} height={15} />
                           ) : (
-                            <PlayIcon color="white" width={20} height={20} />
+                            //  isLoadTSS ? (
+                            //   <LottiePlayLoadingBar />
+                            // ) :
+                            <PlayIcon color="white" width={14} height={14} />
                           )}
                         </button>
                       </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-// import LottieFloatingBtn from './assets/lotties/FloatingBtnLottie';
+import LottieFloatingBtn from './components/lotties/LottieFloatingBtn';
 
 interface FloatingButtonProps {
   showBorder?: boolean;
@@ -42,11 +42,11 @@ export default function FloatingButton({
           />
         </svg>
 
-        {/* <LottieFloatingBtn
-          width={100}
-          height={100}
-          className="absolute top-0 left-0"
-        /> */}
+        <LottieFloatingBtn
+          width={70}
+          height={70}
+          className="absolute -top-[7px] -left-[7px]"
+        />
       </button>
     </div>
   );

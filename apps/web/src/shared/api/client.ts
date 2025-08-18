@@ -4,14 +4,14 @@ import type { ApiResponse, RequestOptions } from './types';
 
 class ApiClient {
   private client: AxiosInstance;
-  private timeout: number;
+  // private timeout: number;
 
   constructor() {
-    this.timeout = API_CONFIG.TIMEOUT;
+    // this.timeout = API_CONFIG.TIMEOUT;
 
     this.client = axios.create({
       baseURL: API_CONFIG.BASE_URL,
-      timeout: this.timeout,
+      // timeout: this.timeout,
       // Content-Type을 기본값으로 설정하지 않음 (FormData 자동 감지)
     });
 
@@ -52,14 +52,14 @@ class ApiClient {
       method = 'GET',
       headers = {},
       body,
-      timeout = this.timeout,
+      // timeout = this.timeout,
     } = options;
 
     const config: AxiosRequestConfig = {
       method,
       url: endpoint,
       headers,
-      timeout,
+      // timeout,
     };
 
     if (body) {
@@ -77,9 +77,9 @@ class ApiClient {
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        if (error.code === 'ECONNABORTED') {
-          throw new Error('Request timeout');
-        }
+        // if (error.code === 'ECONNABORTED') {
+        //   throw new Error('Request timeout');
+        // }
         if (error.response) {
           // 서버에서 에러 응답을 보낸 경우
           const errorMessage =
