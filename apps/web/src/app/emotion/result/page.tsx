@@ -130,7 +130,7 @@ function EmotionResultContent() {
     setSelectedOption('keep');
     if (currentData) {
       updateEmotion({
-        nickname: currentData.user.nickname,
+        nickname: user.name,
         id: String(currentData.id),
         request: {
           emotions: [
@@ -149,7 +149,7 @@ function EmotionResultContent() {
     setSelectedOption('change');
     if (currentData) {
       updateEmotion({
-        nickname: currentData.user.nickname,
+        nickname: user.name,
         id: String(currentData.id),
         request: {
           emotions: currentData.emotions.map(emotion => ({
