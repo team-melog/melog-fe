@@ -13,7 +13,7 @@ import { svgComponents } from '@/assets/svgs/emotions/EmotionSvg';
 import { faceSvgComponents } from '@/assets/svgs/faces/FaceSvg';
 import { useEmotionList } from '@/features';
 import { EmotionListResponse } from '@/features/emotion/api/types';
-import PlayingIcon from '@/assets/svgs/common/PlayingIcon';
+import HasAudioIcon from '@/assets/svgs/common/HasAudioIcon';
 
 interface EmotionList {
   content: {
@@ -284,7 +284,7 @@ export default function FeedPage() {
                         <div className="relative flex items-center justify-center">
                           <div className="absolute top-0 right-0 w-[24px] h-[17px] bg-[#000000] opacity-20 flex items-center justify-center"></div>
                           <div className="absolute top-0 right-0 w-[24px] h-[17px] opacity-100 flex items-center justify-center">
-                            <PlayingIcon width={14} height={9} color="white" />
+                            <HasAudioIcon width={14} height={9} color="white" />
                           </div>
                         </div>
                       </div>
