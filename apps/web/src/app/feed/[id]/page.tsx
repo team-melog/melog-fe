@@ -18,6 +18,7 @@ import PlayIcon from '@/assets/svgs/common/PlayIcon';
 import PlayingIcon from '@/assets/svgs/common/PlayingIcon';
 import { CheckIcon } from '@melog/ui';
 import { intensityLabels } from '@melog/shared';
+// import LottiePlayLoadingBar from '@/components/lotties/LottiePlayLoadingBar';
 
 export default function FeedDetailPage() {
   const router = useRouter();
@@ -40,6 +41,23 @@ export default function FeedDetailPage() {
     'my-voice' | 'teacher' | 'ai1' | 'ai2' | 'ai3'
   >('my-voice');
   const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
+  // const [isLoadTSS, setIsLoadTSS] = useState(false);
+
+  // 더블클릭 감지 함수
+  const toggleAudioPlayBtn = () => {
+    // if (isPlaying) {
+    // return togglePlay();
+    // }
+
+    // setIsLoadTSS(true);
+
+    // setTimeout(() => {
+    //   togglePlay();
+    //   setIsLoadTSS(false);
+    // }, 3000);
+
+    togglePlay();
+  };
 
   const params = useParams();
   const emotionId = params.id as string;
@@ -407,11 +425,14 @@ export default function FeedDetailPage() {
                         </div>
                         <button
                           className="w-9 h-9 bg-white bg-opacity-20 rounded-full flex items-center justify-center"
-                          onClick={togglePlay}
+                          onClick={toggleAudioPlayBtn}
                         >
                           {isPlaying ? (
                             <PlayingIcon color="white" width={20} height={15} />
                           ) : (
+                            // isLoadTSS ? (
+                            //   <LottiePlayLoadingBar />
+                            // ) :
                             <PlayIcon color="white" width={14} height={14} />
                           )}
                         </button>
@@ -511,6 +532,9 @@ export default function FeedDetailPage() {
                           {isPlayingRecord ? (
                             <PlayingIcon color="white" width={17} height={15} />
                           ) : (
+                            //  isLoadTSS ? (
+                            //   <LottiePlayLoadingBar />
+                            // ) :
                             <PlayIcon color="white" width={14} height={14} />
                           )}
                         </button>
