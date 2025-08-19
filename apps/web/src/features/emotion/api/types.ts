@@ -148,9 +148,19 @@ export interface EmotionDetailResponse {
   hasAudioFile?: boolean | null;
 }
 
+export interface EmotionChart {
+  thisMonth: {
+    [key: string]: number;
+  };
+  compareWithLastMonth?: {
+    [key: string]: number;
+  };
+}
+
 // API 응답 타입들
 export type EmotionRecordResponse = ApiResponse<EmotionRecord>;
 export type EmotionAnalysisResponse = ApiResponse<EmotionAnalysisResult>;
 export type EmotionRecordsResponse = PaginatedResponse<EmotionRecord>;
 export type EmotionStatsResponse = ApiResponse<EmotionStats>;
 export type EmotionMonthlyResponse = ApiResponse<EmotionMonthly>;
+export type EmotionChartResponse = ApiResponse<EmotionChart>;

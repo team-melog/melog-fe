@@ -5,6 +5,10 @@ interface AppState {
   user: {
     id: string;
     name: string;
+    createdAt: string;
+    emotionCount: number;
+    audioCount: number;
+    representativeEmotion: string | null;
   };
   isLoading: boolean;
   theme: 'light' | 'dark';
@@ -23,6 +27,10 @@ const initialState: AppState = {
   user: {
     id: '',
     name: '',
+    createdAt: '',
+    emotionCount: 0,
+    audioCount: 0,
+    representativeEmotion: null,
   },
   isLoading: false,
   theme: 'light',

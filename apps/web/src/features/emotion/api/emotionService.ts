@@ -6,13 +6,12 @@ import type {
   //   EmotionAnalysisResult,
   CreateEmotionRecordRequest,
   UpdateEmotionRecordRequest,
-  EmotionStats,
-  EmotionStatsResponse,
   EmotionMonthlyResponse,
   EmotionListResponse,
   EmotionInsightResponse,
   EmotionUpdateResponse,
   EmotionDetailResponse,
+  EmotionChartResponse,
 } from './types';
 
 export class EmotionService {
@@ -94,12 +93,9 @@ export class EmotionService {
   }
 
   // 감정 통계 조회
-  static async getEmotionChart(
-    nickname: string,
-    month: string // YYYY-MM
-  ): Promise<EmotionStatsResponse> {
+  static async getEmotionChart(nickname: string, month: string) {
     const url = API_ENDPOINTS.CHART.replace(':nickname', nickname);
-    return apiClient.get<EmotionStats>(`${url}?month=${month}`);
+    return apiClient.get<EmotionChartResponse>(`${url}?month=${month}`);
   }
   // 월별 키워드 및 한줄 요약 조회
   static async getEmotionInsight(nickname: string, month: string) {

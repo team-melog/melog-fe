@@ -5,7 +5,10 @@ import { Button, Layout } from '@melog/ui';
 import { useAppStore } from '@/features/store';
 import ProfileIcon from '@/assets/icons/ProfileIcon.svg';
 import Link from 'next/link';
-import { emotionIconsByStep } from '@/entities/emotion/types';
+import {
+  emotionIconsByStep,
+  emotionColorsByStep,
+} from '@/entities/emotion/types';
 import { svgComponents } from '@/assets/svgs/emotions/EmotionSvg';
 import { useEmotionChart, useEmotionInsight } from '@/features/emotion';
 import HighlightsIcon from '@/assets/svgs/common/HighlightsIcon';
@@ -19,23 +22,8 @@ export default function ProfilePage() {
     '-' +
     String(new Date().getMonth() + 1).padStart(2, '0');
 
-  const { data: emotionChart } = useEmotionChart(
-    user?.name || '',
-    currentMonth
-  );
-  const { data: emotionInsight } = useEmotionInsight(
-    user?.name || '',
-    currentMonth
-  );
-  console.log('Chart', emotionChart);
-  console.log('Insight', emotionInsight);
-  console.log('Insight data structure:', emotionInsight);
-  if (emotionInsight) {
-    console.log('Insight keys:', Object.keys(emotionInsight));
-  }
-
-  // 감정 기록이 있는지 확인 (testData 사용)
-  const hasEmotionData = true; // testData가 있으므로 항상 true
+  const { data: emotionChart } = useEmotionChart(user?.name, currentMonth);
+  const { data: emotionInsight } = useEmotionInsight(user?.name, currentMonth);
 
   // 사용자 가입일부터 현재까지의 일수 계산
   const daysSinceJoin = useMemo(() => {
@@ -47,23 +35,40 @@ export default function ProfilePage() {
     return diffDays;
   }, []);
 
-  // 현재 월의 감정 데이터 분석
-  const monthlyStats = useMemo(() => {
-    if (!hasEmotionData) return null;
+  // 감정 기록이 있는지 확인 (emotionChart의 모든 값의 합이 0보다 큰지)
+  const hasEmotionData = useMemo(() => {
+    if (!emotionChart) return false;
 
-    // 임시로 testData 구조를 유지 (API 응답 구조 확인 후 수정)
-    const testEmotionData = {
-      기쁨: 50,
-      지침: 30,
-      설렘: 10,
+    const chartData = emotionChart as unknown as {
+      thisMonth: Record<string, number>;
     };
+    if (!chartData?.thisMonth) return false;
 
-    const totalWeight = Object.values(testEmotionData).reduce(
+    const totalWeight = Object.values(chartData.thisMonth).reduce(
       (sum: number, weight: number) => sum + weight,
       0
     );
-    const emotionPercentages = Object.entries(testEmotionData).map(
-      ([emotion, weight]) => {
+
+    return totalWeight > 0;
+  }, [emotionChart]);
+
+  // 현재 월의 감정 데이터 분석
+  const monthlyStats = useMemo(() => {
+    if (!hasEmotionData || !emotionChart) return null;
+
+    // 타입 단언을 사용하여 실제 데이터 구조에 맞춤
+    const chartData = emotionChart as unknown as {
+      thisMonth: Record<string, number>;
+    };
+    if (!chartData.thisMonth) return null;
+
+    const totalWeight = Object.values(chartData.thisMonth).reduce(
+      (sum: number, weight: number) => sum + weight,
+      0
+    );
+    const emotionPercentages = Object.entries(chartData.thisMonth)
+      .filter(([, weight]) => weight > 0) // 0보다 큰 값만 필터링
+      .map(([emotion, weight]) => {
         // 가중치를 20으로 나누어 5단계 step 계산 (1-5)
         const step = Math.ceil(weight / 20);
 
@@ -72,22 +77,17 @@ export default function ProfilePage() {
           percentage: Math.round((weight / totalWeight) * 100),
           step: step,
           color:
-            emotion === '기쁨'
-              ? '#FFD700'
-              : emotion === '지침'
-                ? '#DEE1E2'
-                : emotion === '불안'
-                  ? '#8A2BE2'
-                  : '#8A2BE2',
+            emotionColorsByStep[emotion as keyof typeof emotionColorsByStep]?.[
+              step - 1
+            ] || '#DEE1E2',
         };
-      }
-    );
+      });
 
     return {
-      totalEntries: Object.keys(testEmotionData).length,
+      totalEntries: Object.keys(chartData.thisMonth).length,
       emotionPercentages: emotionPercentages,
     };
-  }, [hasEmotionData]);
+  }, [hasEmotionData, emotionChart]);
 
   // 감정 키워드 분석
   const emotionKeywords = useMemo(() => {
@@ -217,7 +217,7 @@ export default function ProfilePage() {
                   <h3 className="text-[18px] font-normal text-[#36393f] tracking-[-0.18px] leading-[21.6px] mb-4">
                     주요 감정 키워드
                   </h3>
-                  <div className="flex justify-between">
+                  <div className="grid grid-cols-3 gap-2">
                     {emotionKeywords.map(
                       (
                         keyword: { keyword: string; weight: number },
