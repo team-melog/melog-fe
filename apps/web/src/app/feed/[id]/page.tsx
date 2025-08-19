@@ -19,11 +19,17 @@ import PlayingIcon from '@/assets/svgs/common/PlayingIcon';
 import { CheckIcon } from '@melog/ui';
 import { intensityLabels } from '@melog/shared';
 import LottiePlayLoadingBar from '@/components/lotties/LottiePlayLoadingBar';
-import { useGetVoiceTypes } from '@/features/voice/hooks/useVoiceApi';
-import { VoiceType } from '@/features/voice/api/types';
+import {
+  useGetConvertedVoice,
+  useGetVoiceTypes,
+} from '@/features/voice/hooks/useVoiceApi';
+import { ConvertedVoiceType, VoiceType } from '@/features/voice/api/types';
 
 export default function FeedDetailPage() {
   const router = useRouter();
+  const params = useParams();
+  const emotionId = params.id as string;
+
   const { user } = useAppStore();
   const [deletedId, setDeletedId] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<'ai' | 'record'>('ai');
@@ -39,29 +45,114 @@ export default function FeedDetailPage() {
   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const progressRecordIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const [showVoiceSelector, setShowVoiceSelector] = useState(false);
-  const [selectedVoice, setSelectedVoice] = useState<string>('my');
+  const [selectedVoice, setSelectedVoice] = useState<string>('ARA');
   const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
   const [isLoadTSS, setIsLoadTSS] = useState(false);
+  const [voiceError, setVoiceError] = useState<string | null>(null);
 
-  // 더블클릭 감지 함수
-  const toggleAudioPlayBtn = () => {
-    if (isPlaying) {
-      return togglePlay();
-    }
+  const { mutate: getConvertedVoice } = useGetConvertedVoice();
 
-    setIsLoadTSS(true);
+  // 오디오 재생 관련 함수들
+  const setupAudioEvents = (audio: HTMLAudioElement, isMyRecord: boolean) => {
+    audio.addEventListener('loadedmetadata', () => {
+      if (isMyRecord) {
+        setDurationRecord(audio.duration || 0);
+      } else {
+        setDuration(audio.duration || 0);
+      }
+    });
 
-    // 테스트용
-    setTimeout(() => {
-      togglePlay();
-      setIsLoadTSS(false);
-    }, 2000);
-
-    // togglePlay();
+    audio.addEventListener('ended', () => {
+      if (isMyRecord) {
+        setIsPlayingRecord(false);
+        setIsLoadTSS(false);
+        setCurrentTimeRecord(0);
+        if (progressRecordIntervalRef.current) {
+          clearInterval(progressRecordIntervalRef.current);
+        }
+      } else {
+        setIsPlaying(false);
+        setIsLoadTSS(false);
+        setCurrentTime(0);
+        if (progressIntervalRef.current) {
+          clearInterval(progressIntervalRef.current);
+        }
+      }
+    });
   };
 
-  const params = useParams();
-  const emotionId = params.id as string;
+  const startAudioPlayback = (audio: HTMLAudioElement, isMyRecord: boolean) => {
+    audio.play();
+    setIsPlaying(true);
+
+    // 프로그레스 업데이트 시작
+    if (isMyRecord) {
+      progressRecordIntervalRef.current = setInterval(() => {
+        if (audioRecordRef.current) {
+          setCurrentTimeRecord(audioRecordRef.current.currentTime);
+        }
+      }, 100);
+    } else {
+      progressIntervalRef.current = setInterval(() => {
+        if (audioRef.current) {
+          setCurrentTime(audioRef.current.currentTime);
+        }
+      }, 100);
+    }
+  };
+
+  const stopAudioPlayback = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+    }
+    setIsPlaying(false);
+    if (progressIntervalRef.current) {
+      clearInterval(progressIntervalRef.current);
+    }
+  };
+
+  const startRecordAudioPlayback = (audio: HTMLAudioElement) => {
+    audio.play();
+    setIsPlayingRecord(true);
+
+    // 프로그레스 업데이트 시작
+    progressRecordIntervalRef.current = setInterval(() => {
+      if (audioRecordRef.current) {
+        setCurrentTimeRecord(audioRecordRef.current.currentTime);
+      }
+    }, 100);
+  };
+
+  const stopRecordAudioPlayback = () => {
+    if (audioRecordRef.current) {
+      audioRecordRef.current.pause();
+    }
+    setIsPlayingRecord(false);
+    if (progressRecordIntervalRef.current) {
+      clearInterval(progressRecordIntervalRef.current);
+    }
+  };
+
+  const createAndPlayAudio = (audioUrl: string, isMyRecord: boolean) => {
+    // 기존 오디오 객체가 있다면 src만 변경
+    const target = isMyRecord ? audioRecordRef : audioRef;
+    if (target.current) {
+      target.current.pause();
+      target.current.src = audioUrl;
+      target.current.load(); // 새로운 src 로드
+    } else {
+      // 새로운 오디오 객체 생성
+      target.current = new Audio(audioUrl);
+      setupAudioEvents(target.current, isMyRecord);
+    }
+
+    startAudioPlayback(target.current, isMyRecord);
+  };
+
+  const toggleAIPlayBtn = () => {
+    setIsLoadTSS(true);
+    togglePlay();
+  };
 
   const { data: voiceTypes, isLoading: isLoadingVoiceTypes } =
     useGetVoiceTypes();
@@ -79,6 +170,8 @@ export default function FeedDetailPage() {
       const timer = setTimeout(() => {
         setIsBottomSheetVisible(true);
       }, 10);
+      // 음성 선택기가 열릴 때 에러 초기화
+      setVoiceError(null);
       return () => clearTimeout(timer);
     } else {
       setIsBottomSheetVisible(false);
@@ -91,6 +184,43 @@ export default function FeedDetailPage() {
     // console.log('emotionDetail', emotionDetail);
     // console.log('voiceTypes', voiceTypes);
   }, [isLoading, emotionDetail, voiceTypes, isLoadingVoiceTypes]);
+
+  // AI 오디오 초기화 함수
+  const resetAudio = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current);
+      }
+      audioRef.current = null;
+    }
+    setIsPlaying(false);
+    setIsLoadTSS(false);
+    setCurrentTime(0);
+    setDuration(0);
+  };
+
+  // 녹음 오디오 초기화 함수
+  const resetRecordAudio = () => {
+    if (audioRecordRef.current) {
+      audioRecordRef.current.pause();
+      if (progressRecordIntervalRef.current) {
+        clearInterval(progressRecordIntervalRef.current);
+      }
+      audioRecordRef.current = null;
+    }
+    setIsPlayingRecord(false);
+    setCurrentTimeRecord(0);
+    setDurationRecord(0);
+  };
+
+  // 음성 타입 변경 함수
+  const changeVoiceType = (voiceType: string) => {
+    resetAudio();
+    resetRecordAudio();
+    setSelectedVoice(voiceType);
+    setVoiceError(null); // 에러도 함께 초기화
+  };
 
   // 가장 높은 percentage를 가진 감정을 메인 감정으로 선택
   const mainEmotion =
@@ -127,88 +257,118 @@ export default function FeedDetailPage() {
     router.back();
   };
 
-  // 재생 토글 핸들러
+  // [AI] 재생 버튼 핸들러
   const togglePlay = () => {
-    if (!audioRef.current) {
-      // 오디오 객체가 없으면 생성
-      const audioPath =
-        (emotionDetail as unknown as EmotionDetailResponse)?.audioFilePath ||
-        '/static/audio/test.wav';
-      audioRef.current = new Audio(audioPath);
-
-      audioRef.current.addEventListener('loadedmetadata', () => {
-        setDuration(audioRef.current?.duration || 0);
-      });
-
-      audioRef.current.addEventListener('ended', () => {
-        setIsPlaying(false);
-        setCurrentTime(0);
-        if (progressIntervalRef.current) {
-          clearInterval(progressIntervalRef.current);
-        }
-      });
-    }
-
     if (isPlaying) {
       // 일시정지
-      audioRef.current.pause();
-      setIsPlaying(false);
-      if (progressIntervalRef.current) {
-        clearInterval(progressIntervalRef.current);
-      }
-    } else {
-      // 재생
-      audioRef.current.play();
-      setIsPlaying(true);
-
-      // 프로그레스 업데이트 시작
-      progressIntervalRef.current = setInterval(() => {
-        if (audioRef.current) {
-          setCurrentTime(audioRef.current.currentTime);
-        }
-      }, 100);
+      setIsLoadTSS(false);
+      return stopAudioPlayback();
     }
+
+    // 재생 상태가 아닐 때 (일시정지 상태)
+    if (audioRef.current) {
+      // 기존 오디오가 있으면 그대로 재생
+      startAudioPlayback(audioRef.current, true);
+      return;
+    }
+
+    getConvertedVoice(
+      {
+        nickname: user.name,
+        emotionId,
+        payload: {
+          isUserUploadRequst: false,
+          isRequiredUserAudio:
+            (emotionDetail as unknown as EmotionDetailResponse)?.text.length ===
+            0,
+          voiceType: selectedVoice === 'MY' ? null : selectedVoice,
+        },
+      },
+      {
+        onSuccess: (data: unknown | ConvertedVoiceType) => {
+          // console.log('음성 변환 성공0:', data);
+          setVoiceError(null);
+          setIsLoadTSS(false);
+
+          // 성공 시 audioUrl로 오디오 재생
+          if ((data as unknown as ConvertedVoiceType)?.audioUrl) {
+            createAndPlayAudio(
+              (data as unknown as ConvertedVoiceType).audioUrl,
+              false
+            );
+          }
+        },
+        onError: error => {
+          console.error(error);
+          setVoiceError(error.message);
+          setIsLoadTSS(false);
+        },
+      }
+    );
   };
 
-  const togglePlayRecord = () => {
-    if (!audioRecordRef.current) {
-      // 오디오 객체가 없으면 생성
+  // [나의 기록 탭] 재생 버튼 핸들러
+  const toggleMyPlayBtn = () => {
+    if (isPlayingRecord) {
+      // 일시정지
+      return stopRecordAudioPlayback();
+    }
+
+    // 재생 상태가 아닐 때 (일시정지 상태)
+    if (audioRecordRef.current) {
+      // 기존 오디오가 있으면 그대로 재생
+      startRecordAudioPlayback(audioRecordRef.current);
+      return;
+    }
+
+    setIsLoadTSS(true);
+
+    // audioRef.current가 없을 때 새로운 오디오 생성
+    if (
+      selectedVoice === 'MY' &&
+      (emotionDetail as unknown as EmotionDetailResponse)?.audioFilePath
+    ) {
       const audioPath =
         (emotionDetail as unknown as EmotionDetailResponse)?.audioFilePath ||
         '/static/audio/test.wav';
       audioRecordRef.current = new Audio(audioPath);
-
-      audioRecordRef.current.addEventListener('loadedmetadata', () => {
-        setDurationRecord(audioRecordRef.current?.duration || 0);
-      });
-
-      audioRecordRef.current.addEventListener('ended', () => {
-        setIsPlayingRecord(false);
-        setCurrentTimeRecord(0);
-        if (progressRecordIntervalRef.current) {
-          clearInterval(progressRecordIntervalRef.current);
-        }
-      });
-    }
-
-    if (isPlayingRecord) {
-      // 일시정지
-      audioRecordRef.current.pause();
-      setIsPlayingRecord(false);
-      if (progressRecordIntervalRef.current) {
-        clearInterval(progressRecordIntervalRef.current);
-      }
+      setupAudioEvents(audioRecordRef.current, true);
+      startRecordAudioPlayback(audioRecordRef.current);
+      setIsLoadTSS(false);
     } else {
-      // 재생
-      audioRecordRef.current.play();
-      setIsPlayingRecord(true);
+      // AI 목소리
+      // console.log('de', emotionDetail);
+      getConvertedVoice(
+        {
+          nickname: user.name,
+          emotionId,
+          payload: {
+            isUserUploadRequst: true,
+            isRequiredUserAudio: true,
+            voiceType: selectedVoice === 'MY' ? null : selectedVoice,
+          },
+        },
+        {
+          onSuccess: (data: unknown | ConvertedVoiceType) => {
+            // console.log('my 음성성공:', data);
+            setVoiceError(null);
+            setIsLoadTSS(false);
 
-      // 프로그레스 업데이트 시작
-      progressRecordIntervalRef.current = setInterval(() => {
-        if (audioRecordRef.current) {
-          setCurrentTimeRecord(audioRecordRef.current.currentTime);
+            // 성공 시 audioUrl로 오디오 재생
+            if ((data as unknown as ConvertedVoiceType)?.audioUrl) {
+              createAndPlayAudio(
+                (data as unknown as ConvertedVoiceType).audioUrl,
+                true
+              );
+            }
+          },
+          onError: error => {
+            console.error(error);
+            setVoiceError(error.message);
+            setIsLoadTSS(false);
+          },
         }
-      }, 100);
+      );
     }
   };
 
@@ -227,7 +387,7 @@ export default function FeedDetailPage() {
   // 현재 선택된 보이스 텍스트
   const getCurrentVoiceText = () => {
     const defaultVoiceName = '나의 목소리';
-    if (selectedVoice === 'my') {
+    if (selectedVoice === 'MY') {
       return defaultVoiceName;
     }
 
@@ -378,7 +538,10 @@ export default function FeedDetailPage() {
                 <div className="px-4 pb-4">
                   <div className="flex space-x-2">
                     <button
-                      onClick={() => setActiveTab('ai')}
+                      onClick={() => {
+                        setActiveTab('ai');
+                        setSelectedVoice('ARA');
+                      }}
                       className={`flex-1 py-3 px-4 rounded-lg font-medium text-lg tracking-[-0.18px] leading-[21.6px] transition-colors ${
                         activeTab === 'ai'
                           ? 'bg-[#060607] text-white'
@@ -391,7 +554,10 @@ export default function FeedDetailPage() {
                       </div>
                     </button>
                     <button
-                      onClick={() => setActiveTab('record')}
+                      onClick={() => {
+                        setActiveTab('record');
+                        setSelectedVoice('MY');
+                      }}
                       className={`flex-1 py-3 px-4 rounded-lg font-medium text-lg tracking-[-0.18px] leading-[21.6px] transition-colors ${
                         activeTab === 'record'
                           ? 'bg-[#060607] text-white'
@@ -441,7 +607,7 @@ export default function FeedDetailPage() {
                           className={`w-9 h-9 rounded-full flex items-center justify-center ${
                             isLoadTSS ? '' : 'bg-white bg-opacity-20 '
                           }`}
-                          onClick={toggleAudioPlayBtn}
+                          onClick={toggleAIPlayBtn}
                         >
                           {isPlaying ? (
                             <PlayingIcon color="white" width={20} height={15} />
@@ -543,14 +709,13 @@ export default function FeedDetailPage() {
                         </div>
                         <button
                           className="w-9 h-9 bg-white bg-opacity-20 rounded-full flex items-center justify-center"
-                          onClick={togglePlayRecord}
+                          onClick={toggleMyPlayBtn}
                         >
                           {isPlayingRecord ? (
                             <PlayingIcon color="white" width={17} height={15} />
+                          ) : isLoadTSS ? (
+                            <LottiePlayLoadingBar />
                           ) : (
-                            //  isLoadTSS ? (
-                            //   <LottiePlayLoadingBar />
-                            // ) :
                             <PlayIcon color="white" width={14} height={14} />
                           )}
                         </button>
@@ -638,17 +803,22 @@ export default function FeedDetailPage() {
                 <div className="space-y-3">
                   {/* 나의 목소리 */}
                   <button
-                    onClick={() => setSelectedVoice('my')}
-                    className="flex items-center space-x-3 w-full text-left"
+                    onClick={() => changeVoiceType('MY')}
+                    className={`flex items-center space-x-3 w-full text-left ${
+                      activeTab === 'ai' ? 'text-[#B5B8C0]' : 'text-[#060607]'
+                    }`}
+                    disabled={activeTab === 'ai'}
                   >
                     <div className="w-5 h-5">
-                      {selectedVoice === 'my' ? (
+                      {selectedVoice === 'MY' ? (
                         <CheckIcon width={20} height={20} color="#587efc" />
                       ) : (
-                        <div className="w-5 h-5 border-2 border-[#d0d2d7] rounded-full"></div>
+                        <div
+                          className={`w-5 h-5 border-2 rounded-full ${activeTab === 'ai' ? 'bg-[#ECEDEF] border-[#D0D2D7]' : 'border-[#d0d2d7]'}`}
+                        ></div>
                       )}
                     </div>
-                    <span className="text-[15px] font-medium text-[#060607] tracking-[-0.15px] leading-[24px]">
+                    <span className="text-[15px] font-medium tracking-[-0.15px] leading-[24px]">
                       나의 목소리
                     </span>
                   </button>
@@ -658,7 +828,7 @@ export default function FeedDetailPage() {
                       (voice: VoiceType) => (
                         <button
                           key={voice.voiceKey}
-                          onClick={() => setSelectedVoice(voice.name)}
+                          onClick={() => changeVoiceType(voice.name)}
                           className="flex items-center space-x-3 w-full text-left"
                         >
                           <div className="w-5 h-5">
@@ -728,7 +898,7 @@ export default function FeedDetailPage() {
                   </button>
 
                   <button
-                    onClick={() => setSelectedVoice('ai3')}
+                    onClick={() => changeVoiceType('ai3')}
                     className="flex items-center space-x-3 w-full text-left"
                   >
                     <div className="w-5 h-5">
@@ -744,6 +914,54 @@ export default function FeedDetailPage() {
                   </button> */}
                 </div>
               </div>
+
+              {/* Error Message */}
+              {voiceError && (
+                <div className="px-6 py-2">
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                    <p className="text-red-600 text-sm mb-2">{voiceError}</p>
+                    <button
+                      onClick={() => {
+                        setVoiceError(null);
+                        // 재시도 로직 - 현재 선택된 음성으로 다시 시도
+                        if (selectedVoice !== 'MY') {
+                          getConvertedVoice(
+                            {
+                              nickname: user.name,
+                              emotionId,
+                              payload: {
+                                isUserUploadRequst: false,
+                                isRequiredUserAudio: false,
+                                voiceType: selectedVoice,
+                              },
+                            },
+                            {
+                              onSuccess: data => {
+                                // console.log('음성 변환 재시도 성공:', data);
+                                setVoiceError(null);
+
+                                // 재시도 성공 시에도 audioUrl로 오디오 재생
+                                if (data?.data?.audioUrl) {
+                                  createAndPlayAudio(data.data.audioUrl, false);
+                                }
+                              },
+                              onError: error => {
+                                console.error('음성 변환 재시도 실패:', error);
+                                const errorMessage =
+                                  error?.message || '음성 변환에 실패했습니다.';
+                                setVoiceError(errorMessage);
+                              },
+                            }
+                          );
+                        }
+                      }}
+                      className="text-red-600 text-xs underline hover:text-red-700"
+                    >
+                      다시 시도
+                    </button>
+                  </div>
+                </div>
+              )}
 
               {/* Confirm Button */}
               <div className="px-6 py-4">

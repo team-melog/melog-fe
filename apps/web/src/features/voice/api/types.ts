@@ -1,11 +1,14 @@
-export type EmotionVoice = {
+export type ConvertedVoiceType = {
+  audioAvailable: boolean;
   audioUrl: string;
+  duration: number | null;
   fileName: string;
   fileSize: number;
-  mimeType: string;
+  fileSizeInMB?: number;
   isFromUserUpload: boolean;
-  voiceType: string;
-  duration: number | null;
+  mimeType: string;
+  ttsGenerated: boolean;
+  voiceType: string | null;
 };
 
 export interface VoiceType {
