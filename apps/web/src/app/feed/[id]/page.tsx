@@ -244,7 +244,7 @@ export default function FeedDetailPage() {
       .replaceAll(' ', '')
       .replace(/\.([월화수목금토일]요일)/, ' $1');
 
-  const aiSummary = `오늘 ${user?.name || '사용자'}님의 목소리에는 ${(emotionDetail as unknown as EmotionDetailResponse) && (emotionDetail as unknown as EmotionDetailResponse)?.emotions.map(e => `${e.type}(${e.percentage}%)`).join(', ')}가 섞여 있었습니다. ${(emotionDetail as unknown as EmotionDetailResponse) && (emotionDetail as unknown as EmotionDetailResponse)?.summary}`;
+  const aiSummary = `${(emotionDetail as unknown as EmotionDetailResponse) && (emotionDetail as unknown as EmotionDetailResponse)?.summary}\n`;
 
   const handleDelete = () => {
     if (deletedId) {
@@ -668,8 +668,6 @@ export default function FeedDetailPage() {
                     <div className="bg-white rounded-[10px] p-4">
                       <p className="text-[15px] font-medium text-[#1f2024] leading-6 tracking-[-0.15px] whitespace-pre-line">
                         {aiSummary}
-                        <br />
-                        <br />
                         {(emotionDetail as unknown as EmotionDetailResponse) &&
                           (emotionDetail as unknown as EmotionDetailResponse)
                             ?.comment}

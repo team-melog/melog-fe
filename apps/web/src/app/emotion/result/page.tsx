@@ -173,10 +173,6 @@ function EmotionResultContent() {
     }
   };
 
-  const onGoFeed = () => {
-    router.push(`/feed/${currentData.id}`);
-  };
-
   return (
     <Layout showTabBar={false}>
       <div className="min-h-screen bg-white flex flex-col py-10">
@@ -342,8 +338,7 @@ function EmotionResultContent() {
 
                 {/* AI Summary */}
                 <p className="text-sm text-[#1f2024] leading-6 font-pretendard">
-                  {`오늘 ${user?.name || '사용자'}님의 목소리에는 ${currentData.emotions.map(e => `${e.type}(${e.percentage}%)`).join(', ')}가 섞여 있었습니다.\n${currentData.summary}\n`}
-                  <br />
+                  {`${currentData.summary}\n`}
                   <br />
                   {currentData.comment ? currentData.comment : ''}
                 </p>
@@ -358,22 +353,22 @@ function EmotionResultContent() {
             )}
           </div>
 
-          {currentData.userSelectedEmotion ? (
-            <div>
-              {activeTab === 'ai' && (
-                <div className="text-center text-sm font-pretendard text-[#B5B8C0] mb-8">
-                  미로그가 알려준 오늘의 감정,
-                  <br />그 의미를 정하는 건 나예요
-                </div>
-              )}
+          <div>
+            {activeTab === 'ai' && (
+              <div className="text-center text-sm font-pretendard text-[#B5B8C0] mb-20">
+                미로그가 알려준 오늘의 감정,
+                <br />그 의미를 정하는 건 나예요
+              </div>
+            )}
 
-              {/* Question */}
-              <h2 className="text-2xl font-meetme text-center text-black mb-8">
-                어떤 감정으로 기록하시겠어요?
-              </h2>
+            {/* Question */}
+            <h2 className="text-2xl font-meetme text-center text-black mb-8">
+              감정 선택하기
+            </h2>
 
-              {/* Color Selection Buttons */}
-              <div className="space-y-4 w-full flex flex-col items-center">
+            {/* Color Selection Buttons */}
+            <div className="space-y-4 w-full flex flex-col items-center">
+              {currentData.userSelectedEmotion ? (
                 <Button
                   onClick={onUpdateSelectedEmotion}
                   className={`w-4/6 py-4 rounded-xl font-meetme text-xl border-2 bg-white ${
@@ -409,47 +404,10 @@ function EmotionResultContent() {
                     <span>처음 선택한 감정</span>
                   </div>
                 </Button>
+              ) : null}
 
-                <Button
-                  onClick={onUpdateAIEmotion}
-                  className={`w-4/6 py-4 rounded-xl font-meetme text-xl border-2 : ${
-                    selectedOption === 'change'
-                      ? 'text-white border-gray-500'
-                      : 'bg-white text-black border-[#36393f]'
-                  }`}
-                >
-                  <div className="flex items-center justify-center space-x-3">
-                    <div className="w-10 h-10 rounded-full">
-                      {mainEmotionIconKey &&
-                      svgComponents[mainEmotionIconKey] ? (
-                        React.createElement(svgComponents[mainEmotionIconKey], {
-                          width: 40,
-                          height: 40,
-                        })
-                      ) : (
-                        <span className="text-lg text-gray-500">
-                          {mainEmotion?.type}
-                        </span>
-                      )}
-                    </div>
-                    <span>AI 감정진단 감정</span>
-                  </div>
-                </Button>
-                <Button
-                  onClick={handleRetry}
-                  className={`w-4/6 py-4 rounded-xl font-meetme text-xl`}
-                >
-                  <div className="flex items-center justify-center space-x-3">
-                    <RefreshIcon width={20} height={20} />
-                    <span>다시 기록하기</span>
-                  </div>
-                </Button>
-              </div>
-            </div>
-          ) : (
-            <div className="flex justify-center">
               <Button
-                onClick={onGoFeed}
+                onClick={onUpdateAIEmotion}
                 className={`w-4/6 py-4 rounded-xl font-meetme text-xl border-2 : ${
                   selectedOption === 'change'
                     ? 'text-white border-gray-500'
@@ -457,11 +415,32 @@ function EmotionResultContent() {
                 }`}
               >
                 <div className="flex items-center justify-center space-x-3">
-                  <span>피드로 가기</span>
+                  <div className="w-10 h-10 rounded-full">
+                    {mainEmotionIconKey && svgComponents[mainEmotionIconKey] ? (
+                      React.createElement(svgComponents[mainEmotionIconKey], {
+                        width: 40,
+                        height: 40,
+                      })
+                    ) : (
+                      <span className="text-lg text-gray-500">
+                        {mainEmotion?.type}
+                      </span>
+                    )}
+                  </div>
+                  <span>AI 감정진단 감정</span>
+                </div>
+              </Button>
+              <Button
+                onClick={handleRetry}
+                className={`w-4/6 py-4 rounded-xl font-meetme text-xl`}
+              >
+                <div className="flex items-center justify-center space-x-3">
+                  <RefreshIcon width={20} height={20} />
+                  <span>다시 기록하기</span>
                 </div>
               </Button>
             </div>
-          )}
+          </div>
         </div>
       </div>
     </Layout>
