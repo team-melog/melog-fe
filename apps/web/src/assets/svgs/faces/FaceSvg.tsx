@@ -1,7 +1,7 @@
 import React from 'react';
 
 // SVG 파일들을 React 컴포넌트로 import
-import Gray from './Gray';
+import Grey from './Grey';
 import Pink from './Pink';
 import Green from './Green';
 import Red from './Red';
@@ -16,7 +16,7 @@ export const faceSvgComponents: {
     color?: string;
   }>;
 } = {
-  Gray,
+  Grey,
   Pink,
   Green,
   Red,
