@@ -12,7 +12,6 @@ class ApiClient {
     this.client = axios.create({
       baseURL: API_CONFIG.BASE_URL,
       // timeout: this.timeout,
-      // Content-Type을 기본값으로 설정하지 않음 (FormData 자동 감지)
     });
 
     // 요청 인터셉터
@@ -27,19 +26,10 @@ class ApiClient {
         return response;
       },
       error => {
-        // 에러 처리
-        if (error.response) {
-          // 서버 응답이 있는 경우
-          const { status, data } = error.response;
-          console.error(`API Error ${status}:`, data);
-        } else if (error.request) {
-          // 요청은 보냈지만 응답이 없는 경우
-          console.error('Network Error:', error.request);
-        } else {
-          // 요청 설정 중 에러
-          console.error('Request Error:', error.message);
-        }
-        return error;
+        const { message } = error;
+        console.error(message);
+
+        return Promise.reject(error);
       }
     );
   }
@@ -77,9 +67,6 @@ class ApiClient {
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        // if (error.code === 'ECONNABORTED') {
-        //   throw new Error('Request timeout');
-        // }
         if (error.response) {
           // 서버에서 에러 응답을 보낸 경우
           const errorMessage =
