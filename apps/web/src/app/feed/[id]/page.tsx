@@ -648,16 +648,20 @@ export default function FeedDetailPage() {
                         </div>
                         <button
                           className={`w-9 h-9 rounded-full flex items-center justify-center ${
-                            isLoadTSS ? '' : 'bg-white bg-opacity-20 '
+                            isPlaying
+                              ? 'bg-white bg-opacity-20'
+                              : isLoadTSS
+                                ? ''
+                                : 'bg-white bg-opacity-20'
                           }`}
                           onClick={toggleAIPlayBtn}
                         >
                           {isPlaying ? (
-                            <PlayingIcon color="white" width={20} height={15} />
+                            <PlayingIcon color="white" width={12} height={12} />
                           ) : isLoadTSS ? (
                             <LottiePlayLoadingBar />
                           ) : (
-                            <PlayIcon color="white" width={14} height={14} />
+                            <PlayIcon color="white" width={12} height={12} />
                           )}
                         </button>
                       </div>
@@ -749,15 +753,21 @@ export default function FeedDetailPage() {
                           </button>
                         </div>
                         <button
-                          className="w-9 h-9 bg-white bg-opacity-20 rounded-full flex items-center justify-center"
+                          className={`w-9 h-9 rounded-full flex items-center justify-center ${
+                            isPlayingRecord
+                              ? 'bg-white bg-opacity-20'
+                              : isLoadTSS
+                                ? ''
+                                : 'bg-white bg-opacity-20'
+                          }`}
                           onClick={toggleMyPlayBtn}
                         >
                           {isPlayingRecord ? (
-                            <PlayingIcon color="white" width={17} height={15} />
+                            <PlayingIcon color="white" width={12} height={12} />
                           ) : isLoadTSS ? (
                             <LottiePlayLoadingBar />
                           ) : (
-                            <PlayIcon color="white" width={14} height={14} />
+                            <PlayIcon color="white" width={12} height={12} />
                           )}
                         </button>
                       </div>
