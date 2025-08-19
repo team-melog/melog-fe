@@ -186,9 +186,28 @@ export default function CalendarPage() {
       new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1)
     );
   };
+  const hasTodayEmotionData = (() => {
+    const today = new Date();
+    const todayString = today.toISOString().split('T')[0]; // YYYY-MM-DD 형식
+    if (emotionMonthly) {
+      return (emotionMonthly as unknown as EmotionMonthlyType).some(item => {
+        if (item.date === todayString) {
+          return item.emotions.length > 0;
+        }
+      });
+    }
+    return false;
+  })();
+
+  const hasNoTodayEmotionData = hasTodayEmotionData; // 오늘 감정 등록 안했을 때
 
   return (
-    <Layout showTabBar={true} nickname={user?.name} showFloatingButton={true}>
+    <Layout
+      showTabBar={true}
+      nickname={user?.name}
+      showFloatingButton={true}
+      disabledFloatingButton={hasNoTodayEmotionData}
+    >
       <div className=" min-h-screen bg-white flex flex-col pb-20">
         {/* AI 월별 요약 섹션 */}
         <div className="bg-greyBgColor rounded-[20px] p-4 my-6">

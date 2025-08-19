@@ -10,6 +10,7 @@ interface LayoutProps {
   nickname?: string | null;
   showFloatingButton?: boolean;
   showFloatingButtonBorder?: boolean;
+  disabledFloatingButton?: boolean;
 }
 
 export default function Layout({
@@ -19,6 +20,7 @@ export default function Layout({
   nickname,
   showFloatingButton = false,
   showFloatingButtonBorder = false,
+  disabledFloatingButton = false,
 }: LayoutProps) {
   const pathname = usePathname();
   const isOnBoardingPage =
@@ -48,7 +50,10 @@ export default function Layout({
 
         {/* 플로팅 버튼 */}
         {showFloatingButton && (
-          <FloatingButton showBorder={showFloatingButtonBorder} />
+          <FloatingButton
+            showBorder={showFloatingButtonBorder}
+            disabled={disabledFloatingButton}
+          />
         )}
 
         {/* 하단 탭 바 */}

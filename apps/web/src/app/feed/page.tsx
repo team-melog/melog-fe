@@ -98,8 +98,31 @@ export default function FeedPage() {
     return '#e5e7eb';
   };
 
+  const hasTodayEmotionData = (() => {
+    const today = new Date();
+    const todayString = today.toISOString().split('T')[0]; // YYYY-MM-DD 형식
+    if (emotionData && 'content' in emotionData) {
+      const record = emotionData as {
+        content: Array<{
+          date: string;
+          emotions: Array<{ type: string; percentage: number; step: number }>;
+        }>;
+      };
+
+      return record.content.some(item => item.date === todayString);
+    }
+    return false;
+  })();
+
+  const hasNoTodayEmotionData = hasTodayEmotionData; // 오늘 감정 등록 안했을 때
+
   return (
-    <Layout showTabBar={true} nickname={user?.name} showFloatingButton={true}>
+    <Layout
+      showTabBar={true}
+      nickname={user?.name}
+      showFloatingButton={true}
+      disabledFloatingButton={hasNoTodayEmotionData}
+    >
       <div className="font-meetme bg-white flex flex-col min-h-svh">
         {/* Header */}
         <div className="pt-6 px-4 border-b border-gray-200">

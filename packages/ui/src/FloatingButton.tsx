@@ -5,11 +5,13 @@ import LottieFloatingBtn from './components/lotties/LottieFloatingBtn';
 
 interface FloatingButtonProps {
   showBorder?: boolean;
+  disabled?: boolean;
   className?: string;
 }
 
 export default function FloatingButton({
   showBorder = false,
+  disabled = false,
   className = '',
 }: FloatingButtonProps) {
   const router = useRouter();
@@ -23,7 +25,10 @@ export default function FloatingButton({
     <div className="min-w-full sm:min-w-[360px] left-1/2 transform -translate-x-1/2 fixed bottom-[75px] flex justify-end pointer-events-none">
       <button
         onClick={handleEmotionRecord}
-        className={`relative w-14 h-14 mr-4 bg-[#060607] rounded-full flex items-center justify-center transition-all duration-200 hover:bg-[#2a2a2a] pointer-events-auto ${className}`}
+        className={`relative w-14 h-14 mr-4 rounded-full flex items-center justify-center transition-all duration-200 pointer-events-auto
+          ${!disabled ? 'bg-[#060607]' : 'bg-[#B5B8C0]'}
+          ${className}`}
+        disabled={disabled}
       >
         <svg
           className="absolute top-0 left-0 z-10"
@@ -33,7 +38,12 @@ export default function FloatingButton({
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <rect width="56" height="56" rx="28" fill="#060607" />
+          <rect
+            width="56"
+            height="56"
+            rx="28"
+            fill={!disabled ? '#060607' : '#B5B8C0'}
+          />
           <path
             d="M40 28C40 28.2652 39.8946 28.5196 39.7071 28.7071C39.5196 28.8946 39.2652 29 39 29H29V39C29 39.2652 28.8946 39.5196 28.7071 39.7071C28.5196 39.8946 28.2652 40 28 40C27.7348 40 27.4804 39.8946 27.2929 39.7071C27.1054 39.5196 27 39.2652 27 39V29H17C16.7348 29 16.4804 28.8946 16.2929 28.7071C16.1054 28.5196 16 28.2652 16 28C16 27.7348 16.1054 27.4804 16.2929 27.2929C16.4804 27.1054 16.7348 27 17 27H27V17C27 16.7348 27.1054 16.4804 27.2929 16.2929C27.4804 16.1054 27.7348 16 28 16C28.2652 16 28.5196 16.1054 28.7071 16.2929C28.8946 16.4804 29 16.7348 29 17V27H39C39.2652 27 39.5196 27.1054 39.7071 27.2929C39.8946 27.4804 40 27.7348 40 28Z"
             fill="white"
