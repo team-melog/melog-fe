@@ -14,8 +14,10 @@ export const emotionKeys = {
   details: () => [...emotionKeys.all, 'detail'] as const,
   detail: (id: string) => [...emotionKeys.details(), id] as const,
   chart: ['chart'] as const,
-  insight: ['insight'] as const,
-  monthly: ['monthly'] as const,
+  insight: (nickname: string, month: string) =>
+    ['insight', nickname, month] as const,
+  monthly: (nickname: string, month: string) =>
+    ['monthly', nickname, month] as const,
 };
 
 // 감정 기록 목록 조회 훅 (페이지네이션)
@@ -171,7 +173,7 @@ export const useEmotionChart = (nickname: string, month: string) => {
 
 export const useEmotionMonthly = (nickname: string, month: string) => {
   return useQuery({
-    queryKey: emotionKeys.monthly,
+    queryKey: emotionKeys.monthly(nickname, month),
     queryFn: () => EmotionService.getEmotionMonthly(nickname, month),
     enabled: !!month,
   });
@@ -179,7 +181,7 @@ export const useEmotionMonthly = (nickname: string, month: string) => {
 
 export const useEmotionInsight = (nickname: string, month: string) => {
   return useQuery({
-    queryKey: emotionKeys.insight,
+    queryKey: emotionKeys.insight(nickname, month),
     queryFn: () => EmotionService.getEmotionInsight(nickname, month),
     enabled: !!nickname && !!month,
   });

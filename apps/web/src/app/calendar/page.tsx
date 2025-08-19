@@ -13,28 +13,31 @@ import { emotionIconsByStep } from '@/entities/emotion/types';
 import Link from 'next/link';
 import HighlightsIcon from '@/assets/svgs/common/HighlightsIcon';
 
-// 날짜를 YYYY-MM-DD 형식으로 변환 (시간 제외)
-const formatDateOnly = (date: Date) => {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-};
-
-// 현재 날짜를 기반으로 YYYY-MM 형식 생성
-const currentMonth =
-  new Date().getFullYear() +
-  '-' +
-  String(new Date().getMonth() + 1).padStart(2, '0');
-
 export default function CalendarPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const { user } = useAppStore();
+
+  // 날짜를 YYYY-MM-DD 형식으로 변환 (시간 제외)
+  const formatDateOnly = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  const currentMonthFromDate =
+    currentDate.getFullYear() +
+    '-' +
+    String(currentDate.getMonth() + 1).padStart(2, '0');
+
   const { data: emotionMonthly } = useEmotionMonthly(
     user.name,
     formatDateOnly(currentDate).slice(0, 7)
   );
-  const { data: emotionInsight } = useEmotionInsight(user.name, currentMonth);
+  const { data: emotionInsight } = useEmotionInsight(
+    user.name,
+    currentMonthFromDate
+  );
 
   type EmotionMonthlyType = Array<{
     id: number | null;
