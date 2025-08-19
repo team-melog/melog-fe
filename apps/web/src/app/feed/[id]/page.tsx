@@ -507,10 +507,9 @@ export default function FeedDetailPage() {
                   <div className="flex items-center justify-center mb-4">
                     <div className="flex items-center space-x-2">
                       <h3 className="text-[26px] font-normal text-[#060607] tracking-[-0.26px] leading-[31.2px]">
-                        {mainEmotion?.step &&
-                          intensityLabels[mainEmotion?.step - 1]}
+                        {mainEmotion && intensityLabels[mainEmotion.step - 1]}
                         &nbsp;
-                        {mainEmotion?.type}
+                        {mainEmotion && mainEmotion.type}
                       </h3>
                       <div className="flex space-x-2 font-pretendard">
                         {(emotionDetail as unknown as EmotionDetailResponse)
@@ -557,7 +556,12 @@ export default function FeedDetailPage() {
                     <button
                       onClick={() => {
                         setActiveTab('record');
-                        setSelectedVoice('MY');
+                        setSelectedVoice(
+                          (emotionDetail as unknown as EmotionDetailResponse)
+                            ?.hasAudioFile
+                            ? 'MY'
+                            : 'ARA'
+                        );
                       }}
                       className={`flex-1 py-3 px-4 rounded-lg font-medium text-lg tracking-[-0.18px] leading-[21.6px] transition-colors ${
                         activeTab === 'record'
@@ -806,16 +810,30 @@ export default function FeedDetailPage() {
                   <button
                     onClick={() => changeVoiceType('MY')}
                     className={`flex items-center space-x-3 w-full text-left ${
-                      activeTab === 'ai' ? 'text-[#B5B8C0]' : 'text-[#060607]'
+                      activeTab === 'ai' ||
+                      !(emotionDetail as unknown as EmotionDetailResponse)
+                        ?.hasAudioFile
+                        ? 'text-[#B5B8C0]'
+                        : 'text-[#060607]'
                     }`}
-                    disabled={activeTab === 'ai'}
+                    disabled={
+                      activeTab === 'ai' ||
+                      !(emotionDetail as unknown as EmotionDetailResponse)
+                        ?.hasAudioFile
+                    }
                   >
                     <div className="w-5 h-5">
                       {selectedVoice === 'MY' ? (
                         <CheckIcon width={20} height={20} color="#587efc" />
                       ) : (
                         <div
-                          className={`w-5 h-5 border-2 rounded-full ${activeTab === 'ai' ? 'bg-[#ECEDEF] border-[#D0D2D7]' : 'border-[#d0d2d7]'}`}
+                          className={`w-5 h-5 border-2 rounded-full ${
+                            activeTab === 'ai' ||
+                            !(emotionDetail as unknown as EmotionDetailResponse)
+                              ?.hasAudioFile
+                              ? 'bg-[#ECEDEF] border-[#D0D2D7]'
+                              : 'border-[#d0d2d7]'
+                          }`}
                         ></div>
                       )}
                     </div>
