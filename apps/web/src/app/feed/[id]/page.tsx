@@ -19,6 +19,8 @@ import PlayingIcon from '@/assets/svgs/common/PlayingIcon';
 import { CheckIcon } from '@melog/ui';
 import { intensityLabels } from '@melog/shared';
 import LottiePlayLoadingBar from '@/components/lotties/LottiePlayLoadingBar';
+import { useGetVoiceTypes } from '@/features/voice/hooks/useVoiceApi';
+import { VoiceType } from '@/features/voice/api/types';
 
 export default function FeedDetailPage() {
   const router = useRouter();
@@ -37,9 +39,7 @@ export default function FeedDetailPage() {
   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const progressRecordIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const [showVoiceSelector, setShowVoiceSelector] = useState(false);
-  const [selectedVoice, setSelectedVoice] = useState<
-    'my-voice' | 'teacher' | 'ai1' | 'ai2' | 'ai3'
-  >('my-voice');
+  const [selectedVoice, setSelectedVoice] = useState<string>('my');
   const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
   const [isLoadTSS, setIsLoadTSS] = useState(false);
 
@@ -63,7 +63,8 @@ export default function FeedDetailPage() {
   const params = useParams();
   const emotionId = params.id as string;
 
-  // user.name이 있을 때만 API 호출
+  const { data: voiceTypes, isLoading: isLoadingVoiceTypes } =
+    useGetVoiceTypes();
   const { data: emotionDetail, isLoading } = useEmotionDetail(
     user.name,
     emotionId
@@ -86,9 +87,10 @@ export default function FeedDetailPage() {
 
   // 상태 변화 추적
   useEffect(() => {
-    if (isLoading) return;
-    console.log('emotionDetail', emotionDetail);
-  }, [isLoading, emotionDetail]);
+    if (isLoading && isLoadingVoiceTypes) return;
+    // console.log('emotionDetail', emotionDetail);
+    // console.log('voiceTypes', voiceTypes);
+  }, [isLoading, emotionDetail, voiceTypes, isLoadingVoiceTypes]);
 
   // 가장 높은 percentage를 가진 감정을 메인 감정으로 선택
   const mainEmotion =
@@ -224,20 +226,21 @@ export default function FeedDetailPage() {
 
   // 현재 선택된 보이스 텍스트
   const getCurrentVoiceText = () => {
-    switch (selectedVoice) {
-      case 'my-voice':
-        return '나의 목소리';
-      case 'teacher':
-        return '오은영 선생님';
-      case 'ai1':
-        return 'AI 보이스 1';
-      case 'ai2':
-        return 'AI 보이스 2';
-      case 'ai3':
-        return 'AI 보이스 3';
-      default:
-        return '나의 목소리';
+    const defaultVoiceName = '나의 목소리';
+    if (selectedVoice === 'my') {
+      return defaultVoiceName;
     }
+
+    if (voiceTypes) {
+      const matchedVoice = (voiceTypes as unknown as VoiceType[]).find(
+        voice => voice.name === selectedVoice
+      );
+      if (matchedVoice) {
+        return matchedVoice.voiceName;
+      }
+    }
+
+    return defaultVoiceName;
   };
 
   // 컴포넌트 언마운트 시 정리
@@ -635,11 +638,11 @@ export default function FeedDetailPage() {
                 <div className="space-y-3">
                   {/* 나의 목소리 */}
                   <button
-                    onClick={() => setSelectedVoice('my-voice')}
+                    onClick={() => setSelectedVoice('my')}
                     className="flex items-center space-x-3 w-full text-left"
                   >
                     <div className="w-5 h-5">
-                      {selectedVoice === 'my-voice' ? (
+                      {selectedVoice === 'my' ? (
                         <CheckIcon width={20} height={20} color="#587efc" />
                       ) : (
                         <div className="w-5 h-5 border-2 border-[#d0d2d7] rounded-full"></div>
@@ -650,8 +653,33 @@ export default function FeedDetailPage() {
                     </span>
                   </button>
 
-                  {/* 오은영 선생님 */}
-                  <button
+                  {voiceTypes &&
+                    (voiceTypes as unknown as VoiceType[])?.map(
+                      (voice: VoiceType) => (
+                        <button
+                          key={voice.voiceKey}
+                          onClick={() => setSelectedVoice(voice.name)}
+                          className="flex items-center space-x-3 w-full text-left"
+                        >
+                          <div className="w-5 h-5">
+                            {selectedVoice === voice.name ? (
+                              <CheckIcon
+                                width={20}
+                                height={20}
+                                color="#587efc"
+                              />
+                            ) : (
+                              <div className="w-5 h-5 border-2 border-[#d0d2d7] rounded-full"></div>
+                            )}
+                          </div>
+                          <span className="text-[15px] font-medium text-[#060607] tracking-[-0.15px] leading-[24px]">
+                            {voice.voiceName}
+                          </span>
+                        </button>
+                      )
+                    )}
+
+                  {/* <button
                     onClick={() => setSelectedVoice('teacher')}
                     className="flex items-center space-x-3 w-full text-left"
                   >
@@ -667,7 +695,6 @@ export default function FeedDetailPage() {
                     </span>
                   </button>
 
-                  {/* AI 보이스 1 */}
                   <button
                     onClick={() => setSelectedVoice('ai1')}
                     className="flex items-center space-x-3 w-full text-left"
@@ -684,7 +711,6 @@ export default function FeedDetailPage() {
                     </span>
                   </button>
 
-                  {/* AI 보이스 2 */}
                   <button
                     onClick={() => setSelectedVoice('ai2')}
                     className="flex items-center space-x-3 w-full text-left"
@@ -701,7 +727,6 @@ export default function FeedDetailPage() {
                     </span>
                   </button>
 
-                  {/* AI 보이스 3 */}
                   <button
                     onClick={() => setSelectedVoice('ai3')}
                     className="flex items-center space-x-3 w-full text-left"
@@ -716,7 +741,7 @@ export default function FeedDetailPage() {
                     <span className="text-[15px] font-medium text-[#060607] tracking-[-0.15px] leading-[24px]">
                       AI 보이스 3
                     </span>
-                  </button>
+                  </button> */}
                 </div>
               </div>
 

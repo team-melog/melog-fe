@@ -23,6 +23,10 @@ export const API_ENDPOINTS = {
   },
   CHART: '/users/:nickname/emotions/summary/chart',
   INSIGHT: '/users/:nickname/emotions/summary/insight',
+  VOICE: {
+    VOICE_TYPES: '/voice/types',
+    EMOTION_AUDIO: '/users/:nickname/emotions/:id/audio', // 감정 음성 파일 (원본 or TTS)
+  },
 } as const;
 
 export const QUERY_KEYS = {
