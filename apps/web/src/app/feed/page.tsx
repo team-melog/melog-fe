@@ -126,7 +126,7 @@ export default function FeedPage() {
                   감정기록
                 </p>
                 <p className="h-8 text-[15px] font-medium text-[#060607] tracking-[-0.15px] leading-6 flex items-center justify-center">
-                  {emotionData?.content?.length || 0}
+                  {user?.emotionCount || 0}
                 </p>
               </div>
               <div className="w-px h-10 bg-[#ECEDEF]"></div>
@@ -134,14 +134,14 @@ export default function FeedPage() {
                 <p className="text-lg font-normal text-[#36393f] tracking-[-0.18px] leading-[21.6px]">
                   대표감정
                 </p>
-                {hasData && dominantEmotion ? (
+                {user?.representativeEmotion ? (
                   <div className="flex items-center justify-center">
                     {(() => {
                       const iconId =
                         emotionIconsByStep[
-                          emotionData.content[0].emotions[0]
+                          user.representativeEmotion
                             .type as keyof typeof emotionIconsByStep
-                        ]?.[emotionData.content[0].emotions[0].step - 1];
+                        ]?.[user.representativeEmotion.step - 1];
                       const SvgComponent = iconId
                         ? svgComponents[iconId]
                         : null;
@@ -163,8 +163,7 @@ export default function FeedPage() {
                   음성녹음
                 </p>
                 <p className="h-8 text-[15px] font-medium text-[#060607] tracking-[-0.15px] leading-6 flex items-center justify-center">
-                  {emotionData?.content?.filter(item => item.hasAudioFile)
-                    .length || 0}
+                  {user?.audioCount || 0}
                 </p>
               </div>
             </div>
