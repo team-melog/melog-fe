@@ -110,8 +110,9 @@ function EmotionWriteContent() {
           intensity: selectedIntensity || '',
           color: selectedColor || '',
         });
-        router.push(`/emotion/analysis?${params.toString()}`);
+        return router.push(`/emotion/analysis?${params.toString()}`);
       }
+      return router.push(`/emotion/analysis`);
     } else {
       // 텍스트가 없으면 에러 메시지 표시
       setErrorMessage('텍스트를 입력해주세요');

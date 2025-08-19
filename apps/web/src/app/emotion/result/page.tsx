@@ -102,8 +102,8 @@ function EmotionResultContent() {
   // 더미 데이터
   const mainEmotion = currentData.emotions[0];
   const mainColor =
-    emotionColorsByStep[mainEmotion.type as keyof typeof emotionColorsByStep];
-  const mainEmotionColor = mainColor[4];
+    emotionColorsByStep[mainEmotion?.type as keyof typeof emotionColorsByStep];
+  const mainEmotionColor = (mainColor && mainColor[4]) || '#060607';
 
   // percentage를 5단계로 나누어 단계 계산 (0-20: 1단계, 21-40: 2단계, 41-60: 3단계, 61-80: 4단계, 81-100: 5단계)
   const getEmotionStep = (percentage: number) => {
@@ -123,8 +123,8 @@ function EmotionResultContent() {
   };
 
   const mainEmotionIconKey = getEmotionIconKey(
-    mainEmotion.type,
-    mainEmotion.percentage
+    mainEmotion?.type,
+    mainEmotion?.percentage
   );
 
   const onUpdateSelectedEmotion = async () => {
@@ -173,6 +173,10 @@ function EmotionResultContent() {
     }
   };
 
+  const onGoFeed = () => {
+    router.push(`/feed/${currentData.id}`);
+  };
+
   return (
     <Layout showTabBar={false}>
       <div className="min-h-screen bg-white flex flex-col py-10">
@@ -183,7 +187,7 @@ function EmotionResultContent() {
             AI가 정밀하게 분석한
             <br />
             오늘 {user?.name || '사용자'}님은&nbsp;
-            <span style={{ color: mainEmotionColor }}>{mainEmotion.type}</span>
+            <span style={{ color: mainEmotionColor }}>{mainEmotion?.type}</span>
             이에요
           </h1>
 
@@ -191,13 +195,15 @@ function EmotionResultContent() {
           <div className="flex flex-col items-center justify-center mb-8">
             {/* Main Emotion Circle */}
             <div
-              className={`relative mb-4 px-auto  ${
+              className={`relative mb-4 flex w-full justify-center ${
+                currentData.emotions.length > 2 ? 'px-auto gap-2' : 'px-0'
+              }  ${
                 currentData.emotions.length === 1
                   ? 'flex justify-center'
-                  : 'w-4/5'
+                  : 'w-full'
               }`}
             >
-              <div className="w-40 h-40 rounded-lg flex items-center justify-center">
+              <div className="rounded-lg flex items-center ">
                 {mainEmotionIconKey && svgComponents[mainEmotionIconKey] ? (
                   React.createElement(svgComponents[mainEmotionIconKey], {
                     width: currentData.emotions.length === 3 ? 160 : 150,
@@ -205,56 +211,69 @@ function EmotionResultContent() {
                   })
                 ) : (
                   <span className="text-lg text-gray-500">
-                    {mainEmotion.type}
+                    {mainEmotion?.type}
                   </span>
                 )}
               </div>
 
               {/* Secondary Emotion Circles */}
-              {currentData.emotions[1] && (
-                <div className="absolute top-0 right-3 rounded-lg flex items-center justify-center">
-                  {(() => {
-                    const secondEmotion = currentData.emotions[1]; // 분노 30%
-                    const secondEmotionIconKey = getEmotionIconKey(
-                      secondEmotion.type,
-                      secondEmotion.percentage
-                    );
-                    return secondEmotionIconKey &&
-                      svgComponents[secondEmotionIconKey] ? (
-                      React.createElement(svgComponents[secondEmotionIconKey], {
-                        width: currentData.emotions.length === 3 ? 80 : 150,
-                        height: currentData.emotions.length === 3 ? 80 : 150,
-                      })
-                    ) : (
-                      <span className="text-sm text-gray-500">
-                        {secondEmotion.type}
-                      </span>
-                    );
-                  })()}
-                </div>
-              )}
-              {currentData.emotions[2] && (
-                <div className="absolute bottom-0 right-3  rounded-lg flex items-center justify-center">
-                  {(() => {
-                    const thirdEmotion = currentData.emotions[2]; // 평온 20%
-                    const thirdEmotionIconKey = getEmotionIconKey(
-                      thirdEmotion.type,
-                      thirdEmotion.percentage
-                    );
-                    return thirdEmotionIconKey &&
-                      svgComponents[thirdEmotionIconKey] ? (
-                      React.createElement(svgComponents[thirdEmotionIconKey], {
-                        width: 80,
-                        height: 80,
-                      })
-                    ) : (
-                      <span className="text-sm text-gray-500">
-                        {thirdEmotion.type}
-                      </span>
-                    );
-                  })()}
-                </div>
-              )}
+              <div
+                className={`flex ${
+                  currentData.emotions.length === 3 ? 'flex-col' : ''
+                }`}
+              >
+                {currentData.emotions[1] && (
+                  <div className="rounded-lg flex items-center justify-center">
+                    {(() => {
+                      const secondEmotion = currentData.emotions[1]; // 분노 30%
+                      const secondEmotionIconKey = getEmotionIconKey(
+                        secondEmotion.type,
+                        secondEmotion.percentage
+                      );
+                      return secondEmotionIconKey &&
+                        svgComponents[secondEmotionIconKey] ? (
+                        React.createElement(
+                          svgComponents[secondEmotionIconKey],
+                          {
+                            width: currentData.emotions.length === 3 ? 80 : 150,
+                            height:
+                              currentData.emotions.length === 3 ? 80 : 150,
+                          }
+                        )
+                      ) : (
+                        <span className="text-sm text-gray-500">
+                          {secondEmotion.type}
+                        </span>
+                      );
+                    })()}
+                  </div>
+                )}
+                {currentData.emotions[2] && (
+                  <div className="rounded-lg flex items-center justify-center">
+                    {(() => {
+                      const thirdEmotion = currentData.emotions[2]; // 평온 20%
+                      const thirdEmotionIconKey = getEmotionIconKey(
+                        thirdEmotion.type,
+                        thirdEmotion.percentage
+                      );
+                      return thirdEmotionIconKey &&
+                        svgComponents[thirdEmotionIconKey] ? (
+                        React.createElement(
+                          svgComponents[thirdEmotionIconKey],
+                          {
+                            width: 80,
+                            height: 80,
+                          }
+                        )
+                      ) : (
+                        <span className="text-sm text-gray-500">
+                          {thirdEmotion.type}
+                        </span>
+                      );
+                    })()}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
@@ -339,90 +358,110 @@ function EmotionResultContent() {
             )}
           </div>
 
-          {activeTab === 'ai' && (
-            <div className="text-center text-sm font-pretendard text-[#B5B8C0] mb-8">
-              미로그가 알려준 오늘의 감정,
-              <br />그 의미를 정하는 건 나예요
-            </div>
-          )}
+          {currentData.userSelectedEmotion ? (
+            <div>
+              {activeTab === 'ai' && (
+                <div className="text-center text-sm font-pretendard text-[#B5B8C0] mb-8">
+                  미로그가 알려준 오늘의 감정,
+                  <br />그 의미를 정하는 건 나예요
+                </div>
+              )}
 
-          {/* Question */}
-          <h2 className="text-2xl font-meetme text-center text-black mb-8">
-            어떤 감정으로 기록하시겠어요?
-          </h2>
+              {/* Question */}
+              <h2 className="text-2xl font-meetme text-center text-black mb-8">
+                어떤 감정으로 기록하시겠어요?
+              </h2>
 
-          {/* Color Selection Buttons */}
-          <div className="space-y-4 w-full flex flex-col items-center">
-            <Button
-              onClick={onUpdateSelectedEmotion}
-              className={`w-4/6 py-4 rounded-xl font-meetme text-xl border-2 bg-white ${
-                selectedOption === 'keep'
-                  ? ' text-white border-gray-500'
-                  : 'bg-white text-black border-[#36393f]'
-              }`}
-            >
-              <div className="flex items-center justify-center space-x-3">
-                <div className="w-10 h-10 rounded-full">
-                  {/* {SelectedSvgComponent && (
+              {/* Color Selection Buttons */}
+              <div className="space-y-4 w-full flex flex-col items-center">
+                <Button
+                  onClick={onUpdateSelectedEmotion}
+                  className={`w-4/6 py-4 rounded-xl font-meetme text-xl border-2 bg-white ${
+                    selectedOption === 'keep'
+                      ? ' text-white border-gray-500'
+                      : 'bg-white text-black border-[#36393f]'
+                  }`}
+                >
+                  <div className="flex items-center justify-center space-x-3">
+                    <div className="w-10 h-10 rounded-full">
+                      {/* {SelectedSvgComponent && (
                     <SelectedSvgComponent width={40} height={40} />
                   )} */}
 
-                  {(() => {
-                    const selectedEmotionIconKey = getEmotionIconKey(
-                      selectedEmotion || '',
-                      selectedIntensity * 20
-                    );
-                    return (
-                      selectedEmotionIconKey &&
-                      svgComponents[selectedEmotionIconKey] &&
-                      React.createElement(
-                        svgComponents[selectedEmotionIconKey],
-                        {
+                      {(() => {
+                        const selectedEmotionIconKey = getEmotionIconKey(
+                          selectedEmotion || '',
+                          selectedIntensity * 20
+                        );
+                        return (
+                          selectedEmotionIconKey &&
+                          svgComponents[selectedEmotionIconKey] &&
+                          React.createElement(
+                            svgComponents[selectedEmotionIconKey],
+                            {
+                              width: 40,
+                              height: 40,
+                            }
+                          )
+                        );
+                      })()}
+                    </div>
+                    <span>처음 선택한 감정</span>
+                  </div>
+                </Button>
+
+                <Button
+                  onClick={onUpdateAIEmotion}
+                  className={`w-4/6 py-4 rounded-xl font-meetme text-xl border-2 : ${
+                    selectedOption === 'change'
+                      ? 'text-white border-gray-500'
+                      : 'bg-white text-black border-[#36393f]'
+                  }`}
+                >
+                  <div className="flex items-center justify-center space-x-3">
+                    <div className="w-10 h-10 rounded-full">
+                      {mainEmotionIconKey &&
+                      svgComponents[mainEmotionIconKey] ? (
+                        React.createElement(svgComponents[mainEmotionIconKey], {
                           width: 40,
                           height: 40,
-                        }
-                      )
-                    );
-                  })()}
+                        })
+                      ) : (
+                        <span className="text-lg text-gray-500">
+                          {mainEmotion?.type}
+                        </span>
+                      )}
+                    </div>
+                    <span>AI 감정진단 감정</span>
+                  </div>
+                </Button>
+                <Button
+                  onClick={handleRetry}
+                  className={`w-4/6 py-4 rounded-xl font-meetme text-xl`}
+                >
+                  <div className="flex items-center justify-center space-x-3">
+                    <RefreshIcon width={20} height={20} />
+                    <span>다시 기록하기</span>
+                  </div>
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="flex justify-center">
+              <Button
+                onClick={onGoFeed}
+                className={`w-4/6 py-4 rounded-xl font-meetme text-xl border-2 : ${
+                  selectedOption === 'change'
+                    ? 'text-white border-gray-500'
+                    : 'bg-white text-black border-[#36393f]'
+                }`}
+              >
+                <div className="flex items-center justify-center space-x-3">
+                  <span>피드로 가기</span>
                 </div>
-                <span>처음 선택한 감정</span>
-              </div>
-            </Button>
-
-            <Button
-              onClick={onUpdateAIEmotion}
-              className={`w-4/6 py-4 rounded-xl font-meetme text-xl border-2 : ${
-                selectedOption === 'change'
-                  ? 'text-white border-gray-500'
-                  : 'bg-white text-black border-[#36393f]'
-              }`}
-            >
-              <div className="flex items-center justify-center space-x-3">
-                <div className="w-10 h-10 rounded-full">
-                  {mainEmotionIconKey && svgComponents[mainEmotionIconKey] ? (
-                    React.createElement(svgComponents[mainEmotionIconKey], {
-                      width: 40,
-                      height: 40,
-                    })
-                  ) : (
-                    <span className="text-lg text-gray-500">
-                      {mainEmotion.type}
-                    </span>
-                  )}
-                </div>
-                <span>AI 감정진단 감정</span>
-              </div>
-            </Button>
-            <Button
-              onClick={handleRetry}
-              className={`w-4/6 py-4 rounded-xl font-meetme text-xl`}
-            >
-              <div className="flex items-center justify-center space-x-3">
-                <RefreshIcon width={20} height={20} />
-                <span>다시 기록하기</span>
-              </div>
-            </Button>
-          </div>
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </Layout>

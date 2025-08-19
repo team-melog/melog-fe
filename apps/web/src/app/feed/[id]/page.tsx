@@ -226,7 +226,8 @@ export default function FeedDetailPage() {
   const mainEmotion =
     (emotionDetail as unknown as EmotionDetailResponse) &&
     (emotionDetail as unknown as EmotionDetailResponse)?.emotions &&
-    (emotionDetail as unknown as EmotionDetailResponse)?.emotions.reduce(
+    (emotionDetail as unknown as EmotionDetailResponse)?.emotions.length &&
+    (emotionDetail as unknown as EmotionDetailResponse)?.emotions?.reduce(
       (prev, current) => (prev.percentage > current.percentage ? prev : current)
     );
 

@@ -95,7 +95,6 @@ function EmotionAnalysisContent() {
         API_ENDPOINTS.EMOTION.STT.replace(':nickname', user.name),
         formData
       );
-      console.log('===', result);
       return result;
     } catch (e) {
       console.error(e);
@@ -110,7 +109,6 @@ function EmotionAnalysisContent() {
     try {
       setIsAnalyzing(true);
       let result = null;
-      // console.log('payload', recordedAudio, textarea);
       if (recordedAudio) {
         // const audioFile = makeAudioFile(recordedAudio as Blob, user.name);
         // result = await createRecordSTT({
@@ -130,27 +128,31 @@ function EmotionAnalysisContent() {
           nickname: user.name,
           request: {
             text: textarea,
-            userSelectedEmotion: {
-              type: selectedEmotion,
-              percentage: 20 * Number(selectedIntensity),
-            },
+            ...(selectedEmotion &&
+              selectedIntensity && {
+                userSelectedEmotion: {
+                  type: selectedEmotion,
+                  percentage: 20 * Number(selectedIntensity),
+                },
+              }),
           },
         });
       }
 
-      console.log('감정 분석 결과:', result);
-
       setAnalysisResult(result);
       // 분석 완료 후 녹음 데이터 정리
       clearRecording();
-
-      if (selectedEmotion && selectedIntensity && selectedColor) {
-        const params = new URLSearchParams({
-          emotion: selectedEmotion,
-          intensity: selectedIntensity,
-          color: selectedColor,
-        });
-        router.push(`/emotion/result?${params.toString()}`);
+      if (result) {
+        if (selectedEmotion && selectedIntensity && selectedColor) {
+          const params = new URLSearchParams({
+            emotion: selectedEmotion,
+            intensity: selectedIntensity,
+            color: selectedColor,
+          });
+          router.push(`/emotion/result?${params.toString()}`);
+        } else {
+          router.push(`/emotion/result`);
+        }
       }
     } catch (e) {
       console.error(e);

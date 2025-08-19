@@ -18,12 +18,15 @@ function EmotionRecordContentInner() {
   const [transcription] = useState<string>('');
   const [timeLeft, setTimeLeft] = useState(60); // 1분(60초)에서 시작
 
+  const { setRecordedAudio, setTextarea } = useEmotionStore();
+
   const { status, startRecording, stopRecording } = useReactMediaRecorder({
     video: false,
     audio: true,
     blobPropertyBag: { type: 'audio/wav' },
     onStop: (blobUrl, blob) => {
       // blob은 이미 Blob 객체입니다
+      setTextarea('');
       setRecordedAudio(blob);
     },
   });
@@ -72,11 +75,8 @@ function EmotionRecordContentInner() {
   const selectedIntensity = searchParams.get('intensity');
   const selectedColor = searchParams.get('color');
 
-  const { setRecordedAudio } = useEmotionStore();
-
   const handleFinishRecording = async () => {
     await handleStopRecording();
-    // console.log('audioBlob', audioBlob);
 
     // 녹음된 오디오가 있으면 analysis 페이지로 이동
     // if (audioBlob) {
@@ -89,6 +89,8 @@ function EmotionRecordContentInner() {
         color: selectedColor || '',
       });
       router.push(`/emotion/analysis?${params.toString()}`);
+    } else {
+      router.push(`/emotion/analysis`);
     }
     // } else {
     //   // 녹음된 오디오가 없으면 no-result 페이지로
