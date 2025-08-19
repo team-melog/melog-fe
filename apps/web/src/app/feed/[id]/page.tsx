@@ -806,41 +806,41 @@ export default function FeedDetailPage() {
               {/* Voice Options */}
               <div className="px-6 pb-4 font-pretendard">
                 <div className="space-y-3">
-                  {/* 나의 목소리 */}
-                  <button
-                    onClick={() => changeVoiceType('MY')}
-                    className={`flex items-center space-x-3 w-full text-left ${
-                      activeTab === 'ai' ||
-                      !(emotionDetail as unknown as EmotionDetailResponse)
-                        ?.hasAudioFile
-                        ? 'text-[#B5B8C0]'
-                        : 'text-[#060607]'
-                    }`}
-                    disabled={
-                      activeTab === 'ai' ||
-                      !(emotionDetail as unknown as EmotionDetailResponse)
-                        ?.hasAudioFile
-                    }
-                  >
-                    <div className="w-5 h-5">
-                      {selectedVoice === 'MY' ? (
-                        <CheckIcon width={20} height={20} color="#587efc" />
-                      ) : (
-                        <div
-                          className={`w-5 h-5 border-2 rounded-full ${
-                            activeTab === 'ai' ||
-                            !(emotionDetail as unknown as EmotionDetailResponse)
-                              ?.hasAudioFile
-                              ? 'bg-[#ECEDEF] border-[#D0D2D7]'
-                              : 'border-[#d0d2d7]'
-                          }`}
-                        ></div>
-                      )}
-                    </div>
-                    <span className="text-[15px] font-medium tracking-[-0.15px] leading-[24px]">
-                      나의 목소리
-                    </span>
-                  </button>
+                  {/* 나의 목소리 [나의 기록 탭 에서만 출력] */}
+                  {activeTab === 'record' ? (
+                    <button
+                      onClick={() => changeVoiceType('MY')}
+                      className={`flex items-center space-x-3 w-full text-left ${
+                        !(emotionDetail as unknown as EmotionDetailResponse)
+                          ?.hasAudioFile
+                          ? 'text-[#B5B8C0]'
+                          : 'text-[#060607]'
+                      }`}
+                      disabled={
+                        !(emotionDetail as unknown as EmotionDetailResponse)
+                          ?.hasAudioFile
+                      }
+                    >
+                      <div className="w-5 h-5">
+                        {selectedVoice === 'MY' ? (
+                          <CheckIcon width={20} height={20} color="#587efc" />
+                        ) : (
+                          <div
+                            className={`w-5 h-5 border-2 rounded-full ${
+                              !(
+                                emotionDetail as unknown as EmotionDetailResponse
+                              )?.hasAudioFile
+                                ? 'bg-[#ECEDEF] border-[#D0D2D7]'
+                                : 'border-[#d0d2d7]'
+                            }`}
+                          ></div>
+                        )}
+                      </div>
+                      <span className="text-[15px] font-medium tracking-[-0.15px] leading-[24px]">
+                        나의 목소리
+                      </span>
+                    </button>
+                  ) : null}
 
                   {voiceTypes &&
                     (voiceTypes as unknown as VoiceType[])?.map(
