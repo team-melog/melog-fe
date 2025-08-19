@@ -53,7 +53,17 @@ export default function FloatingButton({
           <LottieFloatingBtn
             width={70}
             height={70}
-            className={`absolute -top-[7px] -left-[7px] `}
+            className={`absolute -top-[7px] -left-[7px]`}
+            loop={true}
+            autoplay={true}
+            rendererSettings={{
+              preserveAspectRatio: 'xMidYMid slice',
+              progressiveLoad: true,
+            }}
+            style={{
+              willChange: 'transform',
+              transform: 'translateZ(0)',
+            }}
           />
         ) : null}
       </button>
