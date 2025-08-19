@@ -25,6 +25,7 @@ export default function EmotionPage() {
 
   // 현재 날짜 정보
   const today = new Date();
+  const todayString = today.toISOString().split('T')[0]; // YYYY-MM-DD 형식
   const daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
   const dayNumOfWeek = daysOfWeek.map(day => {
     const date = new Date(today);
@@ -47,13 +48,20 @@ export default function EmotionPage() {
     return null;
   };
 
-  // emotionWeekList 유무에 따라 다른 UI 표시
-  const hasEmotionData =
-    emotionWeekList &&
-    'content' in emotionWeekList &&
-    Array.isArray((emotionWeekList as { content: unknown[] }).content) &&
-    (emotionWeekList as { content: unknown[] }).content.length > 0;
-  const isFirstTime = !hasEmotionData;
+  const hasTodayEmotionData = (() => {
+    if (emotionWeekList && 'content' in emotionWeekList) {
+      const record = emotionWeekList as {
+        content: Array<{
+          date: string;
+          emotions: Array<{ type: string; percentage: number; step: number }>;
+        }>;
+      };
+      return record.content.some(item => item.date === todayString);
+    }
+    return false;
+  })();
+
+  const isFirstTime = !hasTodayEmotionData; // 오늘 감정 등록 안했을 때
 
   return (
     <Layout
