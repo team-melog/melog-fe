@@ -27,8 +27,7 @@ export default function ProfilePage() {
 
   // 사용자 가입일부터 현재까지의 일수 계산
   const daysSinceJoin = useMemo(() => {
-    // 임시로 2025년 1월 1일부터 계산 (실제로는 사용자 가입일을 사용)
-    const joinDate = new Date('2025-08-07');
+    const joinDate = new Date(user?.createdAt || '');
     const today = new Date();
     const diffTime = Math.abs(today.getTime() - joinDate.getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
