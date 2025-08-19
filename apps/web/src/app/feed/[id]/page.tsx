@@ -4,7 +4,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Layout, LeftIcon, MicrophoneIcon } from '@melog/ui';
 import { useAppStore } from '@/features/store';
-import { emotionIconsByStep } from '@/entities/emotion/types';
+import {
+  emotionColorsByStep,
+  emotionIconsByStep,
+} from '@/entities/emotion/types';
 import {
   useDeleteEmotionDetail,
   useEmotionDetail,
@@ -504,7 +507,7 @@ export default function FeedDetailPage() {
                   </div>
 
                   {/* Emotion Name and Tags */}
-                  <div className="flex items-center justify-center mb-4">
+                  <div className="flex items-center justify-center mb-8">
                     <div className="flex items-center space-x-2">
                       <h3 className="text-[26px] font-normal text-[#060607] tracking-[-0.26px] leading-[31.2px]">
                         {mainEmotion && intensityLabels[mainEmotion.step - 1]}
@@ -531,6 +534,41 @@ export default function FeedDetailPage() {
                         )}
                       </div>
                     </div>
+                  </div>
+
+                  {/* 감정 뱃지 */}
+                  <div className="flex justify-center space-x-2">
+                    {(
+                      emotionDetail as unknown as EmotionDetailResponse
+                    ).emotions.map((result, index) => {
+                      const colors =
+                        emotionColorsByStep[
+                          result.type as keyof typeof emotionColorsByStep
+                        ];
+                      const backgroundColor = colors ? colors[0] : '#cccccc';
+                      const borderColor = colors ? colors[2] : '#cccccc';
+                      const textColor = colors ? colors[4] : '#1f2024';
+
+                      return (
+                        <div
+                          key={index}
+                          className="w-[78px] h-[40px] rounded-xl border flex items-center justify-center"
+                          style={{
+                            backgroundColor: backgroundColor,
+                            borderColor: borderColor,
+                          }}
+                        >
+                          <span
+                            className="text-lg font-meetme"
+                            style={{
+                              color: textColor,
+                            }}
+                          >
+                            {result.type} {result.percentage}%
+                          </span>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
 
