@@ -16,6 +16,7 @@ const testData = {
   id: 5,
   text: '야근하고 일이 너무 많은 하루 였다. 힘들다',
   summary: '야근과 많은 일로 인해 힘든 하루를 보냈습니다.',
+  comment: '',
   date: '2025-08-15',
   createdAt: '2025-08-15T02:40:39.398010137',
   user: {
@@ -322,7 +323,10 @@ function EmotionResultContent() {
 
                 {/* AI Summary */}
                 <p className="text-sm text-[#1f2024] leading-6 font-pretendard">
-                  {currentData.summary}
+                  {`오늘 ${user?.name || '사용자'}님의 목소리에는 ${currentData.emotions.map(e => `${e.type}(${e.percentage}%)`).join(', ')}가 섞여 있었습니다.\n${currentData.summary}\n`}
+                  <br />
+                  <br />
+                  {currentData.comment ? currentData.comment : ''}
                 </p>
               </div>
             ) : (
