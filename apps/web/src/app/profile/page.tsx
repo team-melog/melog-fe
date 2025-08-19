@@ -80,7 +80,8 @@ export default function ProfilePage() {
               step - 1
             ] || '#DEE1E2',
         };
-      });
+      })
+      .sort((a, b) => b.percentage - a.percentage); // percentage 높은 순서대로 정렬
 
     return {
       totalEntries: Object.keys(chartData.thisMonth).length,
