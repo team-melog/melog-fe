@@ -71,9 +71,6 @@ export default function FeedPage() {
 
   // emotionList 사용 - 안전한 접근
   const hasData = emotionData?.content && emotionData.content.length > 0;
-  const dominantEmotion = hasData
-    ? emotionData?.content[0]?.emotions[0]?.type
-    : null;
 
   const handleCardClick = (entryId: number) => {
     router.push(`/feed/${entryId}`);

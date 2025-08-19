@@ -3,8 +3,6 @@ import localFont from 'next/font/local';
 import './globals.css';
 import Providers from './utils/Provider';
 
-// Test comment for Husky + lint-staged test
-
 const pretendard = localFont({
   src: '../../public/static/fonts/PretendardGOVVariable.woff2',
   display: 'swap',
@@ -35,10 +33,6 @@ export default function RootLayout({
   return (
     <html lang="ko" className={`${pretendard.variable} ${meetme.variable}`}>
       <head>
-        {/* <meta
-          httpEquiv="Content-Security-Policy"
-          content="upgrade-insecure-requests"
-        /> */}
         <link
           rel="preload"
           href="/static/fonts/PretendardGOVVariable.woff2"
