@@ -45,7 +45,6 @@ export default function OnboardingPage() {
     }
 
     // 유효한 경우 사용자 정보 저장
-    setUser({ name: nickname.trim() });
     localStorage.clear();
     setError('');
 
@@ -55,14 +54,44 @@ export default function OnboardingPage() {
 
       // 이미 존재하는 경우 바로 emotion 페이지로 이동
       if (existingNickname) {
+        setUser({
+          id: existingNickname.id,
+          name: existingNickname.nickname,
+          createdAt: existingNickname.createdAt,
+          audioCount: existingNickname.audioCount,
+          emotionCount: existingNickname.emotionCount,
+          representativeEmotion: existingNickname.representativeEmotion || null,
+        });
+
         router.push('/emotion');
         return;
       } else {
+        // 닉네임 없으면 새로 생성
         createNickname.mutate(nickname.trim(), {
-          onSuccess: () => {
+          onSuccess: res => {
+            if (res) {
+              setUser({
+                id: res.id,
+                name: res.nickname,
+                createdAt: res.createdAt,
+                audioCount: res.audioCount,
+                emotionCount: res.emotionCount,
+                representativeEmotion: res.representativeEmotion,
+              });
+            }
+
             router.push('/emotion');
           },
           onError: () => {
+            setUser({
+              id: null,
+              name: '',
+              createdAt: '',
+              audioCount: 0,
+              emotionCount: 0,
+              representativeEmotion: null,
+            });
+
             router.push('/emotion');
           },
         });

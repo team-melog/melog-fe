@@ -1,6 +1,6 @@
 // 기본 API 응답 타입
 export interface ApiResponse<T = unknown> {
-  success: boolean;
+  success?: boolean;
   data?: T;
   message?: string;
   error?: string;

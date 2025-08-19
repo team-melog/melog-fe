@@ -1,9 +1,15 @@
 import type { ApiResponse } from '../../../shared/api';
 
-// 감정 기록 타입
 export interface NicknameRecord {
-  nickname: string;
-  createdAt: string;
+  id?: number | null;
+  nickname?: string;
+  createdAt?: string;
+  audioCount?: number;
+  emotionCount?: number;
+  representativeEmotion?: {
+    type: string;
+    step: number;
+  };
 }
 
 // API 응답 타입들

@@ -4,17 +4,32 @@ import type { NicknameRecord, NicknameRecordResponse } from './types';
 
 // 닉네임 조회
 export class UserService {
-  static async getNickname(nickname: string): Promise<NicknameRecordResponse> {
-    return apiClient.get<NicknameRecord>(`${API_ENDPOINTS.USER}/${nickname}`);
+  static async getNickname(nickname: string): Promise<NicknameRecord | null> {
+    try {
+      const response = await apiClient.get<NicknameRecord>(
+        `${API_ENDPOINTS.USER}/${nickname}`
+      );
+      return response as unknown as NicknameRecord;
+    } catch (e) {
+      console.error(e);
+      return null;
+    }
   }
 
   // 닉네임 생성
   static async createNickname(
     nickname: string
-  ): Promise<NicknameRecordResponse> {
-    return apiClient.post<NicknameRecord>(`${API_ENDPOINTS.USER}`, {
-      nickname,
-    });
+  ): Promise<NicknameRecord | null> {
+    try {
+      const response = await apiClient.post<NicknameRecord>(
+        `${API_ENDPOINTS.USER}`,
+        { nickname }
+      );
+      return response as unknown as NicknameRecord;
+    } catch (e) {
+      console.error(e);
+      return null;
+    }
   }
 
   // 감정 기록 수정

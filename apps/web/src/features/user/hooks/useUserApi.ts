@@ -27,18 +27,12 @@ export const useCreateNickname = () => {
     mutationKey: [QUERY_KEYS.NICKNAME],
     mutationFn: (nickname: string) => UserService.createNickname(nickname),
     onSuccess: (data, nickname) => {
-      //   console.log('data', data, nickname);
       queryClient.setQueryData(userKeys.nickname(nickname), data);
       queryClient.invalidateQueries({ queryKey: userKeys.nicknames() });
     },
     onError: error => {
       console.error('닉네임 생성 실패:', error);
-      // 테스트용
-      const testData = {
-        nickname: 'angrybird',
-        createdAt: '2025-08-07T14:33:00',
-      };
-      queryClient.setQueryData(userKeys.nickname(testData.nickname), testData);
+
       queryClient.invalidateQueries({ queryKey: userKeys.nicknames() });
     },
   });

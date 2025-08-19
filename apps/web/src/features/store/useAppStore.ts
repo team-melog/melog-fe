@@ -3,12 +3,15 @@ import { createJSONStorage, devtools, persist } from 'zustand/middleware';
 
 interface AppState {
   user: {
-    id: string;
+    id: number | null;
     name: string;
     createdAt: string;
     emotionCount: number;
     audioCount: number;
-    representativeEmotion: string | null;
+    representativeEmotion: {
+      type: string;
+      step: number;
+    } | null;
   };
   isLoading: boolean;
   theme: 'light' | 'dark';
@@ -25,7 +28,7 @@ type AppStore = AppState & AppActions;
 
 const initialState: AppState = {
   user: {
-    id: '',
+    id: null,
     name: '',
     createdAt: '',
     emotionCount: 0,
