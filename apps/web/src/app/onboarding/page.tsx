@@ -46,6 +46,7 @@ export default function OnboardingPage() {
 
     // 유효한 경우 사용자 정보 저장
     setUser({ name: nickname.trim() });
+    localStorage.clear();
     setError('');
 
     try {

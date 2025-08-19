@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { devtools, persist } from 'zustand/middleware';
+import { createJSONStorage, devtools, persist } from 'zustand/middleware';
 
 interface AppState {
   user: {
@@ -48,6 +48,7 @@ export const useAppStore = create<AppStore>()(
       {
         name: 'app-store',
         partialize: state => ({ user: state.user, theme: state.theme }),
+        storage: createJSONStorage(() => sessionStorage),
       }
     ),
     {
