@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   description:
     '음성 또는 텍스트로 하루의 감정을 기록하고 되돌아볼 수 있는 감정 회고 서비스입니다.',
   openGraph: {
-    images: '/static/images/Opengraph.png',
+    images: '/static/images/opengraph.png',
   },
 };
 
