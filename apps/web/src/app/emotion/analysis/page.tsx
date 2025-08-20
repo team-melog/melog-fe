@@ -97,6 +97,16 @@ function EmotionAnalysisContent() {
       );
       return result;
     } catch (e) {
+      if (selectedEmotion && selectedIntensity && selectedColor) {
+        const params = new URLSearchParams({
+          emotion: selectedEmotion,
+          intensity: selectedIntensity,
+          color: selectedColor,
+        });
+        router.push(`/emotion/no-result?${params.toString()}`);
+      } else {
+        router.push(`/emotion/no-result`);
+      }
       console.error(e);
     }
   };
@@ -124,6 +134,11 @@ function EmotionAnalysisContent() {
         result = await createEmotionSTT();
       }
       if (textarea) {
+        const params = new URLSearchParams({
+          emotion: selectedEmotion || '',
+          intensity: selectedIntensity || '',
+          color: selectedColor || '',
+        });
         result = await createRecordTXT({
           nickname: user.name,
           request: {
@@ -136,6 +151,7 @@ function EmotionAnalysisContent() {
                 },
               }),
           },
+          params: selectedEmotion ? params.toString() : '',
         });
       }
 

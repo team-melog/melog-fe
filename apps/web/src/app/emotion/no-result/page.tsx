@@ -13,13 +13,15 @@ function NoResultContent() {
   const selectedColor = searchParams.get('color');
 
   const handleRetryRecording = () => {
-    if (selectedEmotion) {
+    if (selectedEmotion && selectedIntensity && selectedColor) {
       const params = new URLSearchParams({
         emotion: selectedEmotion,
-        intensity: selectedIntensity || '',
-        color: selectedColor || '',
+        intensity: selectedIntensity,
+        color: selectedColor,
       });
-      router.push(`/emotion/record?${params.toString()}`);
+      router.push(`/emotion/input?${params.toString()}`);
+    } else {
+      router.push(`/emotion/skip`);
     }
   };
 
@@ -33,8 +35,8 @@ function NoResultContent() {
         <div className="flex flex-col items-center justify-center gap-10 mt-10">
           <div className="flex flex-col items-center justify-center">
             <h1 className="text-[32px] text-center font-normal text-[#060607] tracking-[-0.32px] leading-[38.4px] mb-4">
-              녹음된 음성을 감지하지 못했어요 <br />
-              다시 녹음하시겠어요?
+              AI가 내용을 감지하지 못했어요 <br />
+              다시 기록하시겠어요?
             </h1>
           </div>
           {/* 감정 이미지 */}
@@ -48,7 +50,7 @@ function NoResultContent() {
             onClick={handleRetryRecording}
             className="w-full bg-[#060607] text-white font-normal text-[20px] py-3 rounded-[30px] tracking-[-0.2px] leading-6 transition-colors"
           >
-            다시 녹음하기
+            다시 기록하기
           </button>
 
           <button

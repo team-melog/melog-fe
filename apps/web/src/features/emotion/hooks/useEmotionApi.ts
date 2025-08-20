@@ -4,6 +4,7 @@ import type {
   CreateEmotionRecordRequest,
   UpdateEmotionRecordRequest,
 } from '../api/types';
+import { useRouter } from 'next/navigation';
 
 // Query Keys
 export const emotionKeys = {
@@ -87,6 +88,7 @@ export const useCreateEmotionRecordSTT = () => {
 // 감정 기록 생성  - 텍스트
 export const useCreateEmotionRecordTXT = () => {
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   return useMutation({
     mutationFn: ({
@@ -95,6 +97,7 @@ export const useCreateEmotionRecordTXT = () => {
     }: {
       nickname: string;
       request: CreateEmotionRecordRequest;
+      params: string;
     }) => {
       return EmotionService.createEmotionTXT(nickname, request);
     },
@@ -103,7 +106,12 @@ export const useCreateEmotionRecordTXT = () => {
       queryClient.invalidateQueries({ queryKey: emotionKeys.lists() });
       queryClient.invalidateQueries({ queryKey: emotionKeys.chart });
     },
-    onError: error => {
+    onError: (error, variables) => {
+      if (variables?.params) {
+        router.push(`/emotion/no-result?${variables.params}`);
+      } else {
+        router.push(`/emotion/no-result`);
+      }
       console.error('감정 기록 생성 실패:', error);
     },
   });
