@@ -579,6 +579,8 @@ export default function FeedDetailPage() {
                       onClick={() => {
                         setActiveTab('ai');
                         setSelectedVoice('ARA');
+                        setIsPlaying(false);
+                        setIsPlayingRecord(false);
                       }}
                       className={`flex-1 py-3 px-4 rounded-lg font-medium text-lg tracking-[-0.18px] leading-[21.6px] transition-colors ${
                         activeTab === 'ai'
@@ -600,6 +602,8 @@ export default function FeedDetailPage() {
                             ? 'MY'
                             : 'ARA'
                         );
+                        setIsPlaying(false);
+                        setIsPlayingRecord(false);
                       }}
                       className={`flex-1 py-3 px-4 rounded-lg font-medium text-lg tracking-[-0.18px] leading-[21.6px] transition-colors ${
                         activeTab === 'record'
