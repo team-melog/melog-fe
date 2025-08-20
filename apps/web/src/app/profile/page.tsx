@@ -138,7 +138,7 @@ export default function ProfilePage() {
                   아직 기록된 감정이 없어요
                 </p>
                 <Link href="/emotion/select" prefetch={true}>
-                  <Button className="bg-[#060607] hover:bg-[#2a2a2a] text-white font-normal text-xl py-3 px-16 rounded-[30px] tracking-[-0.2px] transition-colors">
+                  <Button className="bg-[#060607] text-white font-normal text-xl py-3 px-16 rounded-[30px] tracking-[-0.2px] transition-colors">
                     감정 기록하러 가기
                   </Button>
                 </Link>

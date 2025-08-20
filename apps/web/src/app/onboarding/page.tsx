@@ -185,7 +185,7 @@ export default function OnboardingPage() {
           <Button
             onClick={handleNicknameSubmit}
             disabled={!nickname.trim()}
-            className="w-full bg-[#060607] hover:bg-[#2a2a2a] disabled:bg-[#B5B8C0] text-white font-meetme text-xl py-3 px-6transition-colors rounded-none"
+            className="w-full bg-[#060607] disabled:bg-[#B5B8C0] text-white font-meetme text-xl py-3 px-6transition-colors rounded-none"
           >
             확인
           </Button>

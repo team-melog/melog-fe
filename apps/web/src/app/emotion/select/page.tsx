@@ -171,7 +171,7 @@ export default function EmotionSelectPage() {
           <div className="py-6 space-y-5 flex flex-col items-center">
             <Button
               onClick={handleSkip}
-              className="bg-transparent text-[#36393f] font-meetme text-xl p-0 px-0 transition-colors underline w-fit rounded-none hover:bg-transparent "
+              className="bg-transparent text-[#36393f] font-meetme text-xl p-0 px-0 transition-colors underline w-fit rounded-none"
             >
               감정을 잘 모르겠어요
             </Button>

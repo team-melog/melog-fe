@@ -46,14 +46,14 @@ function NoResultContent() {
         <div className="w-full space-y-4">
           <button
             onClick={handleRetryRecording}
-            className="w-full bg-[#060607] text-white font-normal text-[20px] py-3 rounded-[30px] tracking-[-0.2px] leading-6 hover:bg-[#2a2a2a] transition-colors"
+            className="w-full bg-[#060607] text-white font-normal text-[20px] py-3 rounded-[30px] tracking-[-0.2px] leading-6 transition-colors"
           >
             다시 녹음하기
           </button>
 
           <button
             onClick={handleGoHome}
-            className="w-full text-[#36393f] font-normal text-[20px] py-3 tracking-[-0.2px] leading-6 hover:text-[#060607] transition-colors"
+            className="w-full text-[#36393f] font-normal text-[20px] py-3 tracking-[-0.2px] leading-6 transition-colors"
           >
             홈으로 돌아가기
           </button>

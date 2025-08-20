@@ -111,7 +111,7 @@ function EmotionInputContent() {
               {/* Voice Recording Option */}
               <button
                 onClick={handleVoiceSelect}
-                className={`w-full py-3 px-8 rounded-3xl transition-colors text-xl font-meetme bg-[#060607] text-white hover:bg-[#1a1a1a]`}
+                className={`w-full py-3 px-8 rounded-3xl transition-colors text-xl font-meetme bg-[#060607] text-white`}
               >
                 음성으로 녹음하기
               </button>
@@ -119,7 +119,7 @@ function EmotionInputContent() {
               {/* Text Input Option */}
               <button
                 onClick={handleTextSelect}
-                className={`w-full py-3 px-8 rounded-3xl transition-colors text-xl font-meetme border border-[#060607] text-[#060607] hover:bg-[#060607] hover:text-white`}
+                className={`w-full py-3 px-8 rounded-3xl transition-colors text-xl font-meetme border border-[#060607] text-[#060607]`}
               >
                 텍스트로 기록하기
               </button>

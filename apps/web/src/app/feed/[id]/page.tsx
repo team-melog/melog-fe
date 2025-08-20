@@ -1020,7 +1020,7 @@ export default function FeedDetailPage() {
                           );
                         }
                       }}
-                      className="text-red-600 text-xs underline hover:text-red-700"
+                      className="text-red-600 text-xs underline"
                     >
                       다시 시도
                     </button>
@@ -1032,7 +1032,7 @@ export default function FeedDetailPage() {
               <div className="px-6 py-4">
                 <button
                   onClick={handleConfirmVoice}
-                  className="w-full py-3 bg-[#060607] text-white rounded-[30px] font-normal text-[20px] tracking-[-0.2px] leading-[24px] hover:bg-[#333] transition-colors"
+                  className="w-full py-3 bg-[#060607] text-white rounded-[30px] font-normal text-[20px] tracking-[-0.2px] leading-[24px] transition-colors"
                 >
                   확인
                 </button>
@@ -1052,7 +1052,7 @@ export default function FeedDetailPage() {
               <div className="flex justify-end space-x-3">
                 <button
                   onClick={() => setDeletedId(null)}
-                  className="py-1 px-6 border-[1px] border-[#060607] rounded-3xl text-[#060607] hover:bg-[#060607]/10 transition-colors"
+                  className="py-1 px-6 border-[1px] border-[#060607] rounded-3xl text-[#060607] transition-colors"
                 >
                   취소
                 </button>

@@ -153,7 +153,7 @@ export default function EmotionFinalPage() {
             <div className="flex justify-center">
               <Button
                 onClick={handleConfirm}
-                className="w-full bg-[#060607] hover:bg-[#2a2a2a] text-white font-normal text-xl py-3 rounded-[30px] tracking-[-0.2px] transition-colors"
+                className="w-full bg-[#060607] text-white font-normal text-xl py-3 rounded-[30px] tracking-[-0.2px] transition-colors"
               >
                 피드로 이동
               </Button>

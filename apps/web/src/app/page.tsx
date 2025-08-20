@@ -54,7 +54,7 @@ export default function Home() {
 
           <Button
             onClick={handleStart}
-            className="w-4/5 h-12 bg-[#060607] hover:bg-[#2a2a2a] text-white text-xl py-3 px-6 rounded-3xl transition-colors"
+            className="w-4/5 h-12 bg-[#060607] text-white text-xl py-3 px-6 rounded-3xl transition-colors"
           >
             시작하기
           </Button>

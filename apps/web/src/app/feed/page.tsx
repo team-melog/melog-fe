@@ -263,7 +263,7 @@ export default function FeedPage() {
                   <button
                     key={card.id}
                     onClick={() => handleCardClick(card.id)}
-                    className="relative aspect-square group hover:opacity-80 transition-opacity"
+                    className="relative aspect-square group transition-opacity"
                   >
                     {/* SVG 컴포넌트를 위에 렌더링 */}
                     <div className="absolute top-0 left-0 z-10 flex items-center justify-center w-full h-full">

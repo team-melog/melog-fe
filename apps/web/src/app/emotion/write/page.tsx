@@ -187,7 +187,7 @@ function EmotionWriteContent() {
               disabled={!isTextValid}
               className={`w-full py-3 font-normal text-xl tracking-[-0.2px] transition-colors ${
                 isTextValid
-                  ? 'bg-[#060607] hover:bg-[#2a2a2a] text-white'
+                  ? 'bg-[#060607] text-white'
                   : 'bg-[#b5b8c0] text-white cursor-not-allowed'
               }`}
             >

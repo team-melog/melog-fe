@@ -240,7 +240,7 @@ export default function CalendarPage() {
             <div className="flex items-center space-x-2">
               <button
                 onClick={goToPreviousMonth}
-                className="p-1 hover:bg-gray-100 rounded w-6 h-6 flex items-center justify-center"
+                className="p-1 rounded w-6 h-6 flex items-center justify-center"
               >
                 <svg
                   className="w-5 h-5"
@@ -261,7 +261,7 @@ export default function CalendarPage() {
               </h1>
               <button
                 onClick={goToNextMonth}
-                className="p-1 hover:bg-gray-100 rounded w-6 h-6 flex items-center justify-center"
+                className="p-1 rounded w-6 h-6 flex items-center justify-center"
               >
                 <svg
                   className="w-5 h-5"
