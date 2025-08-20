@@ -37,17 +37,10 @@ export default function OnboardingPage() {
       return;
     }
 
-    // 한글 입력 제한 (영어, 숫자만 허용)
-    const koreanRegex = /[가-힣ㄱ-ㅎㅏ-ㅣ]/;
-    if (koreanRegex.test(nickname)) {
-      setError('닉네임에는 영어, 숫자만 가능합니다');
-      return;
-    }
-
-    // 특수문자 제한 (영어, 숫자만 허용)
-    const specialCharRegex = /[^a-zA-Z0-9\s]/;
+    // 특수문자 제한 (일부만 허용)
+    const specialCharRegex = /[#%&]/;
     if (specialCharRegex.test(nickname)) {
-      setError('닉네임에는 영어, 숫자만 가능합니다');
+      setError('닉네임에는 한글, 영어, 숫자만 가능합니다');
       return;
     }
 
@@ -127,17 +120,10 @@ export default function OnboardingPage() {
   };
 
   const onValidateNickname = (value: string) => {
-    // 한글 입력 제한 (영어, 숫자만 허용)
-    const koreanRegex = /[가-힣ㄱ-ㅎㅏ-ㅣ]/;
-    if (koreanRegex.test(value)) {
-      setError('닉네임에는 영어, 숫자만 가능합니다');
-      return false;
-    }
-
-    // 특수문자 제한 (영어, 숫자만 허용)
-    const specialCharRegex = /[^a-zA-Z0-9\s]/;
+    // 모든 특수문자 제한 (한글, 영문, 숫자만 허용)
+    const specialCharRegex = /[^가-힣a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ\s]/;
     if (specialCharRegex.test(value)) {
-      setError('닉네임에는 영어, 숫자만 가능합니다');
+      setError('닉네임에는 한글, 영어, 숫자만 가능합니다');
       return false;
     }
 
