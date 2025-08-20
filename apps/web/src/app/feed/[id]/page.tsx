@@ -328,52 +328,52 @@ export default function FeedDetailPage() {
     setIsLoadTSS(true);
 
     // audioRef.current가 없을 때 새로운 오디오 생성
-    if (
-      selectedVoice === 'MY' &&
-      (emotionDetail as unknown as EmotionDetailResponse)?.audioFilePath
-    ) {
-      const audioPath =
-        (emotionDetail as unknown as EmotionDetailResponse)?.audioFilePath ||
-        '/static/audio/test.wav';
-      audioRecordRef.current = new Audio(audioPath);
-      setupAudioEvents(audioRecordRef.current, true);
-      startRecordAudioPlayback(audioRecordRef.current);
-      setIsLoadTSS(false);
-    } else {
-      // AI 목소리
-      // console.log('de', emotionDetail);
-      getConvertedVoice(
-        {
-          nickname: user.name,
-          emotionId,
-          payload: {
-            isUserUploadRequst: true,
-            isRequiredUserAudio: true,
-            voiceType: selectedVoice === 'MY' ? null : selectedVoice,
-          },
+    // if (
+    //   selectedVoice === 'MY' &&
+    //   (emotionDetail as unknown as EmotionDetailResponse)?.audioFilePath
+    // ) {
+    //   const audioPath =
+    //     (emotionDetail as unknown as EmotionDetailResponse)?.audioFilePath ||
+    //     '/static/audio/test.wav';
+    //   audioRecordRef.current = new Audio(audioPath);
+    //   setupAudioEvents(audioRecordRef.current, true);
+    //   startRecordAudioPlayback(audioRecordRef.current);
+    //   setIsLoadTSS(false);
+    // } else {
+    // AI 목소리
+    // console.log('de', emotionDetail);
+    getConvertedVoice(
+      {
+        nickname: user.name,
+        emotionId,
+        payload: {
+          isUserUploadRequst: true,
+          isRequiredUserAudio: true,
+          voiceType: selectedVoice === 'MY' ? null : selectedVoice,
         },
-        {
-          onSuccess: (data: unknown | ConvertedVoiceType) => {
-            // console.log('my 음성성공:', data);
-            setVoiceError(null);
-            setIsLoadTSS(false);
+      },
+      {
+        onSuccess: (data: unknown | ConvertedVoiceType) => {
+          // console.log('my 음성성공:', data);
+          setVoiceError(null);
+          setIsLoadTSS(false);
 
-            // 성공 시 audioUrl로 오디오 재생
-            if ((data as unknown as ConvertedVoiceType)?.audioUrl) {
-              createAndPlayAudio(
-                (data as unknown as ConvertedVoiceType).audioUrl,
-                true
-              );
-            }
-          },
-          onError: error => {
-            console.error(error);
-            setVoiceError(error.message);
-            setIsLoadTSS(false);
-          },
-        }
-      );
-    }
+          // 성공 시 audioUrl로 오디오 재생
+          if ((data as unknown as ConvertedVoiceType)?.audioUrl) {
+            createAndPlayAudio(
+              (data as unknown as ConvertedVoiceType).audioUrl,
+              true
+            );
+          }
+        },
+        onError: error => {
+          console.error(error);
+          setVoiceError(error.message);
+          setIsLoadTSS(false);
+        },
+      }
+    );
+    // }
   };
 
   // 보이스 선택 바텀시트 토글
