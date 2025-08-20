@@ -56,51 +56,52 @@ export default function FeedDetailPage() {
   const { mutate: getConvertedVoice } = useGetConvertedVoice();
 
   // 오디오 재생 관련 함수들
-  const setupAudioEvents = (audio: HTMLAudioElement) => {
+  const setupAudioEvents = (audio: HTMLAudioElement, isMyRecord: boolean) => {
     audio.addEventListener('loadedmetadata', () => {
-      console.log('11', audio.duration);
-      setDuration(audio.duration || 0);
-    });
-
-    audio.addEventListener('ended', () => {
-      setIsPlaying(false);
-      setIsLoadTSS(false);
-      setCurrentTime(0);
-      if (progressIntervalRef.current) {
-        clearInterval(progressIntervalRef.current);
+      if (isMyRecord) {
+        setDurationRecord(audio.duration || 0);
+      } else {
+        setDuration(audio.duration || 0);
       }
     });
-  };
-  // [내기록] 오디오 재생 관련 함수들
-  const setupRecordAudioEvents = (audio: HTMLAudioElement) => {
-    audio.addEventListener('loadedmetadata', () => {
-      console.log('22', audio.duration);
-      setDurationRecord(audio.duration || 0);
-    });
 
     audio.addEventListener('ended', () => {
-      setIsPlayingRecord(false);
-      setIsLoadTSS(false);
-      setCurrentTimeRecord(0);
-      if (progressRecordIntervalRef.current) {
-        clearInterval(progressRecordIntervalRef.current);
+      if (isMyRecord) {
+        setIsPlayingRecord(false);
+        setIsLoadTSS(false);
+        setCurrentTimeRecord(0);
+        if (progressRecordIntervalRef.current) {
+          clearInterval(progressRecordIntervalRef.current);
+        }
+      } else {
+        setIsPlaying(false);
+        setIsLoadTSS(false);
+        setCurrentTime(0);
+        if (progressIntervalRef.current) {
+          clearInterval(progressIntervalRef.current);
+        }
       }
     });
   };
 
-  const startAudioPlayback = (audio: HTMLAudioElement) => {
+  const startAudioPlayback = (audio: HTMLAudioElement, isMyRecord: boolean) => {
     audio.play();
     setIsPlaying(true);
 
-    console.log('내목1', audio);
-
     // 프로그레스 업데이트 시작
-
-    progressIntervalRef.current = setInterval(() => {
-      if (audioRef.current) {
-        setCurrentTime(audioRef.current.currentTime);
-      }
-    }, 100);
+    if (isMyRecord) {
+      progressRecordIntervalRef.current = setInterval(() => {
+        if (audioRecordRef.current) {
+          setCurrentTimeRecord(audioRecordRef.current.currentTime);
+        }
+      }, 100);
+    } else {
+      progressIntervalRef.current = setInterval(() => {
+        if (audioRef.current) {
+          setCurrentTime(audioRef.current.currentTime);
+        }
+      }, 100);
+    }
   };
 
   const stopAudioPlayback = () => {
@@ -116,8 +117,6 @@ export default function FeedDetailPage() {
   const startRecordAudioPlayback = (audio: HTMLAudioElement) => {
     audio.play();
     setIsPlayingRecord(true);
-
-    console.log('내목소리2', audio);
 
     // 프로그레스 업데이트 시작
     progressRecordIntervalRef.current = setInterval(() => {
@@ -138,34 +137,19 @@ export default function FeedDetailPage() {
   };
 
   const createAndPlayAudio = (audioUrl: string, isMyRecord: boolean) => {
-    console.log('내기록 - 내목', audioUrl);
-    if (isMyRecord) {
-      // 내 기록
-      if (audioRecordRef.current) {
-        audioRecordRef.current.pause();
-        audioRecordRef.current.src = audioUrl;
-        audioRecordRef.current.load(); // 새로운 src 로드
-      } else {
-        // 새로운 오디오 객체 생성
-        audioRecordRef.current = new Audio(audioUrl);
-        setupRecordAudioEvents(audioRecordRef.current);
-      }
-
-      startRecordAudioPlayback(audioRecordRef.current);
+    // 기존 오디오 객체가 있다면 src만 변경
+    const target = isMyRecord ? audioRecordRef : audioRef;
+    if (target.current) {
+      target.current.pause();
+      target.current.src = audioUrl;
+      target.current.load(); // 새로운 src 로드
     } else {
-      // 기존 오디오 객체가 있다면 src만 변경
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current.src = audioUrl;
-        audioRef.current.load(); // 새로운 src 로드
-      } else {
-        // 새로운 오디오 객체 생성
-        audioRef.current = new Audio(audioUrl);
-        setupAudioEvents(audioRef.current);
-      }
-
-      startAudioPlayback(audioRef.current);
+      // 새로운 오디오 객체 생성
+      target.current = new Audio(audioUrl);
+      setupAudioEvents(target.current, isMyRecord);
     }
+
+    startAudioPlayback(target.current, isMyRecord);
   };
 
   const toggleAIPlayBtn = () => {
@@ -229,7 +213,6 @@ export default function FeedDetailPage() {
       audioRecordRef.current = null;
     }
     setIsPlayingRecord(false);
-    setIsLoadTSS(false);
     setCurrentTimeRecord(0);
     setDurationRecord(0);
   };
@@ -289,7 +272,7 @@ export default function FeedDetailPage() {
     // 재생 상태가 아닐 때 (일시정지 상태)
     if (audioRef.current) {
       // 기존 오디오가 있으면 그대로 재생
-      startAudioPlayback(audioRef.current);
+      startAudioPlayback(audioRef.current, true);
       return;
     }
 
@@ -332,7 +315,6 @@ export default function FeedDetailPage() {
   const toggleMyPlayBtn = () => {
     if (isPlayingRecord) {
       // 일시정지
-      setIsLoadTSS(false);
       return stopRecordAudioPlayback();
     }
 
