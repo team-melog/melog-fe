@@ -20,16 +20,17 @@ function EmotionRecordContentInner() {
 
   const { setRecordedAudio, setTextarea } = useEmotionStore();
 
-  const { status, startRecording, stopRecording } = useReactMediaRecorder({
-    video: false,
-    audio: true,
-    blobPropertyBag: { type: 'audio/wav' },
-    onStop: (blobUrl, blob) => {
-      // blob은 이미 Blob 객체입니다
-      setTextarea('');
-      setRecordedAudio(blob);
-    },
-  });
+  const { mediaBlobUrl, status, startRecording, stopRecording } =
+    useReactMediaRecorder({
+      video: false,
+      audio: true,
+      blobPropertyBag: { type: 'audio/wav' },
+      onStop: (blobUrl, blob) => {
+        // blob은 이미 Blob 객체입니다
+        setTextarea('');
+        setRecordedAudio(blob);
+      },
+    });
 
   // 타이머 효과
   useEffect(() => {
@@ -78,6 +79,20 @@ function EmotionRecordContentInner() {
   const handleFinishRecording = async () => {
     await handleStopRecording();
 
+    if (!mediaBlobUrl) {
+      if (selectedEmotion && selectedIntensity && selectedColor) {
+        const params = new URLSearchParams({
+          emotion: selectedEmotion,
+          intensity: selectedIntensity,
+          color: selectedColor,
+        });
+        router.push(`/emotion/no-result?${params.toString()}`);
+      } else {
+        router.push(`/emotion/no-result`);
+      }
+      return;
+    }
+
     // 녹음된 오디오가 있으면 analysis 페이지로 이동
     // if (audioBlob) {
     // setStoreTranscription(transcription);
@@ -92,17 +107,6 @@ function EmotionRecordContentInner() {
     } else {
       router.push(`/emotion/analysis`);
     }
-    // } else {
-    //   // 녹음된 오디오가 없으면 no-result 페이지로
-    //   if (selectedEmotion) {
-    //     const params = new URLSearchParams({
-    //       emotion: selectedEmotion,
-    //       intensity: selectedIntensity || '',
-    //       color: selectedColor || '',
-    //     });
-    //     router.push(`/emotion/no-result?${params.toString()}`);
-    //   }
-    // }
   };
 
   const handleBack = () => {
