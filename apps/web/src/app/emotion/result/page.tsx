@@ -173,6 +173,8 @@ function EmotionResultContent() {
       });
       deleteEmotion({ nickname: user.name, id: currentData.id.toString() });
       router.push(`/emotion/input?${params.toString()}`);
+    } else {
+      router.push(`/emotion/skip`);
     }
   };
 
