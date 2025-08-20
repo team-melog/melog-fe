@@ -20,8 +20,30 @@ export const metadata: Metadata = {
   title: 'ME:LOG - 감정 회고 서비스',
   description:
     '음성 또는 텍스트로 하루의 감정을 기록하고 되돌아볼 수 있는 감정 회고 서비스입니다.',
+  metadataBase: new URL('https://melog-ai.vercel.app'),
   openGraph: {
-    images: '/static/images/opengraph.png',
+    title: 'ME:LOG - 감정 회고 서비스',
+    description:
+      '음성 또는 텍스트로 하루의 감정을 기록하고 되돌아볼 수 있는 감정 회고 서비스입니다.',
+    url: 'https://melog-ai.vercel.app',
+    siteName: 'ME:LOG',
+    images: [
+      {
+        url: '/static/images/opengraph.png',
+        width: 600,
+        height: 300,
+        alt: 'ME:LOG - 감정 회고 서비스',
+      },
+    ],
+    locale: 'ko_KR',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'ME:LOG - 감정 회고 서비스',
+    description:
+      '음성 또는 텍스트로 하루의 감정을 기록하고 되돌아볼 수 있는 감정 회고 서비스입니다.',
+    images: ['/static/images/opengraph.png'],
   },
 };
 
