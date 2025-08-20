@@ -10,7 +10,7 @@ import SuspenseWrapper from '@/components/SuspenseWrapper';
 import { emotionIconsByStep, emotionColorsByStep } from '@/entities';
 import GradientIcon from '@/assets/svgs/common/GradientIcon';
 import RefreshIcon from '@/assets/svgs/common/RefreshIcon';
-import { useUpdateEmotion } from '@/features';
+import { useDeleteEmotionDetail, useUpdateEmotion } from '@/features';
 
 const testData = {
   id: 5,
@@ -93,6 +93,8 @@ function EmotionResultContent() {
   const selectedIntensity = Number(searchParams.get('intensity'));
   const selectedColor = searchParams.get('color');
 
+  const { mutate: deleteEmotion } = useDeleteEmotionDetail();
+
   // API 응답 결과가 있으면 사용하고, 없으면 기본 테스트 데이터 사용
   const currentData =
     analysisResult && typeof analysisResult === 'object'
@@ -169,6 +171,7 @@ function EmotionResultContent() {
         intensity: selectedIntensity.toString(),
         color: selectedColor || '',
       });
+      deleteEmotion({ nickname: user.name, id: currentData.id.toString() });
       router.push(`/emotion/input?${params.toString()}`);
     }
   };
