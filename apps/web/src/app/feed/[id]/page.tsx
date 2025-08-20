@@ -741,15 +741,32 @@ export default function FeedDetailPage() {
                           </div>
                           <button
                             type="button"
-                            className="flex items-center mb-2"
                             onClick={toggleVoiceSelector}
+                            className={`flex items-center mb-2 ${
+                              !(
+                                emotionDetail as unknown as EmotionDetailResponse
+                              )?.text
+                                ? 'text-slate-300'
+                                : 'text-white'
+                            }`}
+                            disabled={
+                              !(
+                                emotionDetail as unknown as EmotionDetailResponse
+                              )?.text
+                            }
                           >
-                            <span className="text-white text-sm font-medium">
+                            <span className=" text-sm font-medium">
                               {getCurrentVoiceText()}
                             </span>
                             <div className="ml-1 flex items-center justify-center">
                               <ArrowDownIcon
-                                color="white"
+                                color={
+                                  !(
+                                    emotionDetail as unknown as EmotionDetailResponse
+                                  )?.text
+                                    ? '#B5B8C0'
+                                    : 'white'
+                                }
                                 width={12}
                                 height={10}
                               />
@@ -758,12 +775,19 @@ export default function FeedDetailPage() {
                         </div>
                         <button
                           className={`w-9 h-9 rounded-full flex items-center justify-center ${
-                            isPlayingRecord
-                              ? 'bg-white bg-opacity-20'
-                              : isLoadTSS
-                                ? ''
-                                : 'bg-white bg-opacity-20'
+                            !(emotionDetail as unknown as EmotionDetailResponse)
+                              ?.text
+                              ? 'bg-gray-300 bg-opacity-50'
+                              : isPlayingRecord
+                                ? 'bg-white bg-opacity-20'
+                                : isLoadTSS
+                                  ? ''
+                                  : 'bg-white bg-opacity-20'
                           }`}
+                          disabled={
+                            !(emotionDetail as unknown as EmotionDetailResponse)
+                              ?.text
+                          }
                           onClick={toggleMyPlayBtn}
                         >
                           {isPlayingRecord ? (

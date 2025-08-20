@@ -165,13 +165,13 @@ function EmotionResultContent() {
     router.push(`/feed/${currentData.id}`);
   };
   const handleRetry = () => {
+    deleteEmotion({ nickname: user.name, id: currentData.id.toString() });
     if (selectedEmotion) {
       const params = new URLSearchParams({
         emotion: selectedEmotion,
         intensity: selectedIntensity.toString(),
         color: selectedColor || '',
       });
-      deleteEmotion({ nickname: user.name, id: currentData.id.toString() });
       router.push(`/emotion/input?${params.toString()}`);
     } else {
       router.push(`/emotion/skip`);

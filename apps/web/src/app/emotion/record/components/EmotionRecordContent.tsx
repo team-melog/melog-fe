@@ -122,7 +122,9 @@ function EmotionRecordContentInner() {
         <div className="flex-1 flex flex-col items-center justify-around px-4">
           <div className="flex flex-col items-center justify-center">
             <h1 className="text-3xl font-meetme text-center text-white mb-4">
-              목소리를 듣고 있어요
+              {status === 'recording'
+                ? '목소리를 듣고 있어요'
+                : '재생 버튼을 눌러주세요'}
             </h1>
 
             {/* Timer */}
